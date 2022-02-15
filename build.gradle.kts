@@ -29,6 +29,7 @@ kotlin {
         browser {
             commonWebpackConfig {
                 cssSupport.enabled = true
+                outputPath = File(buildDir, "processedResources/jvm/main/static")
             }
         }
     }
