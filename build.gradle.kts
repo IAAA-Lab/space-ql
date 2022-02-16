@@ -25,8 +25,8 @@ kotlin {
         }
     }
     js(IR) {
-        binaries.executable()
         browser {
+            binaries.executable()
             commonWebpackConfig {
                 cssSupport.enabled = true
                 outputPath = File(buildDir, "processedResources/jvm/main/static")
