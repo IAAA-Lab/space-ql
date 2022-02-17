@@ -5,5 +5,6 @@ object Versions {
     const val kotlinWrappers = "0.0.1-pre.266-kotlin-$kotlin"
     const val springBoot = "2.6.3"
     const val springDependencyManagement = "1.0.11.RELEASE"
+    const val orgJson = "20211205"
 }
 

@@ -17,6 +17,11 @@ object SpringBootStarter {
     var test = springBootStarter("test")
 }
 
+object OrgJson {
+    val json = "org.json:json:${Versions.orgJson}"
+
+}
+
 object SpringDependencies {
     const val jacksonModuleKotlin = "com.fasterxml.jackson.module:jackson-module-kotlin"
     const val reactorKotlinExtensions = "io.projectreactor.kotlin:reactor-kotlin-extensions"

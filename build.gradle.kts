@@ -45,6 +45,8 @@ kotlin {
                 implementation(kotlin("reflect"))
                 implementation(kotlin("stdlib-jdk8"))
 
+                implementation(OrgJson.json)
+
                 implementation(Kotlinx.htmlJvm)
                 implementation(Kotlinx.coroutinesReactor)
 
