@@ -3,7 +3,7 @@ TFG Alejandro Magallón
 
 ## Diagrams
 ### High concept diagram
-![High concept](src/assets/TFG-High concept.drawio.png)
+![High concept](src/assets/TFG-High%20concept.drawio.png)
 
 This diagram is a very high level specification of each piece of the system, so it
 is easy to explain to people that doesn't know much about technology.
@@ -25,13 +25,13 @@ the data in the database.
 
 ### Client's design
 
-![Client's box diagram](src/assets/TFG-Client's box diagram.drawio.png)
+![Client's box diagram](src/assets/TFG-Client's%20box%20diagram.drawio.png)
 
 This diagram shows a first approach to the client's design. It is supposed to 
 be a title-based search, so it wouldn't take any other parameter. On future releases
 it must let the user search for any possible metadata and filter the different results.
 
-![Client's box design](src/assets/TFG-client design.png)
+![Client's box design](src/assets/TFG-client%20design.png)
 
 This is the first design for the client. It's a very simple design with an input, and some result cards.
 That cards show the title and any extra metadata chosen. It is thought to be implemented with react and 
