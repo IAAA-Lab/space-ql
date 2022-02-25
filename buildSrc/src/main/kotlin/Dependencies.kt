@@ -18,8 +18,11 @@ object SpringBootStarter {
 }
 
 object OrgJson {
-    val json = "org.json:json:${Versions.orgJson}"
+    const val json = "org.json:json:${Versions.orgJson}"
+}
 
+object JsonPath {
+    const val jsonPath = "com.jayway.jsonpath:json-path:${Versions.jsonPath}"
 }
 
 object SpringDependencies {

@@ -47,6 +47,8 @@ kotlin {
 
                 implementation(OrgJson.json)
 
+                implementation(JsonPath.jsonPath)
+
                 implementation(Kotlinx.htmlJvm)
                 implementation(Kotlinx.coroutinesReactor)
 

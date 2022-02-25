@@ -1,4 +1,5 @@
 object Versions {
+    const val jsonPath = "2.6.0"
     const val spring = "2.6.3"
     const val kotlin = "1.6.0"
     const val kotlinxHtml = "0.7.2"
