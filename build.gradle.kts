@@ -56,6 +56,11 @@ kotlin {
 
                 implementation(SpringDependencies.jacksonModuleKotlin)
                 implementation(SpringDependencies.reactorKotlinExtensions)
+
+                implementation(GraphQL.graphJavaTool)
+                implementation(GraphQL.graphSpringStrarter)
+
+                implementation(ProjectLombok.lombok)
             }
         }
         val jvmTest by getting {
@@ -84,7 +89,7 @@ kotlin {
 }
 
 application {
-    mainClass.set("me.javier.application.ServerApplicationKt")
+    mainClass.set("application.ServerApplicationKt")
 }
 
 tasks.named<Copy>("jvmProcessResources") {

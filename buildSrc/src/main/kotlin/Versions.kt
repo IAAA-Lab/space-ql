@@ -1,4 +1,7 @@
 object Versions {
+    const val graphSpringStarter = "5.0.2"
+    const val graphJTool = "5.2.4"
+    const val lombok = "1.18.22"
     const val jsonPath = "2.6.0"
     const val spring = "2.6.3"
     const val kotlin = "1.6.0"

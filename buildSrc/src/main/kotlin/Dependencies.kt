@@ -30,3 +30,12 @@ object SpringDependencies {
     const val reactorKotlinExtensions = "io.projectreactor.kotlin:reactor-kotlin-extensions"
     const val reactorTest = "io.projectreactor:reactor-test"
 }
+
+object GraphQL {
+    const val graphSpringStrarter = "com.graphql-java:graphql-spring-boot-starter:${Versions.graphSpringStarter}"
+    const val graphJavaTool = "com.graphql-java:graphql-java-tools:${Versions.graphJTool}"
+}
+
+object ProjectLombok {
+    const val lombok = "org.projectlombok:lombok:${Versions.lombok}"
+}
