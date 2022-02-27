@@ -10,11 +10,17 @@ object Kotlinx {
     val htmlJvm = kotlinx("html-jvm", Versions.kotlinxHtml)
 }
 
+object Kotlin {
+    const val reflect = "org.jetbrains.kotlin:kotlin-reflect"
+    const val stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+}
+
 fun springBootStarter(target: String): String = "org.springframework.boot:spring-boot-starter-$target"
 
 object SpringBootStarter {
     val webflux = springBootStarter("webflux")
     var test = springBootStarter("test")
+    val elasticsearch = springBootStarter("data-elasticsearch")
 }
 
 object OrgJson {
