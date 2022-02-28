@@ -54,8 +54,11 @@ kotlin {
 
                 implementation(SpringBootStarter.webflux)
 
-                // Elasticsearch dependency
-                implementation(SpringBootStarter.elasticsearch)
+
+                //implementation(SpringBootStarter.elasticsearch)
+                implementation("org.springframework.data:spring-data-elasticsearch:4.1.3")
+
+
 
                 implementation(SpringDependencies.jacksonModuleKotlin)
                 implementation(SpringDependencies.reactorKotlinExtensions)
