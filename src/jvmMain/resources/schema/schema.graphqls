@@ -1,12 +1,9 @@
-schema{
-    query:Query
-}
-
 type Query {
     allMetadata: [MetaData]
-    metadata(title:String): MetaData
 }
 
 type MetaData {
     title:String
+    content:String
+    location:String
 }

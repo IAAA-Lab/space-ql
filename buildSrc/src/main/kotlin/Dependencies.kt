@@ -42,6 +42,11 @@ object GraphQL {
     const val graphJavaTool = "com.graphql-java:graphql-java-tools:${Versions.graphJTool}"
 }
 
+object Dgs {
+    const val graphPlatformDependencies = "com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release"
+    const val graphSpringBootStarter = "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+}
+
 object ProjectLombok {
     const val lombok = "org.projectlombok:lombok:${Versions.lombok}"
 }

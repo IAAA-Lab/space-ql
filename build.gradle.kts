@@ -54,19 +54,20 @@ kotlin {
 
                 implementation(SpringBootStarter.webflux)
 
+                implementation(SpringBootStarter.elasticsearch)
 
-                //implementation(SpringBootStarter.elasticsearch)
-                implementation("org.springframework.data:spring-data-elasticsearch:4.1.3")
+                implementation("org.springframework.boot:spring-boot-starter-web")
 
-
+                implementation(Dgs.graphSpringBootStarter)
+                implementation(project.dependencies.platform(Dgs.graphPlatformDependencies))
 
                 implementation(SpringDependencies.jacksonModuleKotlin)
                 implementation(SpringDependencies.reactorKotlinExtensions)
 
-                implementation(GraphQL.graphJavaTool)
-                implementation(GraphQL.graphSpringStrarter)
+                //implementation(GraphQL.graphJavaTool)
+                //implementation(GraphQL.graphSpringStrarter)
 
-                implementation(ProjectLombok.lombok)
+                //implementation(ProjectLombok.lombok)
             }
         }
         val jvmTest by getting {
