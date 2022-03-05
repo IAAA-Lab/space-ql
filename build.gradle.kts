@@ -59,7 +59,7 @@ kotlin {
                 implementation("org.springframework.boot:spring-boot-starter-web")
 
                 implementation(Dgs.graphSpringBootStarter)
-                implementation(project.dependencies.platform(Dgs.graphPlatformDependencies))
+                implementation(project.dependencies.enforcedPlatform(Dgs.graphPlatformDependencies))
 
                 implementation(SpringDependencies.jacksonModuleKotlin)
                 implementation(SpringDependencies.reactorKotlinExtensions)

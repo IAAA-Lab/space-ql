@@ -6,7 +6,7 @@ fun kotlinx(target: String, version: String = Versions.kotlin): String =
     "org.jetbrains.kotlinx:kotlinx-$target:$version"
 
 object Kotlinx {
-    val coroutinesReactor = kotlinx("coroutines-reactor")
+    val coroutinesReactor = kotlinx("coroutines-reactor", Versions.kotlinxCoroutines)
     val htmlJvm = kotlinx("html-jvm", Versions.kotlinxHtml)
 }
 
