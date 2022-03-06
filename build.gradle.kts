@@ -63,11 +63,6 @@ kotlin {
 
                 implementation(SpringDependencies.jacksonModuleKotlin)
                 implementation(SpringDependencies.reactorKotlinExtensions)
-
-                //implementation(GraphQL.graphJavaTool)
-                //implementation(GraphQL.graphSpringStrarter)
-
-                //implementation(ProjectLombok.lombok)
             }
         }
         val jvmTest by getting {
@@ -83,8 +78,13 @@ kotlin {
                 implementation(kotlinw("react-dom"))
                 implementation(kotlinw("styled"))
                 implementation(kotlinw("react-router-dom"))
-                implementation(kotlinw("redux"))
-                implementation(kotlinw("react-redux"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("io.ktor:ktor-client-core:1.6.7")
+                implementation("io.ktor:ktor-client-js:1.6.7")
+                implementation("io.ktor:ktor-client-json:1.6.7")
+                implementation("io.ktor:ktor-client-serialization:1.6.7")
+                //implementation(npm("@types/jquery","3.5.1", generateExternals = true))
+                //implementation(npm("jquery","3.5.1"))
             }
         }
         val jsTest by getting {

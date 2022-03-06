@@ -1,40 +1,48 @@
-package frontend.components
-
-import frontend.actions.WriteField
-import frontend.containers.field
+import frontend.components.WelcomeStyles
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
-import react.*
+import org.w3c.dom.HTMLInputElement
+import react.Props
+import react.RBuilder
+import react.RComponent
+import react.State
 import react.dom.attrs
-import react.redux.rConnect
-import redux.WrapperAction
-import store
 import styled.css
+import styled.styledDiv
 import styled.styledInput
 
-
 external interface WelcomeProps : Props {
-    var text: String
-    var writeField: (String) -> Unit
+    var name: String
 }
 
-@JsExport
-class Welcome(props: WelcomeProps) : RComponent<Props, State>(props) {
+data class WelcomeState(val name: String) : State
+
+class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(props) {
+
+    init {
+        state = WelcomeState(props.name)
+    }
 
     override fun RBuilder.render() {
-        field()
+        styledDiv {
+            css {
+                +WelcomeStyles.textContainer
+            }
+            +"Hello, ${state.name}"
+        }
         styledInput {
             css {
                 +WelcomeStyles.textInput
             }
             attrs {
                 type = InputType.text
-                onChangeFunction = { store.dispatch(WriteField(it.toString()))
+                value = state.name
+                onChangeFunction = { event ->
+                    setState(
+                        WelcomeState(name = (event.target as HTMLInputElement).value)
+                    )
                 }
             }
         }
     }
 }
-
-val welcome: ComponentClass<Props> =
-    rConnect<Welcome, WrapperAction>()(Welcome::class.js.unsafeCast<ComponentClass<Props>>())
