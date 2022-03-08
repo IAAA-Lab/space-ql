@@ -5,19 +5,14 @@ import frontend.Results.result
 import frontend.Searchbar.SearchBar
 import frontend.getResults
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.html.id
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import react.*
-import react.dom.div
-import react.dom.h1
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h1
 import react.dom.html.ReactHTML.p
-import react.dom.p
-import react.router.Route
-import react.router.Routes
-import react.router.dom.BrowserRouter
 
-
+private val scope = MainScope()
 
 val App = FC<Props> { _ ->
     var resultList by useState(listOf(MetaData(title = "titulo",
@@ -28,11 +23,11 @@ val App = FC<Props> { _ ->
     div {
         id = "main-container"
         SearchBar {
-//                            attrs {
-//                                onSubmit = { input ->
-//                                    resultList = getResults(input)
-//                                }
-//                            }
+                onSubmit = { input ->
+                    scope.launch {
+                        getResults(input)
+                    }
+                }
         }
         div {
             id = "results"

@@ -1,6 +1,7 @@
 plugins {
     kotlin("multiplatform") version Versions.kotlin
     kotlin("plugin.spring") version Versions.kotlin
+    kotlin("plugin.serialization") version "1.6.10"
     id("org.springframework.boot") version Versions.springBoot
     id("io.spring.dependency-management") version Versions.springDependencyManagement
     application
@@ -34,7 +35,12 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("io.ktor:ktor-client-core:1.6.7")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -83,8 +89,6 @@ kotlin {
                 implementation("io.ktor:ktor-client-js:1.6.7")
                 implementation("io.ktor:ktor-client-json:1.6.7")
                 implementation("io.ktor:ktor-client-serialization:1.6.7")
-                //implementation(npm("@types/jquery","3.5.1", generateExternals = true))
-                //implementation(npm("jquery","3.5.1"))
             }
         }
         val jsTest by getting {

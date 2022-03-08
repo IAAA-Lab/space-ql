@@ -20,9 +20,7 @@ class BasicService(
 
         val nombre = jContext.read<String>("[\"gmd:MD_Metadata\"][\"gmd:identificationInfo\"][\"gmd:MD_DataIdentification\"][\"gmd:citation\"][\"gmd:CI_Citation\"][\"gmd:title\"][\"gco:CharacterString\"]")
 
-        println(nombre)
         val metadata = MetaData(UUID.randomUUID(), nombre, text, " a " )
-        println(metadata.title)
         metadataRepository.save(metadata)
     }
 
