@@ -15,8 +15,7 @@ import react.dom.html.ReactHTML.p
 private val scope = MainScope()
 
 val App = FC<Props> { _ ->
-    var resultList by useState(listOf(MetaData(title = "titulo",
-        content = "a", id="a", location = "a")))
+    var resultList by useState(emptyList<MetaData>())
     h1 {
         +"Test Browser"
     }
@@ -25,7 +24,7 @@ val App = FC<Props> { _ ->
         SearchBar {
                 onSubmit = { input ->
                     scope.launch {
-                        getResults(input)
+                        resultList = getResults(input)
                     }
                 }
         }

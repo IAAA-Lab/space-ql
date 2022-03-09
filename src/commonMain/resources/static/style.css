@@ -19,8 +19,12 @@ body {
   height: 4.5rem;
 }
 
+#searchbar-form {
+  width: 80%
+}
+
 #searchbar {
-  width: 80%;
+  width: 100%;
   height: fit-content;
   padding: 0.8rem 0.5rem;
   margin: 1rem 0;

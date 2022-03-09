@@ -3,6 +3,7 @@ type Query {
 }
 
 type MetaData {
+    id:String
     title:String
     content:String
     location:String

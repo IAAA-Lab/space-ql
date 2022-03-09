@@ -34,11 +34,12 @@ val SearchBar = fc<SearchbarProps> { props ->
         attrs.id = "searchbar-container"
         form {
             attrs.onSubmit = submitHandler as FormEventHandler<*>
-
+            attrs.id = "searchbar-form"
 
             input {
                 attrs {
                     type = InputType.text
+                    id = "searchbar"
                     name = "searchbar"
                     onChange = changeHandler as ChangeEventHandler<*>
                     value = text
