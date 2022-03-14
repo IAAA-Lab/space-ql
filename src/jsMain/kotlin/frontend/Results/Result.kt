@@ -17,7 +17,7 @@ val result = fc<ResultProps> { props ->
         attrs.classes = setOf("result")
         h1 {
             attrs.classes = setOf("res-title")
-            +"${props.data.title}"
+            + props.data.title
         }
         p {
             +"Other metadata found"
