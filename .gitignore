@@ -37,4 +37,4 @@ build
 /kotlin-js-store/yarn.lock
 
 # CSV files used to populate the ElasticSearch instance
-.csv
+metadata.csv

@@ -1,10 +1,26 @@
 type Query {
     allMetadata: [MetaData]
+    search(text: String): [MetaData]
 }
 
 type MetaData {
-    id:String
-    title:String
-    content:String
-    location:String
+    id: String
+    data: ContentData
+    content: String
+}
+
+type ContentData {
+    language: String,
+    uploadDate: String,
+    scope: String,
+    standard: String,
+    standardVersion: String,
+    fileName: String,
+    fileDescription: String,
+    contactPointIndividual: String,
+    contactPointPhone: String,
+    contactPointName: String,
+    contactPointMail: String,
+    contactPointOnlineSource: String,
+    accessUrl: String
 }
