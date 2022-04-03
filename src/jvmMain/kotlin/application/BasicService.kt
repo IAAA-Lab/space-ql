@@ -23,7 +23,7 @@ class BasicService(
     }
 
     fun search(text: String): List<MetaData> {
-        val found = metadataRepository.findByDataFileName(text, PageRequest.of(0,527))
+        val found = metadataRepository.findByDataFileNameOrDataFileDescription(text, text, PageRequest.of(0,527))
 
         return found.toList()
     }
