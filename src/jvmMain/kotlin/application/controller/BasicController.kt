@@ -23,8 +23,8 @@ class BasicController(
     fun pub(@PathVariable text: String) : ResponseEntity<List<String?>> {
         val lista = basicService.search(text)
 
-        val names_list = lista.map{ it.data.fileName}
+        val namesList = lista.map{ it.data.fileName}
 
-        return ResponseEntity(names_list, HttpStatus.OK)
+        return ResponseEntity(namesList, HttpStatus.OK)
     }
 }

@@ -1,7 +1,7 @@
 plugins {
     kotlin("multiplatform") version Versions.kotlin
     kotlin("plugin.spring") version Versions.kotlin
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version Versions.kotlin
     id("org.springframework.boot") version Versions.springBoot
     id("io.spring.dependency-management") version Versions.springDependencyManagement
     application

@@ -2,10 +2,7 @@ import frontend.components.WelcomeStyles
 import kotlinx.html.InputType
 import kotlinx.html.js.onChangeFunction
 import org.w3c.dom.HTMLInputElement
-import react.Props
-import react.RBuilder
-import react.RComponent
-import react.State
+import react.*
 import react.dom.attrs
 import styled.css
 import styled.styledDiv
@@ -15,33 +12,28 @@ external interface WelcomeProps : Props {
     var name: String
 }
 
-data class WelcomeState(val name: String) : State
+val welcome = fc<WelcomeProps> { props ->
+    var name by useState { props.name }
 
-class Welcome(props: WelcomeProps) : RComponent<WelcomeProps, WelcomeState>(props) {
-
-    init {
-        state = WelcomeState(props.name)
+    useEffect(name) {
+        // Dispara axios
     }
 
-    override fun RBuilder.render() {
-        styledDiv {
-            css {
-                +WelcomeStyles.textContainer
-            }
-            +"Hello, ${state.name}"
+    styledDiv {
+        css {
+            +WelcomeStyles.textContainer
         }
-        styledInput {
-            css {
-                +WelcomeStyles.textInput
-            }
-            attrs {
-                type = InputType.text
-                value = state.name
-                onChangeFunction = { event ->
-                    setState(
-                        WelcomeState(name = (event.target as HTMLInputElement).value)
-                    )
-                }
+        +"Hello, $name"
+    }
+    styledInput {
+        css {
+            +WelcomeStyles.textInput
+        }
+        attrs {
+            type = InputType.text
+            value = props.name
+            onChangeFunction = { event ->
+                name = (event.target as HTMLInputElement).value
             }
         }
     }
