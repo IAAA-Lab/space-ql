@@ -12,14 +12,9 @@ class AllMetadataDataFetcher(
 ){
 
     @DgsQuery
-    fun allMetadata(): List<MetaData> {
-        return basicService.getMetadata()
-    }
+    fun allMetadata(): List<MetaData> = basicService.getMetadata()
 
     @DgsQuery
-    fun search(@InputArgument text: String): List<MetaData> {
-        return basicService.search(text)
-    }
-
+    fun search(@InputArgument text: String?): List<MetaData> = text?.let { basicService.search(it) } ?: emptyList()
 
 }
