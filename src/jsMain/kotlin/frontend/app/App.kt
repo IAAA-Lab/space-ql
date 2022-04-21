@@ -1,10 +1,9 @@
-package frontend.App
+package frontend.app
 
 import MetaData
-import frontend.Results.result
-import frontend.Searchbar.SearchBar
+import frontend.results.result
+import frontend.searchbar.SearchBar
 import frontend.getResults
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import react.*
@@ -14,7 +13,7 @@ import react.dom.html.ReactHTML.p
 
 private val scope = MainScope()
 
-val App = FC<Props> { _ ->
+val app = FC<Props> {
     var resultList by useState(emptyList<MetaData>())
     h1 {
         +"Test Browser"
