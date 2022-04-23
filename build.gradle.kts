@@ -1,5 +1,9 @@
 plugins {
     kotlin("multiplatform") version Versions.kotlin
+    kotlin("plugin.spring") version Versions.kotlin
+    kotlin("plugin.serialization") version Versions.kotlin
+    id("org.springframework.boot") version Versions.springBoot
+    id("io.spring.dependency-management") version Versions.springDependencyManagement
     application
 }
 
@@ -22,15 +26,21 @@ kotlin {
         }
     }
     js(IR) {
-        binaries.executable()
         browser {
+            binaries.executable()
             commonWebpackConfig {
                 cssSupport.enabled = true
+                outputPath = File(buildDir, "processedResources/jvm/main/static")
             }
         }
     }
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("io.ktor:ktor-client-core:1.6.7")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -38,21 +48,50 @@ kotlin {
         }
         val jvmMain by getting {
             dependencies {
-                implementation(Ktor.serverNetty)
-                implementation(Ktor.htmlBuilder)
-                implementation(KotlinxHtml.jvm)
+                implementation(kotlin("reflect"))
+                implementation(kotlin("stdlib-jdk8"))
+
+                implementation(OrgJson.json)
+
+                implementation(JsonPath.jsonPath)
+
+                implementation(Kotlinx.htmlJvm)
+                implementation(Kotlinx.coroutinesReactor)
+
+                implementation(SpringBootStarter.webflux)
+
+                implementation(SpringBootStarter.elasticsearch)
+
+                implementation("org.springframework.boot:spring-boot-starter-web")
+
+                implementation(Dgs.graphSpringBootStarter)
+                implementation(project.dependencies.enforcedPlatform(Dgs.graphPlatformDependencies))
+
+                implementation(SpringDependencies.jacksonModuleKotlin)
+                implementation(SpringDependencies.reactorKotlinExtensions)
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting {
+            dependencies {
+                implementation(SpringBootStarter.test)
+                implementation(SpringDependencies.reactorTest)
+            }
+        }
         val jsMain by getting {
             dependencies {
                 implementation(project.dependencies.enforcedPlatform(kotlinw("wrappers-bom:${Versions.kotlinWrappers}")))
                 implementation(kotlinw("react"))
                 implementation(kotlinw("react-dom"))
-                implementation(kotlinw("styled"))
                 implementation(kotlinw("react-router-dom"))
-                implementation(kotlinw("redux"))
-                implementation(kotlinw("react-redux"))
+                implementation(kotlinw("styled"))
+                implementation(kotlinw("emotion"))
+                implementation(kotlinw("mui"))
+                implementation(kotlinw("mui-icons"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+                implementation("io.ktor:ktor-client-core:1.6.7")
+                implementation("io.ktor:ktor-client-js:1.6.7")
+                implementation("io.ktor:ktor-client-json:1.6.7")
+                implementation("io.ktor:ktor-client-serialization:1.6.7")
             }
         }
         val jsTest by getting {
@@ -64,7 +103,7 @@ kotlin {
 }
 
 application {
-    mainClass.set("me.javier.application.ServerKt")
+    mainClass.set("application.ServerApplicationKt")
 }
 
 tasks.named<Copy>("jvmProcessResources") {
