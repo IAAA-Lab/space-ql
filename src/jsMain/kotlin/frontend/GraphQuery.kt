@@ -17,3 +17,7 @@ data class GraphResponse<T>(
 data class AllMetadataResponse(
     val allMetadata: List<MetaData>
 )
+@Serializable
+data class SearchResponse(
+    val search: List<MetaData>
+)

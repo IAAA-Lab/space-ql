@@ -19,6 +19,7 @@ class BasicService(
         return found.toList()
     }
 
+    // TODO: howtographql.com/react-apollo/9-pagination/
     fun search(text: String): List<MetaData> {
         val found = metadataRepository.findByDataFileNameOrDataFileDescription(text, text, PageRequest.of(0,527))
         return found.toList()

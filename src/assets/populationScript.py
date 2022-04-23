@@ -8,6 +8,15 @@ import xmltodict
 from elasticsearch import Elasticsearch, helpers
 from jsonpath_ng import jsonpath, parse
 
+
+
+#
+# for k, v in dict.iteritems():
+#   if v is xxx:
+#       dict[k] = parser.unscape(v)
+#   else: Otra cosa
+
+
 ALT_PATH = { 0 : '',
              1 : '"gmd:characterSet"."gmd:parentIdentifier".',
              2 : '"gmd:parentIdentifier".',

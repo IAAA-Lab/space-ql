@@ -12,20 +12,46 @@ val jsonClient = HttpClient {
 }
 
 suspend fun getResults(input: String): List<MetaData> {
+    val ret: GraphResponse<SearchResponse> = jsonClient.post("http://localhost:8080/graphql") {
+        contentType(ContentType.Application.Json)
+        body = GraphQuery("""
+            {
+                search(text: "${input}") {
+                    data {
+                        fileName
+                        fileDescription
+                    }
+                }
+            }""".trimIndent()
+        )
+    }
+    // If ret is HttpResponse
+    // val value: String = ret.receive()
+
+    (ret.data.search)
+    println("A")
+
+    return ret.data.search
+}
+
+suspend fun getResults(): List<MetaData> {
     val ret: GraphResponse<AllMetadataResponse> = jsonClient.post("http://localhost:8080/graphql") {
         contentType(ContentType.Application.Json)
         body = GraphQuery("""
             {
                 allMetadata {
-                    id 
-                    title
+                    data {
+                        fileName
+                        fileDescription
+                    }
                 }
             }""".trimIndent()
         )
     }
-
     // If ret is HttpResponse
     // val value: String = ret.receive()
+
+    (ret.data.allMetadata)
 
     return ret.data.allMetadata
 }

@@ -12,12 +12,13 @@ external interface ResultProps : Props {
     var data: MetaData
 }
 
+// TODO: MUI card
 val result = FC<ResultProps> { props ->
     div {
         className  = ClassName("result")
         h1 {
             className = ClassName("res-title")
-            + props.data.title
+            + props.data.data.fileName
         }
         p {
             +"Other metadata found"

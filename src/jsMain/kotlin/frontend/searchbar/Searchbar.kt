@@ -1,5 +1,12 @@
 package frontend.searchbar
 
+import csstype.Display
+import csstype.GridLineProperty
+import csstype.JustifyContent
+import csstype.px
+import mui.material.*
+import mui.system.sx
+import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLFormElement
 import org.w3c.dom.HTMLInputElement
 import react.Props
@@ -10,6 +17,7 @@ import react.dom.html.InputType
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.form
 import react.dom.html.ReactHTML.input
+import react.dom.onChange
 import react.useState
 
 
@@ -30,20 +38,29 @@ val SearchBar = FC<SearchbarProps> { props ->
         setText(it.target.value)
     }
 
-    div {
-        id = "searchbar-container"
-        form {
-            onSubmit = submitHandler
-            id = "searchbar-form"
+   Box {
+       sx {
+           display = Display.grid
+           justifyContent = JustifyContent.center
+           marginTop = 10.px
+       }
+       component = form
 
-            input {
-                type = InputType.text
-                id = "searchbar"
-                name = "searchbar"
-                onChange = changeHandler
-                value = text
-                placeholder = "Document's title"
-            }
-        }
-    }
+       // TODO: onSubmit
+       // onSubmit = submitHandler
+
+       TextField {
+           sx {
+               width = 600.px
+           }
+           id = "searchbar-form"
+           label = ReactNode("Search")
+           variant = FormControlVariant.outlined
+           value = text
+           placeholder = "Document's title"
+       // TODO: Use changeHandler on change
+       // onChange = {this.}
+       }
+
+   }
 }
