@@ -1,4 +1,5 @@
 from tokenize import String
+from xml.sax.saxutils import unescape
 import pandas as pd 
 import os
 import csv
@@ -15,6 +16,8 @@ from jsonpath_ng import jsonpath, parse
 #   if v is xxx:
 #       dict[k] = parser.unscape(v)
 #   else: Otra cosa
+
+# unscapet unscapes element by element
 
 
 ALT_PATH = { 0 : '',
@@ -37,7 +40,7 @@ JsonPathExpr_language = parse('$."gmd:MD_Metadata"."gmd:language"."gmd:LanguageC
 # bien delimitadas.
 JsonPathExpr = {
 'date' : '$."gmd:MD_Metadata".{0}"gmd:dateStamp".{1}',                                                
-'scope' : '$."gmd:MD_Metadata".{0}"gmd:hierarchyLevelName"."gco:CharacterString"',
+'scope' : '$."gmd:MD_Metadata".{0}"gmd:hierarchyLevel"."gmd:MD_ScopeCode"',
 'standard' : '$."gmd:MD_Metadata".{0}"gmd:metadataStandardName"."gco:CharacterString"',
 'standardVersion' : '$."gmd:MD_Metadata".{0}"gmd:metadataStandardVersion"."gco:CharacterString"',
 
@@ -50,6 +53,15 @@ JsonPathExpr = {
 'contactPoint_mail' : '$."gmd:MD_Metadata".{0}"gmd:identificationInfo".{1}"gmd:pointOfContact"."gmd:CI_ResponsibleParty"."gmd:contactInfo"."gmd:CI_Contact"."gmd:address"."gmd:CI_Address"."gmd:electronicMailAddress"."gco:CharacterString"',
 'contactPoint_onlineSource' : '$."gmd:MD_Metadata".{0}"gmd:identificationInfo".{1}"gmd:pointOfContact"."gmd:CI_ResponsibleParty"."gmd:contactInfo"."gmd:CI_Contact"."gmd:onlineResource"."gmd:CI_OnlineResource"."gmd:linkage"."gmd:URL"',
 'accessUrl' : '$."gmd:MD_Metadata".{0}"gmd:distributionInfo"."gmd:MD_Distribution"."gmd:transferOptions"."gmd:MD_DigitalTransferOptions"."gmd:onLine"."gmd:CI_OnlineResource"."gmd:linkage"."gmd:URL"',
+
+'distribution' : '$."gmd:MD_Metadata"."gmd:distributionInfo"."gmd:MD_Distribution"',
+'format_Array' : '$."gmd:distributionFormat"[*]."gmd:MD_Format"',
+
+'format_name_string' : '$."gmd:name"."gco:CharacterString"',
+'format_anchor' : '$."gmd:name"."gmx:Anchor"',
+'format_version' : '$."gmd:version"."gco:CharacterString"',
+'transfer_Array' : '$."gmd:transferOptions"."gmd:MD_DigitalTransferOptions"[*]."gmd:onLine"[*]."gmd:CI_OnlineResource"',
+'transfer_URL' : '$."gmd:linkage"."gmd:URL"'
 }
 
 # Añadir excepción para '2021-04-207'
@@ -105,13 +117,86 @@ def getPathValue(field, jsonObj):
     if(len(foundInExpr) <= 0):
         return ""
     else:
-        return str(foundInExpr[0].value)    
+        if field == 'scope':
+            return foundInExpr[0].value.get('@codeListValue')
+        else:
+            return str(foundInExpr[0].value)    
+
+
+def getDist(jsonObj):
+    dist_expr = JsonPathExpr['distribution']
+    fmt_expr = JsonPathExpr['format_Array']
+    transfer_expr = JsonPathExpr['transfer_Array']
+
+    parsed_dist_expr = parse(dist_expr)
+    parsed_fmt_expr = parse(fmt_expr)
+    parsed_transfer_expr = parse(transfer_expr)
+
+    foundInExpr = parsed_dist_expr.find(jsonObj)
+
+    jsonStrFound = json.dumps(foundInExpr[0].value)
+    jsonObjFound = json.loads(jsonStrFound)
+    
+    formats = []
+    transfers = []
+
+    format_name_string = JsonPathExpr['format_name_string']
+    format_anchor = JsonPathExpr['format_anchor']
+    format_version = JsonPathExpr['format_version']
+    
+
+    parsed_format_name_string = parse(format_name_string)
+    parsed_format_anchor = parse(format_anchor)
+    parsed_format_version = parse(format_version)
+    
+
+    for match in parsed_fmt_expr.find(jsonObjFound):
+        match_version = parsed_format_version.find(match.value)
+        match_name = parsed_format_name_string.find(match.value)
+        if(len(match_name) <= 0):
+            match_name = parsed_format_anchor.find(match.value)
+            match_name = match_name[0].value.get('#text')
+        else:
+            match_name = match_name[0].value
+
+        if len(match_version) <= 0:
+            match_version = '-'
+        else:
+            match_version = match_version[0].value
+
+        formats.append(
+            { 'format': {
+                    'name' : str(match_name),
+                    'version' : str(match_version)
+                }
+
+            }
+        )
+    
+
+    transfer_URL = JsonPathExpr['transfer_URL']
+    
+    parsed_transfer_URL = parse(transfer_URL)
+
+    for match in parsed_transfer_expr.find(jsonObjFound):
+        match_url = parsed_transfer_URL.find(match.value)
+        transfers.append(
+            { 'transfer' : {
+                    'URL' : str(match_url[0].value) 
+                }
+            }
+        )
+    
+
+    return {
+        'formats' : formats,
+        'transfers' : transfers
+    }
+
 
 # Find altrentative routes. There are some files that doesn't have the same routes so maybe something like "if(value) is null -> try alt routes"
 # It can still get the available functionalities. They are a list of funcitons found as "containsOperations"
 # I can maybe move the paths to a file or function that automatically does all the job instead of calling each "find" funciton inside the main body
-
-
 metadataFile = pd.read_csv('./metadata.csv', encoding='ISO-8859-1', delimiter=',')
 es = Elasticsearch(hosts='http://localhost:9200')
 
@@ -120,47 +205,52 @@ for index, row in metadataFile.iterrows():
     xmlRow = str(row['xml'])
     xmlObj = xmltodict.parse(xmlRow)
     jsonStr = json.dumps(xmlObj)
-    jsonObj = json.loads(jsonStr)
-    
+    jsonObj = json.loads(jsonStr)    
     
     value_ID = JsonPathExpr_id.find(jsonObj)[0].value
-    value_language = JsonPathExpr_language.find(jsonObj)[0].value
-    value_date = getDatePathValue(jsonObj)
-    value_scope = getPathValue("scope", jsonObj)
-    value_standard = getPathValue("standard", jsonObj)
-    value_standardVersion = getPathValue("standardVersion", jsonObj)
-    value_contactPoint_name = getPathValue("contactPoint_name", jsonObj)
-    value_contactPoint_mail = getPathValue("contactPoint_mail", jsonObj)
-    value_contactPoint_onlineSource = getPathValue("contactPoint_onlineSource", jsonObj)
-    value_accessUrl = getPathValue("accessUrl", jsonObj)
-    value_file_name = getPathValue("file_name", jsonObj)
-    value_file_description = getPathValue("file_description", jsonObj)
-    value_contactPoint_individual = getPathValue("contactPoint_individual", jsonObj)
-    value_contactPoint_phone = getPathValue("contactPoint_phone", jsonObj)
+    #value_language = JsonPathExpr_language.find(jsonObj)[0].value
+    #value_date = getDatePathValue(jsonObj)
+    #value_scope = getPathValue("scope", jsonObj)
+    #value_standard = getPathValue("standard", jsonObj)
+    #value_standardVersion = getPathValue("standardVersion", jsonObj)
+    #value_contactPoint_name = getPathValue("contactPoint_name", jsonObj)
+    #value_contactPoint_mail = getPathValue("contactPoint_mail", jsonObj)
+    #value_contactPoint_onlineSource = getPathValue("contactPoint_onlineSource", jsonObj)
+    #value_accessUrl = getPathValue("accessUrl", jsonObj)
+    #value_file_name = getPathValue("file_name", jsonObj)
+    #value_file_description = getPathValue("file_description", jsonObj)
+    #value_contactPoint_individual = getPathValue("contactPoint_individual", jsonObj)
+    #value_contactPoint_phone = getPathValue("contactPoint_phone", jsonObj)
     
-
-    doc = {
-        'ID' : value_ID,
-        'data' : {
-            'language' : str(value_language),
-            'uploadDate' : str(value_date),
-            'scope' : str(value_scope),
-            'standard' : str(value_standard),
-            'standardVersion' : str(value_standardVersion),
-            'fileName' : str(value_file_name),
-            'fileDescription' : str(value_file_description),
-            'contactPointIndividual' : str(value_contactPoint_individual),
-            'contactPointPhone' : str(value_contactPoint_phone),
-            'contactPointName' : str(value_contactPoint_name),
-            'contactPointMail' : str(value_contactPoint_mail),
-            'contactPointOnlineSource' : str(value_contactPoint_onlineSource),
-            'accessUrl' : str(value_accessUrl),
-        },
-        'document' : str(jsonStr)
-
-    }
-
+    value_distribution = getDist(jsonObj)
+    #doc = {
+    #    'ID' : value_ID,
+    #    'data' : {
+    #        'language' : str(value_language),
+    #        'uploadDate' : str(value_date),
+    #        'scope' : str(value_scope),
+    #        'standard' : str(value_standard),
+    #        'standardVersion' : str(value_standardVersion),
+    #        'fileName' : str(value_file_name),
+    #        'fileDescription' : str(value_file_description),
+    #        'contactPointIndividual' : str(value_contactPoint_individual),
+    #        'contactPointPhone' : str(value_contactPoint_phone),
+    #        'contactPointName' : str(value_contactPoint_name),
+    #        'contactPointMail' : str(value_contactPoint_mail),
+    #        'contactPointOnlineSource' : str(value_contactPoint_onlineSource),
+    #        'accessUrl' : str(value_accessUrl),
+    #        'distribution_formats' : [
+    #            value_distribution_formats
+    #        ],
+    #        'distribution_transfer' : [
+    #            value_distribution_transfer
+    #        ]
+    #    },
+    #    'document' : str(jsonStr)
+#
+    #}
+#
     # Load data to ElasticSearch
-    es.index(index='test-values', id=doc['ID'], document=doc)
+    #es.index(index='test-values', id=doc['ID'], document=doc)
 
-es.indices.refresh(index="test-values")
+#es.indices.refresh(index="test-values")
