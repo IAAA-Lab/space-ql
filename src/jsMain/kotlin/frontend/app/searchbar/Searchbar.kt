@@ -1,4 +1,4 @@
-package frontend.searchbar
+package frontend.app.searchbar
 
 import csstype.Display
 import csstype.GridLineProperty

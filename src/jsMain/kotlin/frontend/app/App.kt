@@ -7,8 +7,8 @@ import frontend.app.header.Header
 import frontend.app.results.Results
 import frontend.common.Area
 import frontend.common.Sizes
-import frontend.results.result
-import frontend.searchbar.SearchBar
+import frontend.app.results.result
+import frontend.app.searchbar.SearchBar
 import frontend.getResults
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

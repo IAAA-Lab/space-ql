@@ -8,13 +8,12 @@ import mui.material.*
 import mui.system.sx
 import react.FC
 import react.Props
-import react.key
 
-external interface ResultProps : Props {
+external interface ResultsProps : Props {
     var resultList : List<MetaData>
 }
 
-val Results = FC<ResultProps> {
+val Results = FC<ResultsProps> {
     Box {
         sx {
             display = Display.grid
@@ -50,25 +49,8 @@ val Results = FC<ResultProps> {
                 gridArea = Area.Results
             }
             it.resultList.forEach { result ->
-                Card {
-                    key = result.id
-
-                    sx {
-                        marginBottom = 10.px
-                        maxWidth = 1200.px
-                    }
-
-                    variant = PaperVariant.outlined
-                    CardContent {
-                        Typography {
-                            variant = "h5"
-                            +result.data.fileName
-                        }
-                        Typography {
-                            variant = "body2"
-                            +result.data.fileDescription
-                        }
-                    }
+                result {
+                    data = result
                 }
             }
         }
