@@ -28,14 +28,15 @@ external interface SearchbarProps : Props {
 val SearchBar = FC<SearchbarProps> { props ->
     val (text, setText) = useState("")
 
-    val submitHandler: FormEventHandler<HTMLFormElement> = {
+    val submitHandler: FormEventHandler<HTMLDivElement> = {
         it.preventDefault()
         setText("")
         props.onSubmit(text)
     }
 
-    val changeHandler: ChangeEventHandler<HTMLInputElement> = {
-        setText(it.target.value)
+    val changeHandler: FormEventHandler<HTMLDivElement> = {
+        val target = it.target as HTMLInputElement
+        setText(target.value)
     }
 
    Box {
@@ -47,7 +48,7 @@ val SearchBar = FC<SearchbarProps> { props ->
        component = form
 
        // TODO: onSubmit
-       // onSubmit = submitHandler
+       onSubmit = submitHandler
 
        TextField {
            sx {
@@ -59,7 +60,7 @@ val SearchBar = FC<SearchbarProps> { props ->
            value = text
            placeholder = "Document's title"
        // TODO: Use changeHandler on change
-       // onChange = {this.}
+           onChange = changeHandler
        }
 
    }

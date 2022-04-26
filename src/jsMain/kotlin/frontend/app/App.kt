@@ -13,6 +13,7 @@ import frontend.getResults
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mui.material.Typography
+import mui.material.styles.TypographyVariant
 import mui.system.Box
 import mui.system.sx
 import react.*
@@ -25,7 +26,7 @@ private val scope = MainScope()
 val app = FC<Props> {
     var resultList by useState(emptyList<MetaData>())
 
-    useEffect {
+    useEffectOnce {
         scope.launch {
             resultList = getResults()
         }
@@ -61,14 +62,14 @@ val app = FC<Props> {
                 sx{
                     textAlign = TextAlign.center
                 }
-                variant = "h1"
+                variant = TypographyVariant.h1
                 +"SpaceQL"
             }
             Typography {
                 sx{
                     textAlign = TextAlign.center
                 }
-                variant ="subtitle1"
+                variant = TypographyVariant.subtitle1
                 +"GraphQL-based metadata browser"
             }
 

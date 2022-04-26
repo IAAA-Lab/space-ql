@@ -5,6 +5,7 @@ import csstype.*
 import frontend.common.Area
 import frontend.common.Sizes
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
@@ -40,7 +41,7 @@ val Results = FC<ResultsProps> {
             sx {
                 gridArea = Area.ResultTitle
             }
-            variant = "h3"
+            variant = TypographyVariant.h3
             +"Results"
         }
 

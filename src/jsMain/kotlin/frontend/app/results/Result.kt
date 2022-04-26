@@ -7,6 +7,7 @@ import mui.material.Card
 import mui.material.CardContent
 import mui.material.PaperVariant
 import mui.material.Typography
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
@@ -31,11 +32,11 @@ val result = FC<ResultProps> { props ->
         variant = PaperVariant.outlined
         CardContent {
             Typography {
-                variant = "h5"
+                variant = TypographyVariant.h5
                 +props.data.data.fileName
             }
             Typography {
-                variant = "body2"
+                variant = TypographyVariant.body2
                 +props.data.data.fileDescription
             }
         }
