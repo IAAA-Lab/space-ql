@@ -19,9 +19,12 @@ class BasicController(
 //    }
 
     // Endpoint for manual testing
-    @GetMapping("/search/{text}")
-    fun pub(@PathVariable text: String) : ResponseEntity<List<String?>> {
-        val lista = basicService.search(text)
+    @GetMapping("/search/{text}/{page}")
+    fun pub(@PathVariable text: String, @PathVariable page: Int) : ResponseEntity<List<String?>> {
+        val pageSize = 10
+        val offset = (page - 1) * pageSize
+
+        val lista = basicService.search(text, pageSize, offset)
 
         val namesList = lista.map{ it.data.fileName}
 

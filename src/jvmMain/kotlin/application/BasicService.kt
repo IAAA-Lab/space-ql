@@ -20,8 +20,19 @@ class BasicService(
     }
 
     // TODO: howtographql.com/react-apollo/9-pagination/
-    fun search(text: String): List<MetaData> {
+    fun search(text: String, limit: Int, offset: Int): List<MetaData> {
         val found = metadataRepository.findByDataFileNameOrDataFileDescription(text, text, PageRequest.of(0,527))
-        return found.toList()
+        val foundList = found.toList()
+
+        val from = offset
+        var to = from + limit
+
+        if(to > foundList.size){
+            to = foundList.size
+        }
+
+        val foundPage = foundList.subList(from, to)
+
+        return foundPage
     }
 }
