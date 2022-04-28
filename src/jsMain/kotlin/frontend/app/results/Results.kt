@@ -2,6 +2,7 @@ package frontend.app.results
 
 import MetaData
 import csstype.*
+import frontend.app.results.PageNav.PageNav
 import frontend.common.Area
 import frontend.common.Sizes
 import mui.material.*
@@ -53,6 +54,9 @@ val Results = FC<ResultsProps> {
                 result {
                     data = result
                 }
+            }
+            PageNav{
+
             }
         }
     }
