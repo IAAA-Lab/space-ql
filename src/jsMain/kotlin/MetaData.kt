@@ -4,6 +4,13 @@ import kotlinx.serialization.Serializable
 data class MetaData(val id: String = "",
                     val data: ContentData,
                     val content: String = "")
+
+@Serializable
+data class MetaDataPage(
+    val totalPages: Int,
+    val metaData: List<MetaData>
+)
+
 @Serializable
 data class ContentData (
     val language: String = "",

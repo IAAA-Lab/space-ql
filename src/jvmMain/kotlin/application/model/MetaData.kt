@@ -11,6 +11,11 @@ data class MetaData(
     val content: String?
 )
 
+data class MetaDataPage(
+    val totalPages: Int,
+    val metaData: List<MetaData>
+)
+
 data class ContentData (
     val language: String?,
     val uploadDate: String?,

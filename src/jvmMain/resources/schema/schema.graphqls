@@ -1,6 +1,11 @@
 type Query {
-    allMetadata: [MetaData]
-    search(text: String, limit: Int, offset: Int): [MetaData]
+    allMetadata(limit: Int, offset: Int): [MetaData]
+    search(text: String, limit: Int, offset: Int): MetaDataPage
+}
+
+type MetaDataPage {
+    totalPages: Int,
+    metaData: [MetaData]
 }
 
 type MetaData {

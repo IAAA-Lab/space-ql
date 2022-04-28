@@ -25,10 +25,16 @@ private val scope = MainScope()
 
 val app = FC<Props> {
     var resultList by useState(emptyList<MetaData>())
+    val (maxPage, setMaxPage) = useState(0)
+    val (currentPage, setCurrentPage) = useState(1)
+    val (searchTerm, setSearchTerm) = useState("")
+    val resultsLimit = 10
 
     useEffectOnce {
         scope.launch {
-            resultList = getResults()
+            val mdPage = getResults(null, resultsLimit, 0)
+            setMaxPage(mdPage.totalPages)
+            resultList = mdPage.metaData
         }
     }
 
@@ -58,6 +64,7 @@ val app = FC<Props> {
                 gridArea = Area.Content
             }
 
+            // TODO: get togeher as a title component??
             Typography {
                 sx{
                     textAlign = TextAlign.center
@@ -76,13 +83,27 @@ val app = FC<Props> {
             SearchBar {
                 onSubmit = { input ->
                     scope.launch {
-                        resultList = getResults(input)
+                        val mdPage = getResults(input, resultsLimit, 0)
+                        setMaxPage(mdPage.totalPages)
+                        resultList = mdPage.metaData
+                        setSearchTerm(input)
                     }
                 }
             }
 
             Results {
                 this.resultList = resultList
+                this.currentPage = currentPage
+                this.maxPages = maxPage
+                this.onPageSelect = { pageNum ->
+                    setCurrentPage(pageNum)
+                    val offset = (pageNum - 1) * resultsLimit
+                    scope.launch {
+                        val mdPage = getResults(searchTerm, resultsLimit, offset )
+                        setMaxPage(mdPage.totalPages)
+                        resultList = mdPage.metaData
+                    }
+                }
             }
 
         }

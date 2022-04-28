@@ -13,6 +13,9 @@ import react.Props
 
 external interface ResultsProps : Props {
     var resultList : List<MetaData>
+    var maxPages: Int
+    var currentPage: Int
+    var onPageSelect: (Int) -> Unit
 }
 
 val Results = FC<ResultsProps> {
@@ -56,7 +59,9 @@ val Results = FC<ResultsProps> {
                 }
             }
             PageNav{
-
+                this.maxPages = it.maxPages
+                this.currentPage = it.currentPage
+                this.onPageClick = it.onPageSelect
             }
         }
     }

@@ -2,6 +2,7 @@ package application.graphQL.fetcher
 
 import application.BasicService
 import application.model.MetaData
+import application.model.MetaDataPage
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
@@ -12,11 +13,11 @@ class AllMetadataDataFetcher(
 ){
 
     @DgsQuery
-    fun allMetadata(): List<MetaData> = basicService.getMetadata()
+    fun allMetadata(@InputArgument limit: Int, @InputArgument offset: Int): MetaDataPage = basicService.getMetadata(limit, offset)
 
     @DgsQuery
-    fun search(@InputArgument text: String?, @InputArgument limit: Int, @InputArgument offset: Int): List<MetaData> = text?.let {
+    fun search(@InputArgument text: String?, @InputArgument limit: Int, @InputArgument offset: Int): MetaDataPage = text?.let {
         basicService.search(it, limit, offset)
-    } ?: emptyList()
+    } ?: basicService.getMetadata(limit, offset)
 
 }

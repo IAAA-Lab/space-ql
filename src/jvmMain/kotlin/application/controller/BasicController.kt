@@ -26,7 +26,7 @@ class BasicController(
 
         val lista = basicService.search(text, pageSize, offset)
 
-        val namesList = lista.map{ it.data.fileName}
+        val namesList = lista.metaData.map{ it.data.fileName}
 
         return ResponseEntity(namesList, HttpStatus.OK)
     }
