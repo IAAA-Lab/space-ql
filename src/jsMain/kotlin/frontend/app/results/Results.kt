@@ -10,12 +10,14 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
+import react.ReactNode
 
 external interface ResultsProps : Props {
     var resultList : List<MetaData>
     var maxPages: Int
     var currentPage: Int
     var onPageSelect: (Int) -> Unit
+    var resultsOrder: String
 }
 
 val Results = FC<ResultsProps> {
@@ -41,12 +43,49 @@ val Results = FC<ResultsProps> {
         }
 
         id = "results"
-        Typography {
+        Box{
             sx {
                 gridArea = Area.ResultTitle
+                display = Display.flex
+                justifyContent = JustifyContent.spaceBetween
             }
-            variant = TypographyVariant.h3
-            +"Results"
+            Typography {
+
+                variant = TypographyVariant.h3
+                +"Results"
+            }
+
+            FormControl {
+                InputLabel {
+                    id = "order-select-label"
+                    +"Order"
+                }
+                Select {
+                    labelId = "order-label"
+                    id = "order-select"
+                    label = ReactNode("Order")
+
+                    // TODO: add order as state in App and add useState as props param
+                    onChange = { event,_ ->
+                        it.resultsOrder = event.target.value
+                    }
+
+                    value = it.resultsOrder.unsafeCast<Nothing?>()
+
+                    MenuItem {
+                        value = "Relevancia"
+                        +"Relevancia"
+                    }
+                    MenuItem {
+                        value = "Fecha de modificación"
+                        +"Fecha de modificación"
+                    }
+                    MenuItem {
+                        value = "Nombre"
+                        +"Nombre"
+                    }
+                }
+            }
         }
 
         Box {

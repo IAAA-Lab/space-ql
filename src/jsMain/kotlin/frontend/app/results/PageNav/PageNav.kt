@@ -28,7 +28,6 @@ val PageNav = FC<PageNavProps> { props ->
         })
 
     val nextPagesList : MouseEventHandler<HTMLButtonElement> = {
-        console.log("NEXT")
         if(props.maxPages > (lastPage + maxPageNum)){
             setLastPage(lastPage + maxPageNum)
         } else{
@@ -45,7 +44,6 @@ val PageNav = FC<PageNavProps> { props ->
     }
 
     val prevPagesList : MouseEventHandler<HTMLButtonElement> = {
-        console.log("PREV")
         setLastPage(lastPage - maxPageNum)
         setFirstPage(firstPage - maxPageNum)
     }
