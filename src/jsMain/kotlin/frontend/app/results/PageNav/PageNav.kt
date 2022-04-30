@@ -12,26 +12,12 @@ import react.useState
 
 
 external interface PageNavProps : Props {
-    /* Cuando se pulse un número de página se propagará al contenedor
-     * padre que modificará el estado realizando la petición en base
-     * al número de página solicitado
-     */
     var onPageClick: (Int) -> Unit
     var currentPage: Int
     var maxPages: Int
-    // next y prev = onPageClick(page-1) ???
-    // NO -> Hay que gestionar la posibilidad de que
-    // vaya a un grupo de menos número (haya que cargar nueva
-    // lista de números de página
 }
 
 val PageNav = FC<PageNavProps> { props ->
-    // handle next
-    // page decrement (...)
-    // page numbers
-    // page increment (...)
-    // handle prev
-
     val maxPageNum = 10
     val (firstPage, setFirstPage) = useState(1)
     val (lastPage, setLastPage) = useState(
@@ -41,25 +27,33 @@ val PageNav = FC<PageNavProps> { props ->
             props.maxPages
         })
 
+    val nextPagesList : MouseEventHandler<HTMLButtonElement> = {
+        console.log("NEXT")
+        if(props.maxPages > (lastPage + maxPageNum)){
+            setLastPage(lastPage + maxPageNum)
+        } else{
+            setLastPage(props.maxPages)
+        }
+        setFirstPage(firstPage + maxPageNum)
+    }
+
     val nextPageHandler : MouseEventHandler<HTMLButtonElement> = {
         props.onPageClick(props.currentPage + 1)
-
-        if(props.currentPage + 1 > lastPage){
-            if(props.maxPages > (lastPage + maxPageNum)){
-                setLastPage(lastPage + maxPageNum)
-            } else{
-                setLastPage(props.maxPages)
-            }
-            setFirstPage(firstPage + maxPageNum)
+        if(props.currentPage + 1 > lastPage) {
+            nextPagesList(it)
         }
+    }
+
+    val prevPagesList : MouseEventHandler<HTMLButtonElement> = {
+        console.log("PREV")
+        setLastPage(lastPage - maxPageNum)
+        setFirstPage(firstPage - maxPageNum)
     }
 
     val prevPageHandler : MouseEventHandler<HTMLButtonElement> = {
         props.onPageClick(props.currentPage - 1)
-
-        if(props.currentPage - 1 < firstPage && props.currentPage - 1 > 0){
-            setLastPage(lastPage - maxPageNum)
-            setFirstPage(firstPage - maxPageNum)
+        if(props.currentPage - 1 in 1 until firstPage) {
+            prevPagesList(it)
         }
     }
 
@@ -83,6 +77,12 @@ val PageNav = FC<PageNavProps> { props ->
                 onClick = prevPageHandler
                 +"Prev"
             }
+            if(firstPage != 1){
+                Button {
+                    onClick = prevPagesList
+                    +"..."
+                }
+            }
 
             for (page in firstPage..lastPage ){
                 Button {
@@ -92,6 +92,14 @@ val PageNav = FC<PageNavProps> { props ->
                     value = page.toString()
                     onClick = pageClickHandler
                     +"${page}"
+                }
+            }
+
+            if(lastPage != props.maxPages){
+                Button {
+
+                    onClick = nextPagesList
+                    +"..."
                 }
             }
 
