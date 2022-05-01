@@ -12,19 +12,20 @@ val jsonClient = HttpClient {
     install(JsonFeature) { serializer = KotlinxSerializer() }
 }
 
-suspend fun getResults(input: String?, limit: Int, offset: Int): MetaDataPage {
+suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): MetaDataPage {
     val ret: GraphResponse<SearchResponse> = jsonClient.post("http://localhost:8080/graphql") {
         contentType(ContentType.Application.Json)
         var graphSearchText = ""
         if(input != null && input != "") {
-            graphSearchText = """text: "${input}","""
+            graphSearchText = """text: "$input","""
         }
 
         body = GraphQuery("""
             {
                 search(${graphSearchText}
                 limit: ${limit},
-                offset: ${offset}) {
+                offset: ${offset},
+                order: "$order") {
                     totalPages,
                     metaData{
                         data{

@@ -9,6 +9,9 @@ interface MetadataElasticsearchRepository: ElasticsearchRepository<MetaData, UUI
     fun findByContent(content: String, pageable: Pageable): Page<MetaData>
     fun findByContentContaining(content: String, pageable: Pageable): Page<MetaData>
     fun findByDataFileNameOrDataFileDescription(fileName: String, fileDescription: String, pageable: Pageable): Page<MetaData>
-    fun findByDataFileNameContaining(file_name: String, pageable: Pageable): Page<MetaData>
+
+    fun findByDataFileNameOrDataFileDescriptionOrderByDataFileName(fileName: String, fileDescription: String, pageable: Pageable): Page<MetaData>
+
+    fun findByDataFileNameOrDataFileDescriptionOrderByDataUploadDate(fileName: String, fileDescription: String, pageable: Pageable): Page<MetaData>
 
 }

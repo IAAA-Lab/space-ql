@@ -28,11 +28,12 @@ val app = FC<Props> {
     val (maxPage, setMaxPage) = useState(0)
     val (currentPage, setCurrentPage) = useState(1)
     val (searchTerm, setSearchTerm) = useState("")
+    val (resultsOrder, setResultsOrder) = useState("Relevance")
     val resultsLimit = 10
 
     useEffectOnce {
         scope.launch {
-            val mdPage = getResults(null, resultsLimit, 0)
+            val mdPage = getResults(null, resultsLimit, 0, resultsOrder)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
         }
@@ -83,7 +84,7 @@ val app = FC<Props> {
             SearchBar {
                 onSubmit = { input ->
                     scope.launch {
-                        val mdPage = getResults(input, resultsLimit, 0)
+                        val mdPage = getResults(input, resultsLimit, 0, resultsOrder)
                         setMaxPage(mdPage.totalPages)
                         resultList = mdPage.metaData
                         setSearchTerm(input)
@@ -95,15 +96,25 @@ val app = FC<Props> {
                 this.resultList = resultList
                 this.currentPage = currentPage
                 this.maxPages = maxPage
-                this.onPageSelect = { pageNum ->
-                    setCurrentPage(pageNum)
-                    val offset = (pageNum - 1) * resultsLimit
+                this.resultsOrder = resultsOrder
+                this.onOrderSelect = {
+                    setResultsOrder(it)
                     scope.launch {
-                        val mdPage = getResults(searchTerm, resultsLimit, offset )
+                        val mdPage = getResults(searchTerm, resultsLimit, 0, it)
                         setMaxPage(mdPage.totalPages)
                         resultList = mdPage.metaData
                     }
                 }
+                this.onPageSelect = { pageNum ->
+                    setCurrentPage(pageNum)
+                    val offset = (pageNum - 1) * resultsLimit
+                    scope.launch {
+                        val mdPage = getResults(searchTerm, resultsLimit, offset, resultsOrder )
+                        setMaxPage(mdPage.totalPages)
+                        resultList = mdPage.metaData
+                    }
+                }
+
             }
 
         }

@@ -8,19 +8,27 @@ import frontend.common.Sizes
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
+import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
 import react.ReactNode
+import react.dom.events.ChangeEventHandler
 
 external interface ResultsProps : Props {
     var resultList : List<MetaData>
-    var maxPages: Int
+    var maxPages: Int 
     var currentPage: Int
     var onPageSelect: (Int) -> Unit
+    var onOrderSelect: (String) -> Unit
     var resultsOrder: String
 }
 
-val Results = FC<ResultsProps> {
+val Results = FC<ResultsProps> { props ->
+
+    val onOrderSelectHandler: ChangeEventHandler<HTMLInputElement> = {
+        props.onOrderSelect(it.target.value)
+    }
+
     Box {
         sx {
             display = Display.grid
@@ -66,23 +74,23 @@ val Results = FC<ResultsProps> {
                     label = ReactNode("Order")
 
                     // TODO: add order as state in App and add useState as props param
-                    onChange = { event,_ ->
-                        it.resultsOrder = event.target.value
+                    onChange = {event,_ ->
+                        props.onOrderSelect(event.target.value)
                     }
 
-                    value = it.resultsOrder.unsafeCast<Nothing?>()
+                    value = props.resultsOrder.unsafeCast<Nothing?>()
 
                     MenuItem {
-                        value = "Relevancia"
-                        +"Relevancia"
+                        value = "Relevance"
+                        +"Relevance"
                     }
                     MenuItem {
-                        value = "Fecha de modificación"
-                        +"Fecha de modificación"
+                        value = "Date"
+                        +"Date"
                     }
                     MenuItem {
-                        value = "Nombre"
-                        +"Nombre"
+                        value = "Name"
+                        +"Name"
                     }
                 }
             }
@@ -92,15 +100,15 @@ val Results = FC<ResultsProps> {
             sx {
                 gridArea = Area.Results
             }
-            it.resultList.forEach { result ->
+            props.resultList.forEach { result ->
                 result {
                     data = result
                 }
             }
             PageNav{
-                this.maxPages = it.maxPages
-                this.currentPage = it.currentPage
-                this.onPageClick = it.onPageSelect
+                this.maxPages = props.maxPages
+                this.currentPage = props.currentPage
+                this.onPageClick = props.onPageSelect
             }
         }
     }

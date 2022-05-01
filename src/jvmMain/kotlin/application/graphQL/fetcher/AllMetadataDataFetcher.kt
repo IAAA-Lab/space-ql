@@ -13,11 +13,18 @@ class AllMetadataDataFetcher(
 ){
 
     @DgsQuery
-    fun allMetadata(@InputArgument limit: Int, @InputArgument offset: Int): MetaDataPage = basicService.getMetadata(limit, offset)
+    fun allMetadata(
+        @InputArgument limit: Int,
+        @InputArgument offset: Int
+    ): MetaDataPage = basicService.search(null, limit, offset, "Relevance")
+
 
     @DgsQuery
-    fun search(@InputArgument text: String?, @InputArgument limit: Int, @InputArgument offset: Int): MetaDataPage = text?.let {
-        basicService.search(it, limit, offset)
-    } ?: basicService.getMetadata(limit, offset)
+    fun search(
+        @InputArgument text: String?,
+        @InputArgument limit: Int,
+        @InputArgument offset: Int,
+        @InputArgument order: String,
+    ): MetaDataPage = basicService.search(text, limit, offset, order)
 
 }
