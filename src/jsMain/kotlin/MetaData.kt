@@ -12,6 +12,17 @@ data class MetaDataPage(
 )
 
 @Serializable
+data class Format (
+    val name: String,
+    val version: String
+)
+
+@Serializable
+data class Transfer (
+    val URL: String
+)
+
+@Serializable
 data class ContentData (
     val language: String = "",
     val uploadDate: String = "",
@@ -25,5 +36,7 @@ data class ContentData (
     val contactPointName: String = "",
     val contactPointMail: String = "",
     val contactPointOnlineSource: String = "",
-    val accessUrl: String = ""
+    val accessUrl: String = "",
+    val distributionFormats: List<Format>?,
+    val distributionTransfers: List<Transfer>?
 )

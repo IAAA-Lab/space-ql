@@ -165,12 +165,10 @@ def getDist(jsonObj):
             match_version = match_version[0].value
 
         formats.append(
-            { 'format': {
+            {
                     'name' : str(match_name),
                     'version' : str(match_version)
                 }
-
-            }
         )
     
 
@@ -180,11 +178,12 @@ def getDist(jsonObj):
 
     for match in parsed_transfer_expr.find(jsonObjFound):
         match_url = parsed_transfer_URL.find(match.value)
+        
         transfers.append(
-            { 'transfer' : {
+            {
                     'URL' : str(match_url[0].value) 
                 }
-            }
+            
         )
     
 
@@ -208,49 +207,45 @@ for index, row in metadataFile.iterrows():
     jsonObj = json.loads(jsonStr)    
     
     value_ID = JsonPathExpr_id.find(jsonObj)[0].value
-    #value_language = JsonPathExpr_language.find(jsonObj)[0].value
-    #value_date = getDatePathValue(jsonObj)
-    #value_scope = getPathValue("scope", jsonObj)
-    #value_standard = getPathValue("standard", jsonObj)
-    #value_standardVersion = getPathValue("standardVersion", jsonObj)
-    #value_contactPoint_name = getPathValue("contactPoint_name", jsonObj)
-    #value_contactPoint_mail = getPathValue("contactPoint_mail", jsonObj)
-    #value_contactPoint_onlineSource = getPathValue("contactPoint_onlineSource", jsonObj)
-    #value_accessUrl = getPathValue("accessUrl", jsonObj)
-    #value_file_name = getPathValue("file_name", jsonObj)
-    #value_file_description = getPathValue("file_description", jsonObj)
-    #value_contactPoint_individual = getPathValue("contactPoint_individual", jsonObj)
-    #value_contactPoint_phone = getPathValue("contactPoint_phone", jsonObj)
+    value_language = JsonPathExpr_language.find(jsonObj)[0].value
+    value_date = getDatePathValue(jsonObj)
+    value_scope = getPathValue("scope", jsonObj)
+    value_standard = getPathValue("standard", jsonObj)
+    value_standardVersion = getPathValue("standardVersion", jsonObj)
+    value_contactPoint_name = getPathValue("contactPoint_name", jsonObj)
+    value_contactPoint_mail = getPathValue("contactPoint_mail", jsonObj)
+    value_contactPoint_onlineSource = getPathValue("contactPoint_onlineSource", jsonObj)
+    value_accessUrl = getPathValue("accessUrl", jsonObj)
+    value_file_name = getPathValue("file_name", jsonObj)
+    value_file_description = getPathValue("file_description", jsonObj)
+    value_contactPoint_individual = getPathValue("contactPoint_individual", jsonObj)
+    value_contactPoint_phone = getPathValue("contactPoint_phone", jsonObj)
     
     value_distribution = getDist(jsonObj)
-    #doc = {
-    #    'ID' : value_ID,
-    #    'data' : {
-    #        'language' : str(value_language),
-    #        'uploadDate' : str(value_date),
-    #        'scope' : str(value_scope),
-    #        'standard' : str(value_standard),
-    #        'standardVersion' : str(value_standardVersion),
-    #        'fileName' : str(value_file_name),
-    #        'fileDescription' : str(value_file_description),
-    #        'contactPointIndividual' : str(value_contactPoint_individual),
-    #        'contactPointPhone' : str(value_contactPoint_phone),
-    #        'contactPointName' : str(value_contactPoint_name),
-    #        'contactPointMail' : str(value_contactPoint_mail),
-    #        'contactPointOnlineSource' : str(value_contactPoint_onlineSource),
-    #        'accessUrl' : str(value_accessUrl),
-    #        'distribution_formats' : [
-    #            value_distribution_formats
-    #        ],
-    #        'distribution_transfer' : [
-    #            value_distribution_transfer
-    #        ]
-    #    },
-    #    'document' : str(jsonStr)
-#
-    #}
-#
-    # Load data to ElasticSearch
-    #es.index(index='test-values', id=doc['ID'], document=doc)
+    doc = {
+       'ID' : value_ID,
+       'data' : {
+           'language' : str(value_language),
+           'uploadDate' : str(value_date),
+           'scope' : str(value_scope),
+           'standard' : str(value_standard),
+           'standardVersion' : str(value_standardVersion),
+           'fileName' : str(value_file_name),
+           'fileDescription' : str(value_file_description),
+           'contactPointIndividual' : str(value_contactPoint_individual),
+           'contactPointPhone' : str(value_contactPoint_phone),
+           'contactPointName' : str(value_contactPoint_name),
+           'contactPointMail' : str(value_contactPoint_mail),
+           'contactPointOnlineSource' : str(value_contactPoint_onlineSource),
+           'accessUrl' : str(value_accessUrl),
+           'distributionFormats' : value_distribution['formats'],
+           'distributionTransfers' : value_distribution['transfers']
+       },
+       'document' : str(jsonStr)
 
-#es.indices.refresh(index="test-values")
+    }
+
+    # Load data to ElasticSearch
+    es.index(index='test-values', id=doc['ID'], document=doc)
+
+es.indices.refresh(index="test-values")

@@ -14,6 +14,16 @@ type MetaData {
     content: String
 }
 
+
+type Format {
+    name: String,
+    version: String
+}
+
+type Transfer {
+    URL: String
+}
+
 type ContentData {
     language: String,
     uploadDate: String,
@@ -27,5 +37,7 @@ type ContentData {
     contactPointName: String,
     contactPointMail: String,
     contactPointOnlineSource: String,
-    accessUrl: String
+    accessUrl: String,
+    distributionFormats: [Format],
+    distributionTransfers: [Transfer]
 }
