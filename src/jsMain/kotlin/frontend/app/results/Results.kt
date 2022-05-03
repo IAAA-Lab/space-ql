@@ -2,6 +2,7 @@ package frontend.app.results
 
 import MetaData
 import csstype.*
+import frontend.app.results.OrderSelector.OrderSelector
 import frontend.app.results.PageNav.PageNav
 import frontend.common.Area
 import frontend.common.Sizes
@@ -24,10 +25,6 @@ external interface ResultsProps : Props {
 }
 
 val Results = FC<ResultsProps> { props ->
-
-    val onOrderSelectHandler: ChangeEventHandler<HTMLInputElement> = {
-        props.onOrderSelect(it.target.value)
-    }
 
     Box {
         sx {
@@ -63,37 +60,11 @@ val Results = FC<ResultsProps> { props ->
                 +"Results"
             }
 
-            FormControl {
-                InputLabel {
-                    id = "order-select-label"
-                    +"Order"
-                }
-                Select {
-                    labelId = "order-label"
-                    id = "order-select"
-                    label = ReactNode("Order")
-
-                    // TODO: add order as state in App and add useState as props param
-                    onChange = {event,_ ->
-                        props.onOrderSelect(event.target.value)
-                    }
-
-                    value = props.resultsOrder.unsafeCast<Nothing?>()
-
-                    MenuItem {
-                        value = "Relevance"
-                        +"Relevance"
-                    }
-                    MenuItem {
-                        value = "Date"
-                        +"Date"
-                    }
-                    MenuItem {
-                        value = "Name"
-                        +"Name"
-                    }
-                }
+            OrderSelector {
+                this.resultsOrder = props.resultsOrder
+                this.onOrderSelect = props.onOrderSelect
             }
+
         }
 
         Box {

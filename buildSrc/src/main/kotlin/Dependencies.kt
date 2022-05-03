@@ -8,6 +8,7 @@ fun kotlinx(target: String, version: String = Versions.kotlin): String =
 object Kotlinx {
     val coroutinesReactor = kotlinx("coroutines-reactor", Versions.kotlinxCoroutines)
     val htmlJvm = kotlinx("html-jvm", Versions.kotlinxHtml)
+    val serializationJson = kotlinx("serialization-json", Versions.kotlinxSerializationJson)
 }
 
 object Kotlin {
@@ -21,6 +22,7 @@ object SpringBootStarter {
     val webflux = springBootStarter("webflux")
     var test = springBootStarter("test")
     val elasticsearch = springBootStarter("data-elasticsearch")
+    val web = springBootStarter("web")
 }
 
 object OrgJson {
@@ -45,4 +47,13 @@ object GraphQL {
 object Dgs {
     const val graphPlatformDependencies = "com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:latest.release"
     const val graphSpringBootStarter = "com.netflix.graphql.dgs:graphql-dgs-spring-boot-starter"
+}
+
+fun ktorClient(target: String, version: String = Versions.ktorClient) : String = "io.ktor:ktor-client-$target:$version"
+
+object KtorClient {
+    val core = ktorClient("core")
+    val js = ktorClient("js")
+    val json = ktorClient("json")
+    val serialization = ktorClient("serialization")
 }

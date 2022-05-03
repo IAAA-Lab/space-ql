@@ -62,7 +62,7 @@ kotlin {
 
                 implementation(SpringBootStarter.elasticsearch)
 
-                implementation("org.springframework.boot:spring-boot-starter-web")
+                implementation(SpringBootStarter.web)
 
                 implementation(Dgs.graphSpringBootStarter)
                 implementation(project.dependencies.enforcedPlatform(Dgs.graphPlatformDependencies))
@@ -87,11 +87,11 @@ kotlin {
                 implementation(kotlinw("emotion"))
                 implementation(kotlinw("mui"))
                 implementation(kotlinw("mui-icons"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
-                implementation("io.ktor:ktor-client-core:1.6.7")
-                implementation("io.ktor:ktor-client-js:1.6.7")
-                implementation("io.ktor:ktor-client-json:1.6.7")
-                implementation("io.ktor:ktor-client-serialization:1.6.7")
+                implementation(Kotlinx.serializationJson)
+                implementation(KtorClient.core)
+                implementation(KtorClient.js)
+                implementation(KtorClient.json)
+                implementation(KtorClient.serialization)
             }
         }
         val jsTest by getting {

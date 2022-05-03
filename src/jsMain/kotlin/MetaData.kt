@@ -37,6 +37,6 @@ data class ContentData (
     val contactPointMail: String = "",
     val contactPointOnlineSource: String = "",
     val accessUrl: String = "",
-    val distributionFormats: List<Format>?,
-    val distributionTransfers: List<Transfer>?
+    val distributionFormats: List<Format> = emptyList(),
+    val distributionTransfers: List<Transfer> = emptyList()
 )
