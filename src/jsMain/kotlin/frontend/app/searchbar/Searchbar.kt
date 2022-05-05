@@ -41,7 +41,6 @@ val SearchBar = FC<SearchbarProps> { props ->
        }
        component = form
 
-       // TODO: onSubmit
        onSubmit = submitHandler
 
        TextField {
@@ -53,7 +52,6 @@ val SearchBar = FC<SearchbarProps> { props ->
            variant = FormControlVariant.outlined
            value = text
            placeholder = "Document's title"
-       // TODO: Use changeHandler on change
            onChange = changeHandler
        }
 

@@ -28,7 +28,6 @@ val Header = FC<Props> {
                 sx { flexGrow = number(1.0) }
                 noWrap = true
                 component = div
-
                 +"Space-QL v0.1.0"
             }
 

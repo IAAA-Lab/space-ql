@@ -3,6 +3,7 @@ package frontend.app
 import MetaData
 import csstype.*
 import frontend.app.Sidebar.Sidebar
+import frontend.app.Title.title
 import frontend.app.header.Header
 import frontend.app.results.Results
 import frontend.common.Area
@@ -12,6 +13,7 @@ import frontend.app.searchbar.SearchBar
 import frontend.getResults
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import kotlinx.js.jso
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.Box
@@ -20,8 +22,12 @@ import react.*
 import react.dom.html.ReactHTML.div
 import react.dom.html.ReactHTML.h1
 import react.dom.html.ReactHTML.main
+import react.router.Route
+import react.router.Routes
+import react.router.dom.BrowserRouter
+import react.router.useLocation
 
-private val scope = MainScope()
+public val scope = MainScope()
 
 val app = FC<Props> {
     var resultList by useState(emptyList<MetaData>())
@@ -46,6 +52,7 @@ val app = FC<Props> {
                 Sizes.Header.Height,
                 Auto.auto,
             )
+
             gridTemplateColumns = array(
                 Sizes.Sidebar.Width, Auto.auto,
             )
@@ -57,66 +64,41 @@ val app = FC<Props> {
 
         Header()
 
-        Sidebar()
-
-        Box {
-            component = main
-            sx {
-                gridArea = Area.Content
-            }
-
-            // TODO: get togeher as a title component??
-            Typography {
-                sx{
-                    textAlign = TextAlign.center
-                }
-                variant = TypographyVariant.h1
-                +"SpaceQL"
-            }
-            Typography {
-                sx{
-                    textAlign = TextAlign.center
-                }
-                variant = TypographyVariant.subtitle1
-                +"GraphQL-based metadata browser"
-            }
-
-            SearchBar {
-                onSubmit = { input ->
-                    scope.launch {
-                        val mdPage = getResults(input, resultsLimit, 0, resultsOrder)
-                        setMaxPage(mdPage.totalPages)
-                        resultList = mdPage.metaData
-                        setSearchTerm(input)
+        BrowserRouter {
+            Routes {
+                Route {
+                    path = "/"
+                    Route {
+                        index = true
+                        element = createElement(homeContent,
+                        props = jso{
+                            this.scope = scope
+                            this.resultsLimit = resultsLimit
+                            this.resultsOrder = resultsOrder
+                            this.searchTerm = searchTerm
+                            this.currentPage = currentPage
+                            this.maxPage = maxPage
+                            this.resultList = resultList
+                            this.setResultList = {
+                                resultList = it
+                            }
+                            this.setMaxPage = {
+                                setMaxPage(it)
+                            }
+                            this.setSearchTerm = {
+                                setSearchTerm(it)
+                            }
+                            this.setResultsOrder = {
+                                setResultsOrder(it)
+                            }
+                            this.setCurrentPage = {
+                                setCurrentPage(it)
+                            }
+                        })
                     }
+
                 }
             }
-
-            Results {
-                this.resultList = resultList
-                this.currentPage = currentPage
-                this.maxPages = maxPage
-                this.resultsOrder = resultsOrder
-                this.onOrderSelect = {
-                    setResultsOrder(it)
-                    scope.launch {
-                        val mdPage = getResults(searchTerm, resultsLimit, 0, it)
-                        setMaxPage(mdPage.totalPages)
-                        resultList = mdPage.metaData
-                    }
-                }
-                this.onPageSelect = { pageNum ->
-                    setCurrentPage(pageNum)
-                    val offset = (pageNum - 1) * resultsLimit
-                    scope.launch {
-                        val mdPage = getResults(searchTerm, resultsLimit, offset, resultsOrder )
-                        setMaxPage(mdPage.totalPages)
-                        resultList = mdPage.metaData
-                    }
-                }
-
-            }
-
         }
 
     }
