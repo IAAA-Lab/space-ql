@@ -1,11 +1,16 @@
 package frontend.app
 
 import MetaData
+import csstype.Auto
+import csstype.Display
+import csstype.GridTemplateAreas
+import csstype.array
 import frontend.app.Sidebar.Sidebar
 import frontend.app.Title.title
 import frontend.app.results.Results
 import frontend.app.searchbar.SearchBar
 import frontend.common.Area
+import frontend.common.Sizes
 import frontend.getResults
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -28,56 +33,59 @@ external interface HomeProps : Props {
     var setSearchTerm : (String) -> Unit
     var setResultsOrder : (String) -> Unit
     var setCurrentPage : (Int) -> Unit
+    var getResultsProp : (String, Int, String) -> Unit
 }
 
 val homeContent = FC<HomeProps> { props ->
-
-
-    Sidebar()
-
     Box {
         component = ReactHTML.main
         sx {
+            display = Display.grid
+            gridTemplateColumns = array(
+                Sizes.Sidebar.Width,
+                Auto.auto
+            )
+            gridTemplateAreas = GridTemplateAreas(
+                arrayOf(Area.Sidebar, Area.ResultsContent)
+            )
+
             gridArea = Area.Content
         }
+        Sidebar()
 
-        title{}
+        Box {
+            sx {
+                gridArea = Area.ResultsContent
+            }
 
-        SearchBar {
-            onSubmit = { input ->
-                props.scope.launch {
-                    val mdPage = getResults(input, props.resultsLimit, 0, props.resultsOrder)
-                    props.setMaxPage(mdPage.totalPages)
-                    props.setResultList(mdPage.metaData)
+            title{}
+
+            SearchBar {
+                onSubmit = { input ->
+                    props.getResultsProp(input, 0, props.resultsOrder)
                     props.setSearchTerm(input)
                 }
             }
-        }
 
-        Results {
-            this.resultList = props.resultList
-            this.currentPage = props.currentPage
-            this.maxPages = props.maxPage
-            this.resultsOrder = props.resultsOrder
-            this.onOrderSelect = {
-                props.setResultsOrder(it)
-                props.scope.launch {
-                    val mdPage = getResults(props.searchTerm, props.resultsLimit, 0, it)
-                    props.setMaxPage(mdPage.totalPages)
-                    props.setResultList(mdPage.metaData)
+            Results {
+                this.resultList = props.resultList
+                this.currentPage = props.currentPage
+                this.maxPages = props.maxPage
+                this.resultsOrder = props.resultsOrder
+                this.onOrderSelect = {
+                    props.setResultsOrder(it)
+                    props.getResultsProp(props.searchTerm, 0, it)
                 }
-            }
-            this.onPageSelect = { pageNum ->
-                props.setCurrentPage(pageNum)
-                val offset = (pageNum - 1) * props.resultsLimit
-                props.scope.launch {
-                    val mdPage = getResults(props.searchTerm, props.resultsLimit, offset, props.resultsOrder )
-                    props.setMaxPage(mdPage.totalPages)
-                    props.setResultList(mdPage.metaData)
+                this.onPageSelect = { pageNum ->
+                    props.setCurrentPage(pageNum)
+                    val offset = (pageNum - 1) * props.resultsLimit
+                    props.getResultsProp(props.searchTerm, offset, props.resultsOrder)
                 }
+
             }
 
         }
+
 
     }
 }

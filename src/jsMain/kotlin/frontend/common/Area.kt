@@ -8,5 +8,5 @@ object Area {
     val Content = ident("content")
     val ResultTitle = ident("resultTitle")
     val Results = ident("results")
-    val Empty = ident("empty")
+    val ResultsContent = ident("resultsContent")
 }

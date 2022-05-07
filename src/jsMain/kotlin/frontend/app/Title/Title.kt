@@ -6,20 +6,24 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
+import react.router.dom.Link
 
 val title = FC<Props>{
-    Typography {
-        sx{
-            textAlign = TextAlign.center
+    Link {
+        to = "/"
+        Typography {
+            sx{
+                textAlign = TextAlign.center
+            }
+            variant = TypographyVariant.h1
+            +"SpaceQL"
         }
-        variant = TypographyVariant.h1
-        +"SpaceQL"
-    }
-    Typography {
-        sx{
-            textAlign = TextAlign.center
+        Typography {
+            sx{
+                textAlign = TextAlign.center
+            }
+            variant = TypographyVariant.subtitle1
+            +"GraphQL-based metadata browser"
         }
-        variant = TypographyVariant.subtitle1
-        +"GraphQL-based metadata browser"
     }
 }

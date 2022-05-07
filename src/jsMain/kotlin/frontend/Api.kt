@@ -28,6 +28,7 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): 
                 order: "$order") {
                     totalPages,
                     metaData{
+                        id,
                         data{
                             fileName,
                             fileDescription
