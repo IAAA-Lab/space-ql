@@ -2,6 +2,7 @@ package frontend.app.results.PageNav
 
 import csstype.Display
 import csstype.JustifyContent
+import csstype.px
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLButtonElement
@@ -64,6 +65,8 @@ val PageNav = FC<PageNavProps> { props ->
         sx {
             justifyContent = JustifyContent.center
             display = Display.flex
+            marginTop = 10.px
+            marginBottom = 10.px
         }
         id = "PageNav"
         ButtonGroup {

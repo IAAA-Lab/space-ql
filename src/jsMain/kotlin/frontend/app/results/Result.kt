@@ -2,6 +2,9 @@ package frontend.app.results
 
 import MetaData
 import csstype.px
+import mui.icons.material.Cloud
+import mui.icons.material.InsertDriveFileOutlined
+import mui.icons.material.Storage
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
@@ -17,6 +20,7 @@ external interface ResultProps : Props {
 
 val result = FC<ResultProps> { props ->
     val navigate = useNavigate()
+    val extra = (if(props.data.data.fileDescription.length > 500)"..." else "")
 
     Card {
 
@@ -27,6 +31,7 @@ val result = FC<ResultProps> { props ->
                     override var state: Any? = null
                 })
         }
+
         key = props.data.id
         variant = PaperVariant.outlined
         CardActionArea {
@@ -35,13 +40,25 @@ val result = FC<ResultProps> { props ->
                 maxWidth = 1200.px
             }
             CardContent {
+
                 Typography {
                     variant = TypographyVariant.h5
-                    +props.data.data.fileName
+                    Icon {
+                        sx {
+                            marginTop = 5.px
+                            marginRight = 5.px
+                        }
+                        when(props.data.data.scope) {
+                            "service" -> Cloud()
+                            "dataset" -> Storage()
+                            else -> InsertDriveFileOutlined()
+                        }
+                    }
+                    +"${props.data.data.fileName}"
                 }
                 Typography {
                     variant = TypographyVariant.body2
-                    +props.data.data.fileDescription
+                    +"${props.data.data.fileDescription.take(500)}${extra}"
                 }
             }
         }

@@ -30,8 +30,9 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): 
                     metaData{
                         id,
                         data{
+                            scope,
                             fileName,
-                            fileDescription
+                            fileDescription,
                         }
                     }
                 }
