@@ -1,6 +1,8 @@
 package frontend.app.Title
 
+import csstype.None
 import csstype.TextAlign
+import emotion.react.css
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx
@@ -10,6 +12,9 @@ import react.router.dom.Link
 
 val title = FC<Props>{
     Link {
+        css {
+            textDecoration = None.none
+        }
         to = "/"
         Typography {
             sx{
