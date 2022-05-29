@@ -1,11 +1,12 @@
 type Query {
-    allMetadata(limit: Int, offset: Int): [MetaData]
     search(text: String, limit: Int, offset: Int, order: String): MetaDataPage
+    # Falta una funcion que devuelva un elemento concreto con toda la informacion relevante
+
 }
 
 type MetaDataPage {
     totalPages: Int,
-    metaData: [MetaData]
+    metaData: [MetadataRecord]
 }
 
 # Colección de metadatos
@@ -15,24 +16,27 @@ type MetadataRecord { # Orientado lo exclusivo del metadato y cualquier truco pa
     description: String
     primaryTopic: Resource
     type: String # MD_ScopeCode
+    details: ContentMetadata
+#   content
 }
+
 
 union Resource = Dataset | Service  # MD_ScopeCode
 
-# Colección de metadatos
+# Colección de servicios
 type Service {
+    # El id no hace falta, no es lo mismo ELS que Graph
+    # En ELS si que estara el id para poder relacionarlo
     title: String # identificationInfo/SV_ServiceIdentification ... title
     coupledDatasets: [MetadataRecord] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
                                       # inspire-cobertura-terrestre-sigpac-atom => inspire-cobertura-terrestre-sigpac {primartyTopic es un Dataset
 }
+# coleccion de datasets
 type Dataset {
     title: String
     coupledServices: [MetadataRecord] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
                                         # inspire-cobertura-terrestre-sigpac => inspire-cobertura-terrestre-sigpac-atom, -wms {primartyTopic es un Dataset
 }
-
-#
-
 
 type Format {
     name: String,
@@ -43,24 +47,27 @@ type Transfer {
     URL: String
 }
 
+type ContactPoint {
+    individual: String,
+    phone: String,
+    name: String,
+    mail: String,
+    onlineSource: String
+}
+
 type ContentMetadata {
-    title: String,
-    description: String
-
-
-    language: String,
+#    son necesarios aqui??
+#    title: String,
+#    description: String
+    languages: [String],     # Hay mas de un lenguaje para cada elemento
     uploadDate: String,
-    scope: String,
-    standard: String,
-    standardVersion: String,
-    fileName: String,
-    fileDescription: String,
-    contactPointIndividual: String,
-    contactPointPhone: String,
-    contactPointName: String,
-    contactPointMail: String,
-    contactPointOnlineSource: String,
+#    scope: String,
+    contactPoint: ContactPoint,
     accessUrl: String,
     distributionFormats: [Format],
     distributionTransfers: [Transfer]
+    #    standard: String,
+    #    standardVersion: String,
+    #    fileName: String,      # Mas que filename lo que tenemos es el titulo del documento
+    #    fileDescription: String,
 }

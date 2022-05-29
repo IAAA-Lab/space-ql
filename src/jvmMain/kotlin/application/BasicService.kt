@@ -1,11 +1,9 @@
 package application
 
-import application.model.MetaData
-import application.model.MetaDataPage
+import application.model.MetadataPage
 import application.model.MetadataElasticsearchRepository
-import org.springframework.data.domain.Page
+import application.model.MetadataRecord
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
@@ -13,7 +11,12 @@ class BasicService(
     private val metadataRepository : MetadataElasticsearchRepository
 ) {
 
-    fun search(text: String?, limit: Int, offset: Int, order: String): MetaDataPage {
+    /*
+     * Esta función implementa el sistema de búsqueda paginada, devolviendo los
+     * resultados de la página indicada en el orden indicado.
+     *
+     */
+    fun search(text: String?, limit: Int, offset: Int, order: String): MetadataPage {
         val foundList = findData(text, order)
 
         val resultSize = foundList.size
@@ -29,16 +32,16 @@ class BasicService(
 
         val foundPage = foundList.subList(from, to)
 
-        return MetaDataPage(totalPages, foundPage)
+        return MetadataPage(totalPages, foundPage)
     }
 
-    fun findData(text: String?, order: String) : List<MetaData> {
+    fun findData(text: String?, order: String) : List<MetadataRecord> {
         // Elasticsearch doesn't apply sorting to text fields, only keyword fields can be used for sorting
         // So it is going to be done in the server
-        val found: List<MetaData>
+        val found: List<MetadataRecord>
 
         found = if(text != null){
-            metadataRepository.findByDataFileNameOrDataFileDescription(text, text, PageRequest.of(0,527)).toList()
+            metadataRepository.findByTitleOrDescription(text, text, PageRequest.of(0,527)).toList()
 
         } else {
             metadataRepository.findAll().toList()
@@ -47,12 +50,12 @@ class BasicService(
         return when(order) {
             "Date" -> {
                 found.sortedBy {
-                    it.data.uploadDate
+                    it.details.uploadDate
                 }
             }
             "Name" -> {
                 found.sortedBy {
-                    it.data.fileName
+                    it.title
                 }
             }
             else -> {
