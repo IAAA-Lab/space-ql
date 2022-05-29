@@ -1,25 +1,20 @@
 package frontend.app.Sidebar
 
-import csstype.Color
-import csstype.None.none
-import csstype.integer
+
 import csstype.px
-import emotion.react.css
 import frontend.common.Area
 import frontend.common.Sizes
-import mui.icons.material.ExpandLess
-import mui.icons.material.ExpandMore
 import mui.material.*
 import mui.material.DrawerAnchor.left
 import mui.material.DrawerVariant.permanent
+import mui.material.List
+import mui.material.styles.TypographyVariant
 import mui.system.Box
 import mui.system.sx
 import react.*
 import react.dom.html.ReactHTML.div
-import react.router.dom.NavLink
 
 val Sidebar = FC<Props> {
-    var (open, setOpen) = useState(false)
 
     Box {
         component = div
@@ -37,55 +32,99 @@ val Sidebar = FC<Props> {
                 List {
                     sx { width = Sizes.Sidebar.Width }
 
-                    List {
-
-                        ListItemButton {
-                            onClick = {
-                                setOpen(!open)
-                            }
-                            ListItemText {
-                                primary = ReactNode("Source Type")
-
-                            }
-                            if (open){
-                                ExpandLess()
-                            }else{
-                                ExpandMore()
-                            }
+                        Typography{
+                            variant = TypographyVariant.subtitle1
+                            +"Language"
                         }
-                        Collapse{
-                            `in` = open
-                            timeout="auto"
-                            List {
+                        List {
+                            listOf("Dataset","Service","Other").forEach { type ->
                                 ListItem{
-                                    ListItemText{
-                                        sx{
-                                            paddingLeft= 15.px
-                                        }
-                                        primary = ReactNode("Service")
+                                    sx {
+                                        paddingLeft=10.px
                                     }
+                                    ListItemIcon {
+                                        Checkbox{
+                                            onChange={_, checked->
+                                                console.log(type)
+                                                console.log(checked)
+                                            }
+                                        }
+                                    }
+                                    ListItemText{
+                                        primary=ReactNode(type)
+                                    }
+                                    Typography{
+                                        variant = TypographyVariant.body2
+                                        +"(2)"
+                                    }
+                                }
+                            }
+
+                        }
+                        Divider{}
+                        Typography{
+                            variant = TypographyVariant.subtitle1
+                            +"Related resources"
+                        }
+                        List {
+                            listOf("0","1","2","3","+3").forEach { number ->
+                                ListItem{
+                                    sx {
+                                        paddingLeft=10.px
+                                    }
+                                    ListItemIcon {
                                         Checkbox{
                                             checked=false
+                                            onChange={_, checked->
+                                                console.log(number)
+                                                console.log(checked)
+                                            }
                                         }
-                                }
-                                ListItem{
-                                    ListItemText{
-                                        sx{
-                                            paddingLeft= 15.px
-                                        }
-                                        primary = ReactNode("Dataset")
                                     }
-                                    Checkbox{
-                                        checked=false
+                                    ListItemText{
+                                        primary=ReactNode(number)
+                                    }
+                                    Typography{
+                                        variant = TypographyVariant.body2
+                                        +"(2)"
                                     }
                                 }
                             }
+
+                        }
+                        Divider{}
+                        Typography{
+                            variant = TypographyVariant.subtitle1
+                            +"Language"
+                        }
+                        List {
+                            listOf("English","Spanish","Catalonian","Basque","Other").forEach { language ->
+                                ListItem{
+                                    sx {
+                                        paddingLeft=10.px
+                                    }
+                                    ListItemIcon {
+                                        Checkbox{
+                                            onChange={_, checked->
+                                                console.log(language)
+                                                console.log(checked)
+                                            }
+                                        }
+                                    }
+                                    ListItemText{
+                                        primary=ReactNode(language)
+                                    }
+                                    Typography{
+                                        variant = TypographyVariant.body2
+                                        +"(2)"
+                                    }
+                                }
+                            }
+
                         }
                     }
-                    Divider{}
-
                 }
             }
         }
-    }
 }
+
