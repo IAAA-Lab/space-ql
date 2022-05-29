@@ -8,11 +8,30 @@ type MetaDataPage {
     metaData: [MetaData]
 }
 
-type MetaData {
-    id: String
-    data: ContentData
-    content: String
+# Colección de metadatos
+type MetadataRecord { # Orientado lo exclusivo del metadato y cualquier truco para aumentar riqueza en la lista
+    id: String # fileIdentifier
+    title: String # computar segun title del recurso
+    description: String
+    primaryTopic: Resource
+    type: String # MD_ScopeCode
 }
+
+union Resource = Dataset | Service  # MD_ScopeCode
+
+# Colección de metadatos
+type Service {
+    title: String # identificationInfo/SV_ServiceIdentification ... title
+    coupledDatasets: [MetadataRecord] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
+                                      # inspire-cobertura-terrestre-sigpac-atom => inspire-cobertura-terrestre-sigpac {primartyTopic es un Dataset
+}
+type Dataset {
+    title: String
+    coupledServices: [MetadataRecord] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
+                                        # inspire-cobertura-terrestre-sigpac => inspire-cobertura-terrestre-sigpac-atom, -wms {primartyTopic es un Dataset
+}
+
+#
 
 
 type Format {
@@ -24,7 +43,11 @@ type Transfer {
     URL: String
 }
 
-type ContentData {
+type ContentMetadata {
+    title: String,
+    description: String
+
+
     language: String,
     uploadDate: String,
     scope: String,
