@@ -248,16 +248,16 @@ for index, row in metadataFile.iterrows():
     # Load data to ElasticSearch
     es.index(index=INDICES['records'], id=recordDoc['ID'], document=recordDoc)
     
-    print('RECORD ' + recordDoc['type'])
-    print( recordDoc['type'] == 'service')
     if(recordDoc['type'] == 'service'):
         serviceDoc = {
+            'id' : recordDoc['ID'],
             'title' : recordDoc['title'],
             'coupledDatasets' : []
         }
         es.index(index=INDICES['services'], id=recordDoc['ID'], document=serviceDoc)
     elif(recordDoc['type'] == 'dataset'):
         datasetDoc = {
+            'id' : recordDoc['ID'],
             'title' : recordDoc['title'],
             'coupledServices' : []
         }
