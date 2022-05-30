@@ -10,7 +10,9 @@ data class MetadataRecord(
     val title: String,
     val description: String,
     // deberia ser Service o Dataset
-    val primaryTopic: Any,
+    // TODO: No va a estar almacenado en la bbdd(?) asi que se
+    // inicializa a null por ahora
+    val primaryTopic: Any? = null,
     val type: String,
     val details: ContentMetadata,
 //    val content: String?
