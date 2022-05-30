@@ -1,14 +1,14 @@
 package application
 
-import application.model.MetadataPage
-import application.model.MetadataElasticsearchRepository
-import application.model.MetadataRecord
+import application.model.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
 class BasicService(
-    private val metadataRepository : MetadataElasticsearchRepository
+    private val metadataRepository : MetadataElasticsearchRepository,
+    private val serviceRepository : ServiceElasticsearchRepository,
+    private val datasetRepository : DatasetElasticsearchRepository
 ) {
 
     /*
@@ -31,6 +31,17 @@ class BasicService(
         }
 
         val foundPage = foundList.subList(from, to)
+
+        for(i in 0 until foundPage.size){
+            var record = foundPage[i]
+            if(record.type == "service"){
+                val service = serviceRepository.findById(record.ID)
+                record.primaryTopic = service
+            } else if(record.type == "dataset") {
+                val dataset = datasetRepository.findById(record.ID)
+                record.primaryTopic = dataset
+            }
+        }
 
         return MetadataPage(totalPages, foundPage)
     }

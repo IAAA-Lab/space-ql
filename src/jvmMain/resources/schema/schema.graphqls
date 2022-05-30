@@ -11,7 +11,7 @@ type MetaDataPage {
 
 # Colección de metadatos
 type MetadataRecord { # Orientado lo exclusivo del metadato y cualquier truco para aumentar riqueza en la lista
-    id: String # fileIdentifier
+    ID: String # fileIdentifier
     title: String # computar segun title del recurso
     description: String
     primaryTopic: Resource
@@ -59,7 +59,7 @@ type ContentMetadata {
 #    son necesarios aqui??
 #    title: String,
 #    description: String
-    languages: [String],     # Hay mas de un lenguaje para cada elemento
+    language: String,     # Hay mas de un lenguaje para cada elemento
     uploadDate: String,
 #    scope: String,
     contactPoint: ContactPoint,

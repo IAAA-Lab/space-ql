@@ -5,14 +5,12 @@ import org.springframework.data.elasticsearch.annotations.Document
 
 @Document(indexName = "sql_records")
 data class MetadataRecord(
-    @Id val id: String,
+    @Id val ID: String,
     //@Field(type = FieldType.Nested, includeInParent = true)
     val title: String,
     val description: String,
     // deberia ser Service o Dataset
-    // TODO: No va a estar almacenado en la bbdd(?) asi que se
-    // inicializa a null por ahora
-    val primaryTopic: Any? = null,
+    var primaryTopic: Any? = null,
     val type: String,
     val details: ContentMetadata,
 //    val content: String?
@@ -42,7 +40,8 @@ data class ContactPoint (
 )
 
 data class ContentMetadata (
-    val languages: List<String>?,
+    // Es uno solo
+    val language: String?,
     val uploadDate: String?,
 //    val scope: String?,
 //    val standard: String?,
