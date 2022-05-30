@@ -47,9 +47,13 @@ for serviceRaw in servicesRaw['hits']['hits']:
             2 : dsId.rpartition('.')[0],
         }
         if (serviceId in dsId) or (dsId in serviceId) or (len(substrings[0]) > 0 and substrings[0] in dsId) or (len(substrings[1]) > 0 and substrings[1] in dsId) or (len(substrings[2]) > 0 and substrings[2] in dsId) :
-            relatedDatasets.append(dsId)
+            dsRecord = es.get(index=INDICES['records'], id=dsId)
+            relatedDatasets.append(dsRecord['_source'])
+
         elif (len(dsSubstrings[0]) > 0 and dsSubstrings[0] in serviceId) or (len(dsSubstrings[1]) > 0 and dsSubstrings[1] in serviceId) or (len(dsSubstrings[2]) > 0 and dsSubstrings[2] in serviceId):
-            relatedDatasets.append(dsId)
+            dsRecord = es.get(index=INDICES['records'], id=dsId)
+            relatedDatasets.append(dsRecord['_source'])
+
     # actualizar el servicio
     serviceDoc = {
             'id' : serviceId,
@@ -77,9 +81,13 @@ for datasetRaw in datasetsRaw['hits']['hits']:
             2 : srvId.rpartition('.')[0],
         }
         if (datasetId in srvId) or (srvId in datasetId) or (len(substrings[0]) > 0 and substrings[0] in srvId) or (len(substrings[1]) > 0 and substrings[1] in srvId) or (len(substrings[2]) > 0 and substrings[2] in srvId) :
-            relatedServices.append(srvId)
+            srvRecord = es.get(index=INDICES['records'], id=srvId)
+            relatedServices.append(srvRecord['_source'])
+
         elif (len(srvSubstrings[0]) > 0 and srvSubstrings[0] in datasetId) or (len(srvSubstrings[1]) > 0 and srvSubstrings[1] in datasetId) or (len(srvSubstrings[2]) > 0 and srvSubstrings[2] in datasetId):
-            relatedServices.append(srvId)
+            srvRecord = es.get(index=INDICES['records'], id=srvId)
+            relatedServices.append(srvRecord['_source'])
+
     # actualizar el dataset
     datasetDoc = {
             'id' : datasetId,
