@@ -16,6 +16,12 @@ data class MetadataRecord(
 //    val content: String?
 )
 
+data class ResourceElement(
+    val type: String,
+    val data: Any
+)
+
+
 data class MetadataPage(
     val totalPages: Int,
     val metaData: List<MetadataRecord>

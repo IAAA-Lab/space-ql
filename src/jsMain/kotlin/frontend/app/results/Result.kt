@@ -1,6 +1,8 @@
 package frontend.app.results
 
+import Dataset
 import MetadataRecord
+import Service
 import csstype.px
 import mui.icons.material.Cloud
 import mui.icons.material.InsertDriveFileOutlined
@@ -62,6 +64,19 @@ val result = FC<ResultProps> { props ->
                 Typography {
                     variant = TypographyVariant.body2
                     +"${props.data.description.take(500)}${extra}"
+                }
+                Typography {
+                    variant = TypographyVariant.body2
+                    when(props.data.type) {
+                        "service" -> {
+                            val topic = props.data.primaryTopic as Service
+                            +"Related Datasets: ${topic.coupledDatasets?.size}"
+                        }
+                        "dataset" -> {
+                            val topic = props.data.primaryTopic as Dataset
+                            +"Related Services: ${topic.coupledServices?.size}"
+                        }
+                    }
                 }
             }
         }

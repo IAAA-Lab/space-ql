@@ -10,21 +10,23 @@ import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.polymorphic
+import kotlinx.serialization.modules.subclass
 
+private val serializer = SerializersModule {
+    polymorphic(Resource::class){
+        subclass(Service::class)
+        subclass(Dataset::class)
+    }
+}
+
+val JSON = Json {
+    serializersModule = serializer
+}
 
 val jsonClient = HttpClient {
-    install(JsonFeature) { serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
-        isLenient = false
-        ignoreUnknownKeys = false
-        allowSpecialFloatingPointValues = true
-        useArrayPolymorphism = false
-        SerializersModule {
-            polymorphic(Resource::class) {
-                Service::class  Service.serializer()
-                Dataset::class  Dataset.serializer()
-            }
-        }
-    }) }
+    install(JsonFeature) { serializer = KotlinxSerializer(JSON) }
 }
 
 suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): MetaDataPage {
@@ -48,20 +50,24 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): 
                         description,
                         type,
                         primaryTopic{
+                           
                             __typename
                             ...on Dataset {
+                                type,
                                 title,
                                 coupledServices{
                                     ID
                                 }
                             }
                             ...on Service {
+                                type,
                                 title,
                                 coupledDatasets{
                                     ID
                                 }
                             }
                         }
+                 
                         details{
                             language,
                             uploadDate,

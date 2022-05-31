@@ -21,7 +21,7 @@ class BasicService(
 
         val resultSize = foundList.size
         var totalPages = resultSize / limit
-        if(resultSize % limit != 0) totalPages = totalPages +1
+        if(resultSize % limit != 0) totalPages += 1
 
         val from = offset
         var to = from + limit
@@ -49,11 +49,9 @@ class BasicService(
     fun findData(text: String?, order: String) : List<MetadataRecord> {
         // Elasticsearch doesn't apply sorting to text fields, only keyword fields can be used for sorting
         // So it is going to be done in the server
-        val found: List<MetadataRecord>
 
-        found = if(text != null){
+        val found: List<MetadataRecord> = if(text != null){
             metadataRepository.findByTitleOrDescription(text, text, PageRequest.of(0,527)).toList()
-
         } else {
             metadataRepository.findAll().toList()
         }
