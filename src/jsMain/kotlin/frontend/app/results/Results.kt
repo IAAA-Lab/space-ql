@@ -1,6 +1,6 @@
 package frontend.app.results
 
-import MetaData
+import MetadataRecord
 import csstype.*
 import frontend.app.results.OrderSelector.OrderSelector
 import frontend.app.results.PageNav.PageNav
@@ -9,14 +9,11 @@ import frontend.common.Sizes
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
-import react.ReactNode
-import react.dom.events.ChangeEventHandler
 
 external interface ResultsProps : Props {
-    var resultList : List<MetaData>
+    var resultList : List<MetadataRecord>
     var maxPages: Int 
     var currentPage: Int
     var onPageSelect: (Int) -> Unit

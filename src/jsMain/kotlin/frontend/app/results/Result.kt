@@ -1,6 +1,6 @@
 package frontend.app.results
 
-import MetaData
+import MetadataRecord
 import csstype.px
 import mui.icons.material.Cloud
 import mui.icons.material.InsertDriveFileOutlined
@@ -15,24 +15,27 @@ import react.router.NavigateOptions
 import react.router.useNavigate
 
 external interface ResultProps : Props {
-    var data: MetaData
+    var data: MetadataRecord
 }
 
 val result = FC<ResultProps> { props ->
     val navigate = useNavigate()
-    val extra = (if(props.data.data.fileDescription.length > 500)"..." else "")
+    val extra = (if(props.data.description.length > 500)"..." else "")
 
     Card {
+        sx {
+            marginBottom = 10.px
+        }
 
         this.onClick = {
-            navigate("/id/${props.data.id}",
+            navigate("/id/${props.data.ID}",
                 options = object : NavigateOptions {
                     override var replace: Boolean? = null
                     override var state: Any? = null
                 })
         }
 
-        key = props.data.id
+        key = props.data.ID
         variant = PaperVariant.outlined
         CardActionArea {
             sx {
@@ -48,17 +51,17 @@ val result = FC<ResultProps> { props ->
                             marginTop = 5.px
                             marginRight = 5.px
                         }
-                        when(props.data.data.scope) {
+                        when(props.data.type) {
                             "service" -> Cloud()
                             "dataset" -> Storage()
                             else -> InsertDriveFileOutlined()
                         }
                     }
-                    +"${props.data.data.fileName}"
+                    +"${props.data.title}"
                 }
                 Typography {
                     variant = TypographyVariant.body2
-                    +"${props.data.data.fileDescription.take(500)}${extra}"
+                    +"${props.data.description.take(500)}${extra}"
                 }
             }
         }

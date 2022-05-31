@@ -1,6 +1,6 @@
 package frontend.app
 
-import MetaData
+import MetadataRecord
 import csstype.Auto
 import csstype.Display
 import csstype.GridTemplateAreas
@@ -11,9 +11,7 @@ import frontend.app.results.Results
 import frontend.app.searchbar.SearchBar
 import frontend.common.Area
 import frontend.common.Sizes
-import frontend.getResults
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import mui.system.Box
 import mui.system.sx
 import react.FC
@@ -27,8 +25,8 @@ external interface HomeProps : Props {
     var searchTerm : String
     var currentPage : Int
     var maxPage : Int
-    var resultList : List<MetaData>
-    var setResultList : (List<MetaData>) -> Unit
+    var resultList : List<MetadataRecord>
+    var setResultList : (List<MetadataRecord>) -> Unit
     var setMaxPage : (Int) -> Unit
     var setSearchTerm : (String) -> Unit
     var setResultsOrder : (String) -> Unit

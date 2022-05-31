@@ -1,6 +1,6 @@
 package frontend.app
 
-import MetaData
+import MetadataRecord
 import csstype.*
 import frontend.app.header.Header
 import frontend.common.Area
@@ -19,7 +19,7 @@ import react.router.dom.BrowserRouter
 val scope = MainScope()
 
 val app = FC<Props> {
-    var resultList by useState(emptyList<MetaData>())
+    var resultList by useState(emptyList<MetadataRecord>())
     val (maxPage, setMaxPage) = useState(0)
     val (currentPage, setCurrentPage) = useState(1)
     val (searchTerm, setSearchTerm) = useState("")
