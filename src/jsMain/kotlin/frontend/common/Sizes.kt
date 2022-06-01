@@ -9,10 +9,7 @@ object Sizes {
     }
 
     object Sidebar {
-        val Width = 210.px
+        val Width = 250.px
     }
 
-    object EmptySide {
-        val Width = 100.px
-    }
 }

@@ -1,5 +1,6 @@
 package frontend.app
 
+import Facets
 import MetadataRecord
 import csstype.Auto
 import csstype.Display
@@ -19,7 +20,7 @@ import react.Props
 import react.dom.html.ReactHTML
 
 external interface HomeProps : Props {
-    var scope : CoroutineScope
+    var facets : List<Facets>
     var resultsLimit : Int
     var resultsOrder: String
     var searchTerm : String
@@ -49,7 +50,9 @@ val homeContent = FC<HomeProps> { props ->
 
             gridArea = Area.Content
         }
-        Sidebar()
+        Sidebar{
+            this.facets = props.facets
+        }
 
         Box {
             sx {

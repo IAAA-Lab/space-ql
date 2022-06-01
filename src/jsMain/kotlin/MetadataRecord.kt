@@ -36,20 +36,23 @@ data class Dataset(
     val __typename: String = "Dataset"
 ) : Resource
 
-
-//object ResourceSerializer : JsonTransformingSerializer<Resource>(PolymorphicSerializer(Resource::class)) {
-//    override fun transformDeserialize(element: JsonElement): JsonElement {
-//        println(element)
-//        val type = element.jsonObject["type"]!!
-//        val data = element.jsonObject["data"] ?: return element
-//        return JsonObject(data.jsonObject.toMutableMap().also { it["type"] = type })
-//    }
-//}
-
 @Serializable
 data class MetaDataPage(
+    val facets: List<Facets>,
     val totalPages: Int,
     val metaData: List<MetadataRecord>
+)
+
+@Serializable
+data class SubFacets(
+    var field : String?,
+    var docNum : Int?
+)
+
+@Serializable
+data class Facets(
+    var name: String?,
+    var values: List<SubFacets>?
 )
 
 @Serializable

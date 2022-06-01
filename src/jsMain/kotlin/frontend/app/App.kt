@@ -1,5 +1,6 @@
 package frontend.app
 
+import Facets
 import MetadataRecord
 import csstype.*
 import frontend.app.header.Header
@@ -24,13 +25,16 @@ val app = FC<Props> {
     val (currentPage, setCurrentPage) = useState(1)
     val (searchTerm, setSearchTerm) = useState("")
     val (resultsOrder, setResultsOrder) = useState("Relevance")
+    var facetsList by useState(emptyList<Facets>())
     val resultsLimit = 10
+    // TODO - Facets
 
     useEffectOnce {
         scope.launch {
             val mdPage = getResults(null, resultsLimit, 0, resultsOrder)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
+            facetsList = mdPage.facets
         }
     }
 
@@ -69,6 +73,7 @@ val app = FC<Props> {
                         index = true
                         element = createElement(homeContent,
                             props = jso{
+                                this.facets = facetsList
                                 this.resultsLimit = resultsLimit
                                 this.resultsOrder = resultsOrder
                                 this.searchTerm = searchTerm

@@ -43,6 +43,13 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): 
                 limit: ${limit},
                 offset: ${offset},
                 order: "$order") {
+                    facets {
+                        name,
+                        values {
+                            field,
+                            docNum
+                        }
+                    }
                     totalPages,
                     metaData{
                         ID,
@@ -50,7 +57,6 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): 
                         description,
                         type,
                         primaryTopic{
-                           
                             __typename
                             ...on Dataset {
                                 type,
@@ -67,7 +73,6 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): 
                                 }
                             }
                         }
-                 
                         details{
                             language,
                             uploadDate,
