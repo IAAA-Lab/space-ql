@@ -25,17 +25,21 @@ val app = FC<Props> {
     val (currentPage, setCurrentPage) = useState(1)
     val (searchTerm, setSearchTerm) = useState("")
     val (resultsOrder, setResultsOrder) = useState("Relevance")
-    var facetsList by useState(emptyList<Facets>())
+    var facetsList by useState(mutableListOf<Facets>())
     val resultsLimit = 10
-    // TODO - Facets
 
     useEffectOnce {
         scope.launch {
             val mdPage = getResults(null, resultsLimit, 0, resultsOrder)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
-            facetsList = mdPage.facets
+            facetsList = mdPage.facets as MutableList<Facets>
         }
+    }
+
+    useEffect(facetsList) {
+        val resultAux : MutableList<MetadataRecord>  = ArrayList(resultList)
+
     }
 
     fun getResultsProp(term: String, offset: Int, order: String) {
@@ -74,6 +78,21 @@ val app = FC<Props> {
                         element = createElement(homeContent,
                             props = jso{
                                 this.facets = facetsList
+                                this.setChecked = { facet, subfacet, checked ->
+
+                                    // Esta copia es necesaria porque si no el estado
+                                    // no se actualiza y el componente no se vuelve
+                                    // a renderizar (Deep copy)
+                                    val facetsAux : MutableList<Facets> = ArrayList(facetsList)
+
+                                    facetsAux
+                                        .find { el -> el.name == facet }
+                                        ?.values
+                                        ?.find{ el -> el.field == subfacet}?.checked = checked
+
+                                    facetsList = facetsAux
+
+                                }
                                 this.resultsLimit = resultsLimit
                                 this.resultsOrder = resultsOrder
                                 this.searchTerm = searchTerm

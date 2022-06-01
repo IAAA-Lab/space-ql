@@ -12,7 +12,6 @@ import frontend.app.results.Results
 import frontend.app.searchbar.SearchBar
 import frontend.common.Area
 import frontend.common.Sizes
-import kotlinx.coroutines.CoroutineScope
 import mui.system.Box
 import mui.system.sx
 import react.FC
@@ -21,6 +20,7 @@ import react.dom.html.ReactHTML
 
 external interface HomeProps : Props {
     var facets : List<Facets>
+    var setChecked : (String, String, Boolean) -> Unit
     var resultsLimit : Int
     var resultsOrder: String
     var searchTerm : String
@@ -52,6 +52,7 @@ val homeContent = FC<HomeProps> { props ->
         }
         Sidebar{
             this.facets = props.facets
+            this.setChecked = { facet, subfacet, checked -> props.setChecked(facet, subfacet, checked)}
         }
 
         Box {

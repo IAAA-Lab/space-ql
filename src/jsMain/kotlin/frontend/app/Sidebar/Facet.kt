@@ -12,7 +12,7 @@ import react.ReactNode
 external interface FacetProps : Props {
     var title : String
     var subFacets  : List<SubFacets>
-    // TODO - setChecked(subfacet) // Porque la facet se pone desde la anterior llamada
+    var setChecked : (String, Boolean) -> Unit // Porque la facet se pone desde la anterior llamada
 }
 
 val Facet = FC<FacetProps> {
@@ -28,9 +28,9 @@ val Facet = FC<FacetProps> {
                 }
                 ListItemIcon {
                     Checkbox{
-                        onChange={_, checked->
-                            console.log(checked)
-                            // TODO - setChecked(facet, subfacet)
+                        checked = subFacet.checked
+                        onChange={e, _->
+                            it.setChecked(subFacet.field!!, e.target.checked)
                         }
                     }
                 }

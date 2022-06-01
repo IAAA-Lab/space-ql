@@ -1,9 +1,5 @@
 
 import kotlinx.serialization.*
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonTransformingSerializer
-import kotlinx.serialization.json.jsonObject
 
 
 @Serializable
@@ -46,7 +42,8 @@ data class MetaDataPage(
 @Serializable
 data class SubFacets(
     var field : String?,
-    var docNum : Int?
+    var docNum : Int?,
+    var checked : Boolean = false
 )
 
 @Serializable
