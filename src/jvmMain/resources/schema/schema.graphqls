@@ -5,8 +5,19 @@ type Query {
 }
 
 type MetaDataPage {
+    facets: [Facets]
     totalPages: Int,
     metaData: [MetadataRecord]
+}
+
+type Facets {
+    name: String
+    values: [SubFacets]
+}
+
+type SubFacets {
+    field: String,
+    docNum: Int
 }
 
 # Colección de metadatos

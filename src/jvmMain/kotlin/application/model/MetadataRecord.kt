@@ -16,13 +16,17 @@ data class MetadataRecord(
 //    val content: String?
 )
 
-data class ResourceElement(
-    val type: String,
-    val data: Any
+data class SubFacets(
+    var field : String?,
+    var docNum : Int?
 )
 
-
+data class Facets(
+    var name: String?,
+    var values: List<SubFacets>?
+)
 data class MetadataPage(
+    val facets: List<Facets>,
     val totalPages: Int,
     val metaData: List<MetadataRecord>
 )

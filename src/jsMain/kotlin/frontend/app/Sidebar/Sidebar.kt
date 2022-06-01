@@ -34,7 +34,7 @@ val Sidebar = FC<Props> {
 
                         Typography{
                             variant = TypographyVariant.subtitle1
-                            +"Language"
+                            +"Resource Type"
                         }
                         List {
                             listOf("Dataset","Service","Other").forEach { type ->
