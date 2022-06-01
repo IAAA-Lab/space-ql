@@ -3,7 +3,7 @@ package frontend.app.results
 import Dataset
 import MetadataRecord
 import Service
-import csstype.px
+import csstype.*
 import mui.icons.material.Cloud
 import mui.icons.material.InsertDriveFileOutlined
 import mui.icons.material.Storage
@@ -47,36 +47,87 @@ val result = FC<ResultProps> { props ->
             CardContent {
 
                 Typography {
-                    variant = TypographyVariant.h5
-                    Icon {
-                        sx {
-                            marginTop = 5.px
-                            marginRight = 5.px
-                        }
-                        when(props.data.type) {
-                            "service" -> Cloud()
-                            "dataset" -> Storage()
-                            else -> InsertDriveFileOutlined()
-                        }
-                    }
-                    +"${props.data.title}"
-                }
-                Typography {
-                    variant = TypographyVariant.body2
-                    +"${props.data.description.take(500)}${extra}"
-                }
-                Typography {
-                    variant = TypographyVariant.body2
+                   sx {
+                       fontSize = FontSize.medium
+                   }
+                    asDynamic().color = "text.secondary"
+
                     when(props.data.type) {
                         "service" -> {
-                            val topic = props.data.primaryTopic as Service
-                            +"Related Datasets: ${topic.coupledDatasets?.size}"
+                            Icon {
+                                sx {
+                                    marginTop = 5.px
+                                    marginRight = 5.px
+                                }
+                                Cloud()
+                            }
+                            +" Service"
                         }
                         "dataset" -> {
-                            val topic = props.data.primaryTopic as Dataset
-                            +"Related Services: ${topic.coupledServices?.size}"
+                            Icon {
+                                sx {
+                                    marginTop = 5.px
+                                    marginRight = 5.px
+                                }
+                                Storage()
+                            }
+                            +" Dataset"
+                        }
+                        else -> {
+                            Icon {
+                                sx {
+                                    marginTop = 5.px
+                                    marginRight = 5.px
+                                }
+                                InsertDriveFileOutlined()
+                            }
+                            +" Unknown type"
                         }
                     }
+                }
+                Typography {
+                    variant = TypographyVariant.h5
+                    +props.data.title
+                }
+                Typography {
+//                    variant = TypographyVariant.body2
+                    sx {
+                        marginBottom = 15.px
+                    }
+                    +"${props.data.description.take(500)}${extra}"
+                }
+                Box {
+                    sx{
+                        display = Display.flex
+                    }
+                    Typography {
+                        variant = TypographyVariant.body2
+                        sx{
+                            fontWeight = FontWeight.bold
+                            fontSize = 1.rem
+                        }
+                        when(props.data.type) {
+                            "service" -> {
+                                val topic = props.data.primaryTopic as Service
+                                +"Related Datasets: ${topic.coupledDatasets?.size}"
+                            }
+                            "dataset" -> {
+                                val topic = props.data.primaryTopic as Dataset
+                                +"Related Services: ${topic.coupledServices?.size}"
+                            }
+                        }
+                    }
+
+                    Typography {
+                        variant = TypographyVariant.body2
+                        sx{
+                            fontWeight = FontWeight.bold
+                            fontSize = 1.rem
+                            marginInline = 10.px
+                        }
+                        +"Language: ${props.data.details?.language}"
+                    }
+
                 }
             }
         }
