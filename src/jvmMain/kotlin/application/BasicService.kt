@@ -1,7 +1,6 @@
 package application
 
 import application.model.*
-import io.ktor.utils.io.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 @Service
@@ -51,18 +50,101 @@ class BasicService(
         if(language != null && language.isNotEmpty()){
             retList = filterLanguage(retList, language)
         }
-//        if(resType != null){
-//
-//        }
-//        if(related != null){
-//
-//        }
-
-
+        if(resType != null && resType.isNotEmpty()){
+            retList = filterType(retList, resType)
+        }
+        if(related != null && related.isNotEmpty()){
+            retList = filterRelated(retList, related)
+        }
 
         return retList
     }
 
+
+    private fun filterRelated(
+        recordList: MutableList<MetadataRecord>,
+        related: List<String>
+    ): MutableList<MetadataRecord> {
+        var retList : MutableList<MetadataRecord> = ArrayList(recordList)
+
+        val zero = "0" in related
+        val one = "1" in related
+        val two = "2" in related
+        val three = "3" in related
+        val plusThree = "+3" in related
+
+        var relatedFilter = ArrayList<Int>()
+
+        if(zero){
+            relatedFilter.add(0)
+        }
+        if(one){
+            relatedFilter.add(1)
+        }
+        if(two){
+            relatedFilter.add(2)
+        }
+        if(three){
+            relatedFilter.add(3)
+        }
+
+
+        retList = retList.filter {el ->
+            checkTopic(el, relatedFilter, plusThree)
+        } as MutableList<MetadataRecord>
+
+
+        return retList
+
+    }
+
+    private fun checkTopic(topic : Any, filter : ArrayList<Int>, plusThree : Boolean ) : Boolean {
+        return if(topic is application.model.Service) {
+            if(plusThree){
+                (topic.coupledDatasets.size in filter) || (topic.coupledDatasets.size > 3)
+            }else{
+                topic.coupledDatasets.size in filter
+            }
+        } else if(topic is Dataset) {
+            if(plusThree){
+                (topic.coupledServices.size in filter) || (topic.coupledServices.size > 3)
+            }else{
+                topic.coupledServices.size in filter
+            }
+        } else {
+            false
+        }
+    }
+
+    private fun filterType(
+        recordList: MutableList<MetadataRecord>,
+        resType: List<String>
+    ): MutableList<MetadataRecord> {
+        var retList : MutableList<MetadataRecord> = ArrayList(recordList)
+
+        val serv = "Service" in resType
+        val dat = "Dataset" in resType
+        val otherType = "Other" in resType
+
+        var typeFilter = ArrayList<String>()
+
+        if(serv){
+            typeFilter.add("service")
+        }
+        if(dat){
+            typeFilter.add("dataset")
+        }
+
+        if(otherType){
+            retList = retList.filter { el -> el.type in typeFilter || (el.type != "service" && el.type != "dataset" )  } as MutableList<MetadataRecord>
+        } else if(serv || dat){
+            retList = retList.filter { el -> el.type in typeFilter } as MutableList<MetadataRecord>
+        }
+
+        return retList
+
+    }
+    
     private fun filterLanguage(
         recordList: MutableList<MetadataRecord>,
         language: List<String>

@@ -26,9 +26,9 @@ val app = FC<Props> {
     val (searchTerm, setSearchTerm) = useState("")
     val (resultsOrder, setResultsOrder) = useState("Relevance")
     var facetsList by useState(mutableListOf<Facets>())
-    var langFacet by useState(mutableListOf<String>())
-    var typeFacet by useState(mutableListOf<String>())
-    var relatedFacet by useState(mutableListOf<String>())
+    val langFacet by useState(mutableListOf<String>())
+    val typeFacet by useState(mutableListOf<String>())
+    val relatedFacet by useState(mutableListOf<String>())
     val resultsLimit = 10
 
     useEffectOnce {
@@ -41,39 +41,11 @@ val app = FC<Props> {
     }
 
     fun updateWithFacets() {
-        // TODO - treat facets on the backend or send the whole content
         if(facetsList.isNotEmpty()){
-            // Language - Spanish, English, Other/Unknown
-            val langs = facetsList.find { el -> el.name == "Language" }
-
-            val spa = langs?.values?.find{ el -> el.field == "Spanish"}?.checked
-            val eng = langs?.values?.find{ el -> el.field == "English"}?.checked
-            val otherLang = langs?.values?.find{ el -> el.field == "Other/Unknown"}?.checked
-
-            if(spa == true){
-                langFacet.add("Spanish")
-            } else{
-                do{
-                    val obtained = langFacet.remove("Spanish")
-                }while(obtained)
-
-            }
-
-            if(eng == true){
-                langFacet.add("English")
-            } else{
-                do{
-                    val obtained = langFacet.remove("English")
-                }while(obtained)
-            }
-
-            if(otherLang == true){
-                langFacet.add("Other/Unknown")
-            } else{
-                do{
-                    val obtained = langFacet.remove("Other/Unknown")
-                }while(obtained)
-            }
+            // Update the facets filter applied
+            getLangFacets(facetsList, langFacet)
+            getTypeFacets(facetsList, typeFacet)
+            getRelatedFacets(facetsList, relatedFacet)
 
             scope.launch {
                 val mdPage = getResults(searchTerm, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet)
@@ -101,6 +73,14 @@ val app = FC<Props> {
             val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
+            var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
+
+            facetsAux.forEach {facet ->
+                facet.values?.forEach {subfacet ->
+                    subfacet.docNum = mdPage.facets.find{el -> el.name == facet.name}?.values?.find{ el -> el.field == subfacet.field}?.docNum
+                }
+            }
+            facetsList = facetsAux
         }
     }
 
@@ -176,4 +156,130 @@ val app = FC<Props> {
     }
 
 
+}
+
+private fun getLangFacets(
+    facetsList: MutableList<Facets>,
+    langFacet: MutableList<String>
+) {
+    val langs = facetsList.find { el -> el.name == "Language" }
+
+    val spa = langs?.values?.find { el -> el.field == "Spanish" }?.checked
+    val eng = langs?.values?.find { el -> el.field == "English" }?.checked
+    val otherLang = langs?.values?.find { el -> el.field == "Other/Unknown" }?.checked
+
+    if (spa == true) {
+        langFacet.add("Spanish")
+    } else {
+        do {
+            val obtained = langFacet.remove("Spanish")
+        } while (obtained)
+
+    }
+
+    if (eng == true) {
+        langFacet.add("English")
+    } else {
+        do {
+            val obtained = langFacet.remove("English")
+        } while (obtained)
+    }
+
+    if (otherLang == true) {
+        langFacet.add("Other/Unknown")
+    } else {
+        do {
+            val obtained = langFacet.remove("Other/Unknown")
+        } while (obtained)
+    }
+}
+
+private fun getTypeFacets(
+    facetsList: MutableList<Facets>,
+    typeFacet: MutableList<String>
+) {
+    val types = facetsList.find { el -> el.name == "Resource type" }
+
+    val serv = types?.values?.find { el -> el.field == "Service" }?.checked
+    val dat = types?.values?.find { el -> el.field == "Dataset" }?.checked
+    val otherType = types?.values?.find { el -> el.field == "Other" }?.checked
+
+    if (serv == true) {
+        typeFacet.add("Service")
+    } else {
+        do {
+            val obtained = typeFacet.remove("Service")
+        } while (obtained)
+
+    }
+
+    if (dat == true) {
+        typeFacet.add("Dataset")
+    } else {
+        do {
+            val obtained = typeFacet.remove("Dataset")
+        } while (obtained)
+    }
+
+    if (otherType == true) {
+        typeFacet.add("Other")
+    } else {
+        do {
+            val obtained = typeFacet.remove("Other")
+        } while (obtained)
+    }
+}
+
+private fun getRelatedFacets(
+    facetsList: MutableList<Facets>,
+    relatedFacet: MutableList<String>
+) {
+    val relateds = facetsList.find { el -> el.name == "Related Resources" }
+
+    val zero = relateds?.values?.find { el -> el.field == "0" }?.checked
+    val one = relateds?.values?.find { el -> el.field == "1" }?.checked
+    val two = relateds?.values?.find { el -> el.field == "2" }?.checked
+    val three = relateds?.values?.find { el -> el.field == "3" }?.checked
+    val plusThree = relateds?.values?.find { el -> el.field == "+3" }?.checked
+
+    if (zero == true) {
+        relatedFacet.add("0")
+    } else {
+        do {
+            val obtained = relatedFacet.remove("0")
+        } while (obtained)
+
+    }
+
+    if (one == true) {
+        relatedFacet.add("1")
+    } else {
+        do {
+            val obtained = relatedFacet.remove("1")
+        } while (obtained)
+    }
+
+    if (two == true) {
+        relatedFacet.add("2")
+    } else {
+        do {
+            val obtained = relatedFacet.remove("2")
+        } while (obtained)
+    }
+
+    if (three == true) {
+        relatedFacet.add("3")
+    } else {
+        do {
+            val obtained = relatedFacet.remove("3")
+        } while (obtained)
+    }
+
+    if (plusThree == true) {
+        relatedFacet.add("+3")
+    } else {
+        do {
+            val obtained = relatedFacet.remove("+3")
+        } while (obtained)
+    }
 }
