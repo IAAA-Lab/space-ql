@@ -17,6 +17,9 @@ class AllMetadataDataFetcher(
         @InputArgument limit: Int,
         @InputArgument offset: Int,
         @InputArgument order: String,
-    ): MetadataPage = basicService.search(text, limit, offset, order)
+        @InputArgument language: List<String>?,
+        @InputArgument resType: List<String>?,
+        @InputArgument related: List<String>?,
+    ): MetadataPage = basicService.search(text, limit, offset, order, language, resType, related)
 
 }

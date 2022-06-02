@@ -26,27 +26,23 @@ val app = FC<Props> {
     val (searchTerm, setSearchTerm) = useState("")
     val (resultsOrder, setResultsOrder) = useState("Relevance")
     var facetsList by useState(mutableListOf<Facets>())
+    var langFacet by useState(mutableListOf<String>())
+    var typeFacet by useState(mutableListOf<String>())
+    var relatedFacet by useState(mutableListOf<String>())
     val resultsLimit = 10
 
     useEffectOnce {
         scope.launch {
-            val mdPage = getResults(null, resultsLimit, 0, resultsOrder)
+            val mdPage = getResults(null, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
             facetsList = mdPage.facets as MutableList<Facets>
         }
     }
 
-    useEffect(facetsList) {
+    fun updateWithFacets() {
         // TODO - treat facets on the backend or send the whole content
-        // idea: Mandar en el search() unos campos language, resource type y related docs
-        // y en base a ellos hacer el filtrado y rehacer la busqueda.
-        // deberia ser sencillo si cada campo es un arrayList de Strings que
-        // contenga los campos que deben mirarse en el filter
-        // ej: language = [Spanish, English, Other] y si esta vacio que no filtre en base
-        // a eso
         if(facetsList.isNotEmpty()){
-            var resultAux : MutableList<MetadataRecord>  = ArrayList(resultList)
             // Language - Spanish, English, Other/Unknown
             val langs = facetsList.find { el -> el.name == "Language" }
 
@@ -54,28 +50,46 @@ val app = FC<Props> {
             val eng = langs?.values?.find{ el -> el.field == "English"}?.checked
             val otherLang = langs?.values?.find{ el -> el.field == "Other/Unknown"}?.checked
 
-            console.log(spa, eng, otherLang)
-
-            var langFilter = ArrayList<String>()
-            val spaFilter = arrayOf("Spanish", "Español", "spa" )
-            val engFilter = arrayOf("eng", "English")
-
             if(spa == true){
-                langFilter.addAll(spaFilter)
+                langFacet.add("Spanish")
+            } else{
+                do{
+                    val obtained = langFacet.remove("Spanish")
+                }while(obtained)
+
             }
+
             if(eng == true){
-                langFilter.addAll(engFilter)
+                langFacet.add("English")
+            } else{
+                do{
+                    val obtained = langFacet.remove("English")
+                }while(obtained)
             }
 
-            console.log(resultAux.size)
             if(otherLang == true){
-                resultAux = resultAux.filter { el -> el.details?.language in langFilter || (el.details?.language !in spaFilter && el.details?.language !in engFilter )  } as MutableList<MetadataRecord>
-            } else if(spa == true || eng == true){
-                resultAux = resultAux.filter { el -> el.details?.language in langFilter } as MutableList<MetadataRecord>
+                langFacet.add("Other/Unknown")
+            } else{
+                do{
+                    val obtained = langFacet.remove("Other/Unknown")
+                }while(obtained)
             }
-            console.log(resultAux.size)
 
-            resultList = resultAux
+            scope.launch {
+                val mdPage = getResults(searchTerm, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet)
+                setMaxPage(mdPage.totalPages)
+                resultList = mdPage.metaData
+                var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
+
+                facetsAux.forEach {facet ->
+                    facet.values?.forEach {subfacet ->
+                        subfacet.docNum = mdPage.facets.find{el -> el.name == facet.name}?.values?.find{ el -> el.field == subfacet.field}?.docNum
+                    }
+                }
+                facetsList = facetsAux
+
+                // Coger las facets y cambiarle el valor de docnum por el de estas
+            }
         }
 
         // resource type - Service, Dataset, Other
@@ -84,7 +98,7 @@ val app = FC<Props> {
 
     fun getResultsProp(term: String, offset: Int, order: String) {
         scope.launch {
-            val mdPage = getResults(term, resultsLimit, offset, order)
+            val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
         }
@@ -131,7 +145,7 @@ val app = FC<Props> {
                                         ?.find{ el -> el.field == subfacet}?.checked = checked
 
                                     facetsList = facetsAux
-
+                                    updateWithFacets()
                                 }
                                 this.resultsLimit = resultsLimit
                                 this.resultsOrder = resultsOrder

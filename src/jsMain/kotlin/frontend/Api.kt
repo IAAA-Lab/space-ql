@@ -29,7 +29,7 @@ val jsonClient = HttpClient {
     install(JsonFeature) { serializer = KotlinxSerializer(JSON) }
 }
 
-suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): MetaDataPage {
+suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>): MetaDataPage {
     val ret: GraphResponse<SearchResponse> = jsonClient.post("http://localhost:8080/graphql") {
         contentType(ContentType.Application.Json)
         var graphSearchText = ""
@@ -42,7 +42,10 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String): 
                 search(${graphSearchText}
                 limit: ${limit},
                 offset: ${offset},
-                order: "$order") {
+                order: "$order",
+                language: [${language.joinToString { "\"${it}\"" }}],
+                resType: [${resType.joinToString { "\"${it}\"" }}],
+                related: [${related.joinToString { "\"${it}\"" }}]) {
                     facets {
                         name,
                         values {
