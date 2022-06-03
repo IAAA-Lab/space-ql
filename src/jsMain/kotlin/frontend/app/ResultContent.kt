@@ -54,7 +54,7 @@ val resultContent = FC<ResultContentProps> { props ->
             if(data.ID != ""){
                 Box {
                     sx {
-                        marginInline = 60.px
+                        marginInline = 80.px
                     }
                     // Type of the Element
                     Typography {
@@ -128,6 +128,9 @@ val resultContent = FC<ResultContentProps> { props ->
                                 +"Related Resources"
                             }
                             Typography{
+                                sx {
+                                    marginLeft=20.px
+                                }
                                 asDynamic().color = "text.secondary"
                                 +"Other records that could be relevant"
                             }

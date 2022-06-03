@@ -30,7 +30,6 @@ val PageNav = FC<PageNavProps> { props ->
             color = PaginationColor.primary
             size = Size.large
             onChange = { e, number ->
-                console.log("clicked " + number.toString())
                 props.onPageClick(number.toInt())
             }
         }

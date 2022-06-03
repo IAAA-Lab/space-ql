@@ -12,6 +12,7 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
+import react.ReactNode
 import react.key
 import react.router.NavigateOptions
 import react.router.useNavigate
@@ -23,8 +24,6 @@ external interface ResultProps : Props {
 val result = FC<ResultProps> { props ->
     val navigate = useNavigate()
     val extra = (if(props.data.description.length > 500)"..." else "")
-
-    console.log(props.data.type)
 
     Card {
         sx {
@@ -91,12 +90,31 @@ val result = FC<ResultProps> { props ->
                     variant = TypographyVariant.h5
                     +props.data.title
                 }
-                Typography {
-//                    variant = TypographyVariant.body2
-                    sx {
-                        marginBottom = 15.px
+                Box{
+                    sx{
+                        display= Display.grid
+                        gridTemplateColumns = array(6.fr, 1.fr)
                     }
-                    +"${props.data.description.take(500)}${extra}"
+                    Typography {
+//                    variant = TypographyVariant.body2
+                        sx {
+                            marginBottom = 15.px
+                        }
+                        +"${props.data.description.take(500)}${extra}"
+                    }
+
+                    Box{
+                        sx{
+                            display= Display.grid
+                            gridTemplateColumns = array(1.fr)
+                        }
+                        props.data.details?.distributionFormats?.forEach {
+                            Chip{
+                                label = ReactNode(it.name)
+                            }
+                        }
+                    }
+
                 }
                 Box {
                     sx{

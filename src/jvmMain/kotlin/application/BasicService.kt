@@ -132,7 +132,8 @@ class BasicService(
 
     }
 
-    private fun checkTopic(topic : Any, filter : ArrayList<Int>, plusThree : Boolean ) : Boolean {
+    private fun checkTopic(record : MetadataRecord, filter : ArrayList<Int>, plusThree : Boolean ) : Boolean {
+        val topic = record.primaryTopic
         return if(topic is application.model.Service) {
             if(plusThree){
                 (topic.coupledDatasets.size in filter) || (topic.coupledDatasets.size > 3)
