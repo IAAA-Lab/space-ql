@@ -24,6 +24,8 @@ val result = FC<ResultProps> { props ->
     val navigate = useNavigate()
     val extra = (if(props.data.description.length > 500)"..." else "")
 
+    console.log(props.data.type)
+
     Card {
         sx {
             marginBottom = 10.px
@@ -106,15 +108,11 @@ val result = FC<ResultProps> { props ->
                             fontWeight = FontWeight.bold
                             fontSize = 1.rem
                         }
-                        when(props.data.type) {
-                            "service" -> {
-                                val topic = props.data.primaryTopic as Service
+                        val topic = props.data.primaryTopic
+                        if(topic != null && topic is Service) {
                                 +"Related Datasets: ${topic.coupledDatasets?.size}"
-                            }
-                            "dataset" -> {
-                                val topic = props.data.primaryTopic as Dataset
+                        } else if(topic != null && topic is Dataset){
                                 +"Related Services: ${topic.coupledServices?.size}"
-                            }
                         }
                     }
 

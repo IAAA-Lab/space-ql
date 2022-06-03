@@ -9,6 +9,41 @@ class BasicService(
     private val serviceRepository : ServiceElasticsearchRepository,
     private val datasetRepository : DatasetElasticsearchRepository
 ) {
+
+    fun getRecord(id: String) : MetadataRecord {
+        // Obtiene el record
+        val value = metadataRepository.findById(id)
+
+        // Obtiene el record del Optional
+        val retValue = value.get()
+
+        // Es servicio, obtener los coupled datasets
+        if(retValue.type == "service"){
+            val topic = serviceRepository.findById(id).get()
+
+            // Para cada coupled dataset no tenemos sus propios coupled services, asi que toca cogerlos
+            // como sabemos que es un dataset simplemente hay que coger el dataset con su id
+            // del contenedor de datasets
+            for(i in 0 until topic.coupledDatasets.size){
+                val ds = topic.coupledDatasets[i]
+                ds.primaryTopic = datasetRepository.findById(ds.ID).get()
+            }
+
+            retValue.primaryTopic = topic
+
+        } else if(retValue.type == "dataset"){
+            val topic = datasetRepository.findById(id).get()
+
+            for(i in 0 until topic.coupledServices.size){
+                val ds = topic.coupledServices[i]
+                ds.primaryTopic = serviceRepository.findById(ds.ID).get()
+            }
+
+            retValue.primaryTopic = topic
+        }
+        return retValue
+    }
+
     /*
      * Esta función implementa el sistema de búsqueda paginada, devolviendo los
      * resultados de la página indicada en el orden indicado.
@@ -24,19 +59,18 @@ class BasicService(
 
         val resultSize = foundList.size
         var totalPages = resultSize / limit
-        if(resultSize % limit != 0) totalPages += 1
+        if (resultSize % limit != 0) totalPages += 1
 
-        val from = offset
-        var to = from + limit
+        var to = offset + limit
 
-        if(to > foundList.size){
+        if (to > foundList.size) {
             to = foundList.size
         }
 
-        val foundPage = foundList.subList(from, to)
+        val foundPage = foundList.subList(offset, to)
 
 
-        return MetadataPage(foundFacets,totalPages, foundPage)
+        return MetadataPage(foundFacets, totalPages, foundPage)
     }
 
     private fun filterFacets(
@@ -73,7 +107,7 @@ class BasicService(
         val three = "3" in related
         val plusThree = "+3" in related
 
-        var relatedFilter = ArrayList<Int>()
+        val relatedFilter = ArrayList<Int>()
 
         if(zero){
             relatedFilter.add(0)
@@ -126,7 +160,7 @@ class BasicService(
         val dat = "Dataset" in resType
         val otherType = "Other" in resType
 
-        var typeFilter = ArrayList<String>()
+        val typeFilter = ArrayList<String>()
 
         if(serv){
             typeFilter.add("service")
@@ -155,7 +189,7 @@ class BasicService(
         val eng = "English" in language
         val otherLang = "Other/Unknown" in language
 
-        var langFilter = ArrayList<String>()
+        val langFilter = ArrayList<String>()
         val spaFilter = arrayOf("Spanish", "Español", "spa" )
         val engFilter = arrayOf("eng", "English")
 
@@ -194,7 +228,7 @@ class BasicService(
 
         // Assign the related resources AKA primary topic
         for(i in 0 until found.size){
-            var record = found[i]
+            val record = found[i]
             if(record.type == "service"){
                 val service = allServices.find { service -> service.id == record.ID }
                 record.primaryTopic = service

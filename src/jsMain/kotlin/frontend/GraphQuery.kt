@@ -22,3 +22,8 @@ data class AllMetadataResponse(
 data class SearchResponse(
     val search: MetaDataPage
 )
+
+@Serializable
+data class RecordResponse(
+    val getRecord: MetadataRecord
+)

@@ -1,7 +1,7 @@
 type Query {
     search(text: String, limit: Int, offset: Int, order: String, language: [String], resType: [String], related: [String]): MetaDataPage
     # Falta una funcion que devuelva un elemento concreto con toda la informacion relevante
-
+    getRecord(id: String) : MetadataRecord
 }
 
 type MetaDataPage {

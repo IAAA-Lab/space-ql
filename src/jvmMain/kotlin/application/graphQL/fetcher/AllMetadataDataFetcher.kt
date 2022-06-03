@@ -2,6 +2,7 @@ package application.graphQL.fetcher
 
 import application.BasicService
 import application.model.MetadataPage
+import application.model.MetadataRecord
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
@@ -21,5 +22,11 @@ class AllMetadataDataFetcher(
         @InputArgument resType: List<String>?,
         @InputArgument related: List<String>?,
     ): MetadataPage = basicService.search(text, limit, offset, order, language, resType, related)
+
+
+    @DgsQuery
+    fun getRecord(
+        @InputArgument id : String
+    ) : MetadataRecord = basicService.getRecord(id)
 
 }

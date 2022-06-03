@@ -2,6 +2,7 @@ package frontend
 
 import Dataset
 import MetaDataPage
+import MetadataRecord
 import Resource
 import Service
 import io.ktor.client.*
@@ -27,6 +28,116 @@ val JSON = Json {
 
 val jsonClient = HttpClient {
     install(JsonFeature) { serializer = KotlinxSerializer(JSON) }
+}
+
+suspend fun getSingleResult(id: String) : MetadataRecord{
+
+    val ret: GraphResponse<RecordResponse> = jsonClient.post("http://localhost:8080/graphql") {
+        contentType(ContentType.Application.Json)
+
+        body = GraphQuery("""
+        {
+            getRecord(id:"${id}") {
+                ID,
+                title,
+                description,
+                type,
+                primaryTopic{
+                    __typename
+                    ...on Dataset {
+                        type,
+                        title,
+                        coupledServices{
+                            ID,
+                            title,
+                            description,
+                            type,
+                            details {
+                                language,
+                                uploadDate,
+                                distributionFormats {
+                                    name
+                                },
+                                distributionTransfers {
+                                    URL
+                                }
+                            },
+                            primaryTopic{
+                                __typename
+                                ...on Dataset {
+                                    type,
+                                    title,
+                                    coupledServices{
+                                        ID
+                                    }
+                                }
+                                ...on Service {
+                                    type,
+                                    title,
+                                    coupledDatasets{
+                                        ID
+                                    }
+                                }
+                            }
+                        },
+                    },
+                    ...on Service {
+                        type,
+                        title,
+                        coupledDatasets{
+                            ID,
+                            title,
+                            description,
+                            type,
+                            details {
+                                language,
+                                uploadDate,
+                                distributionFormats {
+                                    name
+                                },
+                                distributionTransfers {
+                                    URL
+                                }
+                            },
+                            primaryTopic{
+                                __typename
+                                ...on Dataset {
+                                    type,
+                                    title,
+                                    coupledServices{
+                                        ID
+                                    }
+                                }
+                                ...on Service {
+                                    type,
+                                    title,
+                                    coupledDatasets{
+                                        ID
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                details{
+                    language,
+                    uploadDate,
+                    distributionFormats {
+                        name
+                    },
+                    distributionTransfers {
+                        URL
+                    }
+                }
+        
+            }
+        }
+        """.trimIndent()
+        )
+    }
+
+    return ret.data.getRecord
+
 }
 
 suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>): MetaDataPage {
