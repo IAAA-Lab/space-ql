@@ -21,7 +21,8 @@ class AllMetadataDataFetcher(
         @InputArgument language: List<String>?,
         @InputArgument resType: List<String>?,
         @InputArgument related: List<String>?,
-    ): MetadataPage = basicService.search(text, limit, offset, order, language, resType, related)
+        @InputArgument contactPoints: List<String>?
+    ): MetadataPage = basicService.search(text, limit, offset, order, language, resType, related, contactPoints)
 
 
     @DgsQuery

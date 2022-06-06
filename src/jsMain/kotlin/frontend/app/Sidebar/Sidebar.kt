@@ -28,7 +28,7 @@ val Sidebar = FC<SidebarProps> { props ->
 
         Drawer {
             variant = permanent
-            anchor = left
+//            anchor = left
 
             Box {
                 Toolbar()

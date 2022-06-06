@@ -122,6 +122,13 @@ suspend fun getSingleResult(id: String) : MetadataRecord{
                 details{
                     language,
                     uploadDate,
+                    contactPoint {
+                        individual,
+                        phone,
+                        name,
+                        mail,
+                        onlineSource
+                    },
                     distributionFormats {
                         name
                     },
@@ -140,7 +147,7 @@ suspend fun getSingleResult(id: String) : MetadataRecord{
 
 }
 
-suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>): MetaDataPage {
+suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>, contactPoints: List<String>): MetaDataPage {
     val ret: GraphResponse<SearchResponse> = jsonClient.post("http://localhost:8080/graphql") {
         contentType(ContentType.Application.Json)
         var graphSearchText = ""
@@ -156,7 +163,8 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, l
                 order: "$order",
                 language: [${language.joinToString { "\"${it}\"" }}],
                 resType: [${resType.joinToString { "\"${it}\"" }}],
-                related: [${related.joinToString { "\"${it}\"" }}]) {
+                related: [${related.joinToString { "\"${it}\"" }}],
+                contactPoints: [${contactPoints.joinToString { "\"${it}\"" }}]) {
                     facets {
                         name,
                         values {

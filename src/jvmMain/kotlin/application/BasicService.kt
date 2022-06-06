@@ -50,10 +50,13 @@ class BasicService(
      *
      */
     fun search(text: String?, limit: Int, offset: Int, order: String,
-               language: List<String>?, resType: List<String>?, related: List<String>?): MetadataPage {
+               language: List<String>?, resType: List<String>?,
+               related: List<String>?, contactPoints: List<String>?): MetadataPage {
         var foundList = findData(text, order)
 
-        foundList = filterFacets(foundList, language, resType, related)
+        // TODO - refactor to change the multiple lists of facets into a single list
+        // of facets with a name and a internal list of strings
+        foundList = filterFacets(foundList, language, resType, related, contactPoints)
 
         val foundFacets = getFacets(foundList)
 
@@ -77,7 +80,8 @@ class BasicService(
         foundList: List<MetadataRecord>,
         language: List<String>?,
         resType: List<String>?,
-        related: List<String>?
+        related: List<String>?,
+        contactPoints: List<String>?
     ): List<MetadataRecord> {
         var retList : MutableList<MetadataRecord> = ArrayList(foundList)
 
@@ -90,8 +94,25 @@ class BasicService(
         if(related != null && related.isNotEmpty()){
             retList = filterRelated(retList, related)
         }
+        if(contactPoints != null && contactPoints.isNotEmpty()){
+            retList = filterContactPoints(retList, contactPoints)
+        }
 
         return retList
+    }
+
+    private fun filterContactPoints(
+        recordList: MutableList<MetadataRecord>,
+        contactPoints: List<String>
+    ): MutableList<MetadataRecord> {
+        var retList : MutableList<MetadataRecord> = ArrayList(recordList)
+
+        retList = retList.filter {el ->
+            el.details.contactPoint.name in contactPoints
+        } as MutableList<MetadataRecord>
+
+        return retList
+
     }
 
 
@@ -283,7 +304,15 @@ class BasicService(
             SubFacets("3", 0),
             SubFacets("+3", 0),
         )))
+
+        ret.add(getContactFacets(foundList))
+
         foundList.forEach {
+            // Contact points
+            if(it.details.contactPoint.name != null){
+                addDoc(ret, "Contact Points", it.details.contactPoint.name)
+            }
+
             // Lang
             val lang = it.details.language
             if (lang != null) {
@@ -327,6 +356,18 @@ class BasicService(
         }
 
         return ret
+    }
+
+    private fun getContactFacets(foundList: List<MetadataRecord>): Facets {
+        val subFacets : MutableList<SubFacets> = mutableListOf()
+
+        val distinctValues = foundList.distinctBy { it.details.contactPoint.name }
+
+        distinctValues.forEach {
+            subFacets.add(SubFacets(it.details.contactPoint.name, 0))
+        }
+
+        return Facets("Contact Points", subFacets)
     }
 
     // It adds 1 to the number of documents of the subfacet of a facet

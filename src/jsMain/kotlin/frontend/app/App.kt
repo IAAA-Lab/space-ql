@@ -28,12 +28,13 @@ val app = FC<Props> {
     var facetsList by useState(mutableListOf<Facets>())
     val langFacet by useState(mutableListOf<String>())
     val typeFacet by useState(mutableListOf<String>())
+    val contactFacet by useState(mutableListOf<String>())
     val relatedFacet by useState(mutableListOf<String>())
     val resultsLimit = 10
 
     useEffectOnce {
         scope.launch {
-            val mdPage = getResults(null, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet)
+            val mdPage = getResults(null, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
             facetsList = mdPage.facets as MutableList<Facets>
@@ -46,18 +47,23 @@ val app = FC<Props> {
             getLangFacets(facetsList, langFacet)
             getTypeFacets(facetsList, typeFacet)
             getRelatedFacets(facetsList, relatedFacet)
+            getContactFacets(facetsList, contactFacet)
 
             scope.launch {
-                val mdPage = getResults(searchTerm, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet)
+                val mdPage = getResults(searchTerm, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet)
                 setMaxPage(mdPage.totalPages)
                 resultList = mdPage.metaData
                 var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
 
                 facetsAux.forEach {facet ->
                     facet.values?.forEach {subfacet ->
-                        subfacet.docNum = mdPage.facets.find{el -> el.name == facet.name}?.values?.find{ el -> el.field == subfacet.field}?.docNum
+                        var number = mdPage.facets.find{ el -> el.name == facet.name}
+                            ?.values?.find{ el -> el.field == subfacet.field}?.docNum
+                        if(number == null) number = 0
+                        subfacet.docNum = number
                     }
                 }
+
                 facetsList = facetsAux
 
                 // Coger las facets y cambiarle el valor de docnum por el de estas
@@ -70,7 +76,7 @@ val app = FC<Props> {
 
     fun getResultsProp(term: String, offset: Int, order: String) {
         scope.launch {
-            val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet)
+            val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet, contactFacet)
             setMaxPage(mdPage.totalPages)
             resultList = mdPage.metaData
             var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
@@ -158,12 +164,31 @@ val app = FC<Props> {
 
 }
 
+private fun getContactFacets(
+    facetsList: MutableList<Facets>,
+    contactFacet: MutableList<String>
+) {
+    val contactPoints = facetsList.find {el -> el.name == "Contact Points"}
+
+    contactPoints?.values?.forEach {
+        if (it.checked){
+            contactFacet.add(it.field!!)
+        } else {
+            do{
+                val obtained = contactFacet.remove(it.field!!)
+            } while(obtained)
+        }
+    }
+
+}
+
 private fun getLangFacets(
     facetsList: MutableList<Facets>,
     langFacet: MutableList<String>
 ) {
     val langs = facetsList.find { el -> el.name == "Language" }
 
+    // Check whether the values are checked or not
     val spa = langs?.values?.find { el -> el.field == "Spanish" }?.checked
     val eng = langs?.values?.find { el -> el.field == "English" }?.checked
     val otherLang = langs?.values?.find { el -> el.field == "Other/Unknown" }?.checked

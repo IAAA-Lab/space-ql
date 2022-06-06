@@ -125,6 +125,9 @@ val resultContent = FC<ResultContentProps> { props ->
                             expandIcon = ExpandMore.create()
 
                             Typography {
+                                sx{
+                                    fontWeight= FontWeight.bolder
+                                }
                                 +"Related Resources"
                             }
                             Typography{
@@ -150,6 +153,187 @@ val resultContent = FC<ResultContentProps> { props ->
                                 topic.coupledServices?.forEach{
                                     result {
                                         this.data = it
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+
+                    Accordion{
+                        AccordionSummary {
+                            this.id = "ContactPoint"
+                            expandIcon = ExpandMore.create()
+
+                            Typography {
+                                sx{
+                                    fontWeight= FontWeight.bolder
+                                }
+                                +"Contact Point"
+                            }
+                        }
+                        AccordionDetails {
+
+                            List {
+                                sx {
+                                    width = 70.ch
+                                }
+                                if(data.details?.contactPoint?.name!=null && data.details.contactPoint.name !="" ){
+                                    ListItem {
+                                        sx {
+                                            paddingLeft = 10.px
+                                        }
+                                        ListItemText {
+                                            sx {
+                                                fontWeight = FontWeight.bold
+                                            }
+                                            primary = ReactNode("Name")
+                                        }
+                                        Typography {
+                                            sx{
+                                                marginLeft = 30.px
+                                            }
+                                            variant = TypographyVariant.body2
+                                            +data.details.contactPoint.name
+                                        }
+                                    }
+                                }
+                                if(data.details?.contactPoint?.individual != null && data.details.contactPoint.individual != ""){
+                                    ListItem {
+                                        sx {
+                                            paddingLeft = 10.px
+                                        }
+                                        ListItemText {
+                                            sx {
+                                                fontWeight = FontWeight.bold
+                                            }
+                                            primary = ReactNode("Individual")
+                                        }
+                                        Typography {
+                                            sx{
+                                                marginLeft = 30.px
+                                            }
+                                            variant = TypographyVariant.body2
+                                            +data.details.contactPoint.individual
+                                        }
+                                    }
+                                }
+                                if(data.details?.contactPoint?.mail !=null && data.details.contactPoint.mail != ""){
+                                    ListItem {
+                                        sx {
+                                            paddingLeft = 10.px
+                                        }
+                                        ListItemText {
+                                            sx {
+                                                fontWeight = FontWeight.bold
+                                            }
+                                            primary = ReactNode("Mail")
+                                        }
+                                        Typography {
+                                            sx{
+                                                marginLeft = 30.px
+                                            }
+                                            variant = TypographyVariant.body2
+                                            +data.details.contactPoint.mail
+                                        }
+                                    }
+                                }
+                                if(data.details?.contactPoint?.phone!=null && data.details.contactPoint.phone !=""){
+                                    ListItem {
+                                        sx {
+                                            paddingLeft = 10.px
+                                        }
+                                        ListItemText {
+                                            sx {
+                                                fontWeight = FontWeight.bold
+                                            }
+                                            primary = ReactNode("Phone")
+                                        }
+                                        Typography {
+                                            sx{
+                                                marginLeft = 30.px
+                                            }
+                                            variant = TypographyVariant.body2
+                                            +data.details.contactPoint.phone
+                                        }
+                                    }
+                                }
+                                if(data.details?.contactPoint?.onlineSource!=null && data.details.contactPoint.onlineSource !=""){
+                                    ListItem {
+                                        sx {
+                                            paddingLeft = 10.px
+                                        }
+                                        ListItemText {
+                                            sx {
+                                                fontWeight = FontWeight.bold
+                                            }
+                                            primary = ReactNode("Online Source")
+                                        }
+                                        Typography {
+                                            sx{
+                                                marginLeft = 30.px
+                                            }
+                                            variant = TypographyVariant.body2
+                                            +data.details.contactPoint.onlineSource
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Accordion {
+                        AccordionSummary {
+                            this.id = "resultInfo"
+                            expandIcon = ExpandMore.create()
+
+                            Typography {
+                                sx{
+                                    fontWeight= FontWeight.bolder
+                                }
+                                +"More Information"
+                            }
+                            Typography{
+                                sx {
+                                    marginLeft=20.px
+                                }
+                                asDynamic().color = "text.secondary"
+                                +"Extra information about the Metadata"
+                            }
+                        }
+                        AccordionDetails{
+
+                            List {
+                                sx{
+                                    width=52.ch
+                                }
+                                ListItem{
+                                    sx {
+                                        paddingLeft=10.px
+                                    }
+                                    ListItemText{
+                                        sx {
+                                            fontWeight= FontWeight.bolder
+                                        }
+                                        primary= ReactNode("Language")
+                                    }
+                                    Typography{
+                                        variant = TypographyVariant.body2
+                                        +data.details?.language!!
+                                    }
+                                }
+                                ListItem{
+                                    sx {
+                                        paddingLeft=10.px
+                                    }
+                                    ListItemText{
+                                        sx {
+                                            fontWeight= FontWeight.bolder
+                                        }
+                                        primary= ReactNode("Upload date")
+                                    }
+                                    Typography{
+                                        variant = TypographyVariant.body2
+                                        +data.details?.uploadDate!!
                                     }
                                 }
                             }
