@@ -17,10 +17,13 @@ import mui.system.sx
 import react.FC
 import react.Props
 import react.dom.html.ReactHTML
+import react.router.useLocation
+import react.useEffectOnce
 
 external interface HomeProps : Props {
     var facets : List<Facets>
     var setChecked : (String, String, Boolean) -> Unit
+    var setSingleCheck : (String, String) -> Unit
     var resultsLimit : Int
     var resultsOrder: String
     var searchTerm : String
@@ -36,6 +39,16 @@ external interface HomeProps : Props {
 }
 
 val homeContent = FC<HomeProps> { props ->
+    val location = useLocation()
+    val cpCheckedName = location.state as? String
+
+    useEffectOnce {
+        console.log(cpCheckedName)
+        if(cpCheckedName != null){
+            props.setSingleCheck("Contact Points", cpCheckedName)
+        }
+    }
+
     Box {
         component = ReactHTML.main
         sx {

@@ -2,6 +2,7 @@ package frontend.app
 
 import Facets
 import MetadataRecord
+import SubFacets
 import csstype.*
 import frontend.app.header.Header
 import frontend.common.Area
@@ -129,6 +130,18 @@ val app = FC<Props> {
                                         .find { el -> el.name == facet }
                                         ?.values
                                         ?.find{ el -> el.field == subfacet}?.checked = checked
+
+                                    facetsList = facetsAux
+                                    updateWithFacets()
+                                }
+                                this.setSingleCheck = { checkedFacet, checkedSubFacet ->
+                                    val facetsAux : MutableList<Facets> = ArrayList(facetsList)
+
+                                    facetsAux.forEach {facet ->
+                                        facet.values?.forEach {
+                                            it.checked = it.field == checkedSubFacet
+                                        }
+                                    }
 
                                     facetsList = facetsAux
                                     updateWithFacets()

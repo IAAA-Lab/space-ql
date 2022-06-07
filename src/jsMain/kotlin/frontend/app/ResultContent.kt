@@ -6,9 +6,7 @@ import Service
 import csstype.*
 import frontend.app.Title.title
 import frontend.common.Area
-import frontend.common.Sizes
 import frontend.getSingleResult
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import mui.icons.material.Cloud
 import mui.icons.material.ExpandMore
@@ -21,6 +19,8 @@ import mui.system.sx
 import react.*
 import frontend.app.results.result
 import react.router.Navigate
+import react.router.NavigateOptions
+import react.router.useNavigate
 import react.router.useParams
 
 external interface ResultContentProps : Props {
@@ -30,6 +30,7 @@ external interface ResultContentProps : Props {
 val resultContent = FC<ResultContentProps> { props ->
 
     val (data, setData) = useState(MetadataRecord())
+    val navigate = useNavigate()
 
     val id = useParams()["metadata"]?: run {
         return@FC Navigate {
@@ -189,11 +190,19 @@ val resultContent = FC<ResultContentProps> { props ->
                                             }
                                             primary = ReactNode("Name")
                                         }
-                                        Typography {
+                                        Link {
                                             sx{
                                                 marginLeft = 30.px
                                             }
-                                            variant = TypographyVariant.body2
+                                            underline=LinkUnderline.hover
+                                            variant="body2"
+                                            onClick={
+                                                navigate(to="/", options = object : NavigateOptions {
+                                                    override var replace: Boolean? = null
+                                                    override var state: Any? = data.details.contactPoint.name
+
+                                                })
+                                            }
                                             +data.details.contactPoint.name
                                         }
                                     }

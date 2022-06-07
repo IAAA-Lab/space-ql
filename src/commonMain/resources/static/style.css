@@ -2,6 +2,9 @@ body {
   font-family: monospace;
   color: slategrey;
 }
+a {
+  font-family: 'Roboto' !important;
+}
 
 #main-container {
   padding-top: 1rem;
