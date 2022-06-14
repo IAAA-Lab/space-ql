@@ -4,7 +4,6 @@ import Dataset
 import MetadataRecord
 import Service
 import csstype.*
-import history.To
 import mui.icons.material.Cloud
 import mui.icons.material.InsertDriveFileOutlined
 import mui.icons.material.Storage
@@ -34,7 +33,7 @@ val result = FC<ResultProps> { props ->
         this.onClick = {
             navigate("/id/${props.data.ID}",
                 options = object : NavigateOptions {
-                    override var replace: Boolean? = null
+                    override var replace: Boolean? = false
                     override var state: Any? = null
                 })
         }

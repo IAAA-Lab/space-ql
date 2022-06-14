@@ -37,13 +37,11 @@ val resultContent = FC<ResultContentProps> { props ->
             to="/"
         }
     }
-    useEffectOnce {
+    useEffect(id){
         scope.launch {
            setData(getSingleResult(id))
         }
     }
-
-
 
     Box {
         sx {

@@ -38,3 +38,4 @@ build
 
 # CSV files used to populate the ElasticSearch instance
 metadata.csv
+/asciidoc/

@@ -2,7 +2,6 @@ package frontend.app
 
 import Facets
 import MetadataRecord
-import SubFacets
 import csstype.*
 import frontend.app.header.Header
 import frontend.common.Area

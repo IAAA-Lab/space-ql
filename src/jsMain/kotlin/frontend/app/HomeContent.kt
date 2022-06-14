@@ -43,7 +43,6 @@ val homeContent = FC<HomeProps> { props ->
     val cpCheckedName = location.state as? String
 
     useEffectOnce {
-        console.log(cpCheckedName)
         if(cpCheckedName != null){
             props.setSingleCheck("Contact Points", cpCheckedName)
         }
