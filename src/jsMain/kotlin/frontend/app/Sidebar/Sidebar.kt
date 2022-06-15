@@ -5,7 +5,6 @@ import Facets
 import frontend.common.Area
 import frontend.common.Sizes
 import mui.material.*
-import mui.material.DrawerAnchor.left
 import mui.material.DrawerVariant.permanent
 import mui.material.List
 import mui.system.Box
@@ -28,7 +27,6 @@ val Sidebar = FC<SidebarProps> { props ->
 
         Drawer {
             variant = permanent
-//            anchor = left
 
             Box {
                 Toolbar()
@@ -41,7 +39,7 @@ val Sidebar = FC<SidebarProps> { props ->
                     props.facets.forEach {
                         Facet{
                             this.title = it.name!!
-                            this.subFacets = it.values!!
+                            this.subFacets = it.values?.sortedByDescending { it.docNum }!!
                             this.setChecked = { subfacet, checked -> props.setChecked(it.name!!, subfacet, checked)}
                         }
                     }
