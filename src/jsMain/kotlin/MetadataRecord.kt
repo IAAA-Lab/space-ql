@@ -17,10 +17,16 @@ data class MetadataRecord(
 sealed interface Resource
 
 @Serializable
+data class RelatedElements(
+    val related : Boolean,
+    val relatedRecord : MetadataRecord
+)
+
+@Serializable
 @SerialName("Service")
 data class Service(
     val title: String? = null,
-    val coupledDatasets: List<MetadataRecord>? = null,
+    val coupledDatasets: List<RelatedElements>? = null,
     val __typename: String = "Service"
 ) : Resource
 
@@ -28,7 +34,7 @@ data class Service(
 @SerialName("Dataset")
 data class Dataset(
     val title: String? = null,
-    val coupledServices: List<MetadataRecord>? = null,
+    val coupledServices: List<RelatedElements>? = null,
     val __typename: String = "Dataset"
 ) : Resource
 

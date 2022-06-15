@@ -22,24 +22,26 @@ val Facet = FC<FacetProps> {
     }
     List {
         it.subFacets.forEach { subFacet ->
-            ListItem{
-                sx {
-                    paddingLeft=10.px
-                }
-                ListItemIcon {
-                    Checkbox{
-                        checked = subFacet.checked
-                        onChange={e, _->
-                            it.setChecked(subFacet.field!!, e.target.checked)
+            if(subFacet.docNum!! > 0){
+                ListItem{
+                    sx {
+                        paddingLeft=10.px
+                    }
+                    ListItemIcon {
+                        Checkbox{
+                            checked = subFacet.checked
+                            onChange={e, _->
+                                it.setChecked(subFacet.field!!, e.target.checked)
+                            }
                         }
                     }
-                }
-                ListItemText{
-                    primary= ReactNode(subFacet.field!!)
-                }
-                Typography{
-                    variant = TypographyVariant.body2
-                    +"(${subFacet.docNum})"
+                    ListItemText{
+                        primary= ReactNode(subFacet.field!!)
+                    }
+                    Typography{
+                        variant = TypographyVariant.body2
+                        +"(${subFacet.docNum})"
+                    }
                 }
             }
         }

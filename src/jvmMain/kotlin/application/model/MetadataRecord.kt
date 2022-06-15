@@ -3,44 +3,47 @@ package application.model
 import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.Document
 
-@Document(indexName = "sql_records")
+// tag::mdrecord[]
+@Document(indexName = "sql_records") // <7>
 data class MetadataRecord(
-    @Id val ID: String,
-    //@Field(type = FieldType.Nested, includeInParent = true)
-    val title: String,
-    val description: String,
-    // deberia ser Service o Dataset
-    var primaryTopic: Any? = null,
-    val type: String,
-    val details: ContentMetadata,
-//    val content: String?
+    @Id val ID: String, // <1>
+    val title: String,  // <2>
+    val description: String, // <3>
+    var primaryTopic: Any? = null, // <4>
+    val type: String,   // <5>
+    val details: ContentMetadata, // <6>
 )
+// end::mdrecord[]
 
-data class SubFacets(
-    var field : String?,
-    var docNum : Int?
+// tag::facets[]
+data class SubFacets(       // <2>
+    var field : String?,    // <3>
+    var docNum : Int?       // <4>
 )
-
 data class Facets(
-    var name: String?,
-    var values: List<SubFacets>?
+    var name: String?,      // <1>
+    var values: List<SubFacets>? // <2>
 )
+// end::facets[]
+// tag::mdpage[]
 data class MetadataPage(
-    val facets: List<Facets>,
-    val totalPages: Int,
-    val metaData: List<MetadataRecord>
+    val facets: List<Facets>,   // <1>
+    val totalPages: Int,        // <2>
+    val metaData: List<MetadataRecord>  // <3>
 )
+//end::mdpage[]
 
-
+// tag::formtrans[]
 data class Format (
     val name: String,
     val version: String
     )
-
 data class Transfer (
     val URL: String
     )
+// end::formtrans[]
 
+// tag::contactpoint[]
 data class ContactPoint (
     val individual: String?,
     val phone: String?,
@@ -48,18 +51,15 @@ data class ContactPoint (
     val mail: String?,
     val onlineSource: String?,
 )
+// end::contactpoint[]
 
+// tag::content[]
 data class ContentMetadata (
-    // Es uno solo
     val language: String?,
     val uploadDate: String?,
-//    val scope: String?,
-//    val standard: String?,
-//    val standardVersion: String?,
-//    val fileName: String?,
-//    val fileDescription: String?,
     val contactPoint: ContactPoint,
     val accessUrl: String?,
     val distributionFormats: List<Format>?,
     val distributionTransfers: List<Transfer>?
 )
+//end::content[]

@@ -26,7 +26,7 @@ class BasicService(
             // del contenedor de datasets
             for(i in 0 until topic.coupledDatasets.size){
                 val ds = topic.coupledDatasets[i]
-                ds.primaryTopic = datasetRepository.findById(ds.ID).get()
+                ds.relatedRecord.primaryTopic = datasetRepository.findById(ds.relatedRecord.ID).get()
             }
 
             retValue.primaryTopic = topic
@@ -36,7 +36,7 @@ class BasicService(
 
             for(i in 0 until topic.coupledServices.size){
                 val ds = topic.coupledServices[i]
-                ds.primaryTopic = serviceRepository.findById(ds.ID).get()
+                ds.relatedRecord.primaryTopic = serviceRepository.findById(ds.relatedRecord.ID).get()
             }
 
             retValue.primaryTopic = topic

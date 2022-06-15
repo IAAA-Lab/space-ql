@@ -38,20 +38,26 @@ type ResourceElement {
 
 union Resource = Dataset | Service  # MD_ScopeCode
 
+
+type RelatedElements {
+    related: Boolean,
+    relatedRecord: MetadataRecord
+}
+
 # Colección de servicios
 type Service {
     type: String
     # El id no hace falta, no es lo mismo ELS que Graph
     # En ELS si que estara el id para poder relacionarlo
     title: String # identificationInfo/SV_ServiceIdentification ... title
-    coupledDatasets: [MetadataRecord] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
+    coupledDatasets: [RelatedElements] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
                                       # inspire-cobertura-terrestre-sigpac-atom => inspire-cobertura-terrestre-sigpac {primartyTopic es un Dataset
 }
 # coleccion de datasets
 type Dataset {
     type: String
     title: String
-    coupledServices: [MetadataRecord] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
+    coupledServices: [RelatedElements] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
                                         # inspire-cobertura-terrestre-sigpac => inspire-cobertura-terrestre-sigpac-atom, -wms {primartyTopic es un Dataset
 }
 

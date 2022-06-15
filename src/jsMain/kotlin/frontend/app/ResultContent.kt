@@ -144,14 +144,19 @@ val resultContent = FC<ResultContentProps> { props ->
                             val topic = data.primaryTopic
                             if(topic != null && topic is Service){
                                 topic.coupledDatasets?.forEach{
-                                    result {
-                                        this.data = it
+                                    if(it.related) {
+                                        result {
+                                            this.data = it.relatedRecord
+                                        }
                                     }
                                 }
                             }else if(topic != null && topic is Dataset){
                                 topic.coupledServices?.forEach{
-                                    result {
-                                        this.data = it
+                                    if(it.related){
+                                        // TODO: Create a clone like "relatedResult" with an option to deactivate it
+                                        result {
+                                            this.data = it.relatedRecord
+                                        }
                                     }
                                 }
                             }
