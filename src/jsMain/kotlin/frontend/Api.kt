@@ -72,7 +72,8 @@ suspend fun getSingleResult(id: String) : MetadataRecord{
                                         coupledServices{
                                             relatedRecord {
                                                 ID
-                                            }
+                                            },
+                                            related
                                         }
                                     }
                                     ...on Service {
@@ -81,7 +82,8 @@ suspend fun getSingleResult(id: String) : MetadataRecord{
                                         coupledDatasets{
                                             relatedRecord {
                                                 ID
-                                            }
+                                            },
+                                            related
                                         }
                                     }
                                 }
@@ -93,41 +95,47 @@ suspend fun getSingleResult(id: String) : MetadataRecord{
                         type,
                         title,
                         coupledDatasets{
-                            ID,
-                            title,
-                            description,
-                            type,
-                            details {
-                                language,
-                                uploadDate,
-                                distributionFormats {
-                                    name
-                                },
-                                distributionTransfers {
-                                    URL
-                                }
-                            },
-                            primaryTopic{
-                                __typename
-                                ...on Dataset {
-                                    type,
-                                    title,
-                                    coupledServices{
-                                        relatedRecord {
-                                                ID
-                                            }
+                            related,
+                            relatedRecord {
+                                ID,
+                                title,
+                                description,
+                                type,
+                                details {
+                                    language,
+                                    uploadDate,
+                                    distributionFormats {
+                                        name
+                                    },
+                                    distributionTransfers {
+                                        URL
                                     }
-                                }
-                                ...on Service {
-                                    type,
-                                    title,
-                                    coupledDatasets{
-                                        relatedRecord {
-                                            ID
+                                },
+                                primaryTopic{
+                                    __typename
+                                    ...on Dataset {
+                                        type,
+                                        title,
+                                        coupledServices{
+                                            relatedRecord {
+                                                ID
+                                            },
+                                            related
+                                        }
+                                    }
+                                    ...on Service {
+                                        type,
+                                        title,
+                                        coupledDatasets{
+                                            relatedRecord {
+                                                ID
+                                            },
+                                            related
                                         }
                                     }
                                 }
                             }
+                            
                         }
                     }
                 },
@@ -198,7 +206,8 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, l
                                 coupledServices{
                                     relatedRecord {
                                         ID
-                                    }
+                                    },
+                                    related
                                 }
                             }
                             ...on Service {
@@ -207,7 +216,8 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, l
                                 coupledDatasets{
                                     relatedRecord {
                                         ID
-                                    }
+                                    },
+                                    related
                                 }
                             }
                         }

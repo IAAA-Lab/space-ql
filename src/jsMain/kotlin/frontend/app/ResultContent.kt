@@ -5,6 +5,7 @@ import MetadataRecord
 import Service
 import csstype.*
 import frontend.app.Title.title
+import frontend.app.results.RelatedResult
 import frontend.common.Area
 import frontend.getSingleResult
 import kotlinx.coroutines.launch
@@ -145,7 +146,7 @@ val resultContent = FC<ResultContentProps> { props ->
                             if(topic != null && topic is Service){
                                 topic.coupledDatasets?.forEach{
                                     if(it.related) {
-                                        result {
+                                        RelatedResult {
                                             this.data = it.relatedRecord
                                         }
                                     }
@@ -153,9 +154,11 @@ val resultContent = FC<ResultContentProps> { props ->
                             }else if(topic != null && topic is Dataset){
                                 topic.coupledServices?.forEach{
                                     if(it.related){
-                                        // TODO: Create a clone like "relatedResult" with an option to deactivate it
-                                        result {
+                                        RelatedResult {
                                             this.data = it.relatedRecord
+                                            this.removeRelated = {
+                                                console.log("removed " + it.relatedRecord.ID)
+                                            }
                                         }
                                     }
                                 }
