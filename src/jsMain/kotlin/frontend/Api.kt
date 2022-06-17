@@ -239,3 +239,140 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, l
 
     return ret.data.search
 }
+
+suspend fun removeRelated(recordId: String, relatedId: String) : MetadataRecord{
+
+    val ret: GraphResponse<RemoveRelatedResponse> = jsonClient.post("http://localhost:8080/graphql") {
+        contentType(ContentType.Application.Json)
+
+        body = GraphMutation("""
+        {
+            removeRelated( recordId: "$recordId", relatedId: "$relatedId") {
+                ID,
+                title,
+                description,
+                type,
+                primaryTopic{
+                    __typename
+                    ...on Dataset {
+                        type,
+                        title,
+                        coupledServices{
+                            related,
+                            relatedRecord {
+                                ID,
+                                title,
+                                description,
+                                type,
+                                details {
+                                    language,
+                                    uploadDate,
+                                    distributionFormats {
+                                        name
+                                    },
+                                    distributionTransfers {
+                                        URL
+                                    }
+                                },
+                                primaryTopic{
+                                    __typename
+                                    ...on Dataset {
+                                        type,
+                                        title,
+                                        coupledServices{
+                                            relatedRecord {
+                                                ID
+                                            },
+                                            related
+                                        }
+                                    }
+                                    ...on Service {
+                                        type,
+                                        title,
+                                        coupledDatasets{
+                                            relatedRecord {
+                                                ID
+                                            },
+                                            related
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        },
+                    },
+                    ...on Service {
+                        type,
+                        title,
+                        coupledDatasets{
+                            related,
+                            relatedRecord {
+                                ID,
+                                title,
+                                description,
+                                type,
+                                details {
+                                    language,
+                                    uploadDate,
+                                    distributionFormats {
+                                        name
+                                    },
+                                    distributionTransfers {
+                                        URL
+                                    }
+                                },
+                                primaryTopic{
+                                    __typename
+                                    ...on Dataset {
+                                        type,
+                                        title,
+                                        coupledServices{
+                                            relatedRecord {
+                                                ID
+                                            },
+                                            related
+                                        }
+                                    }
+                                    ...on Service {
+                                        type,
+                                        title,
+                                        coupledDatasets{
+                                            relatedRecord {
+                                                ID
+                                            },
+                                            related
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                },
+                details{
+                    language,
+                    uploadDate,
+                    contactPoint {
+                        individual,
+                        phone,
+                        name,
+                        mail,
+                        onlineSource
+                    },
+                    distributionFormats {
+                        name
+                    },
+                    distributionTransfers {
+                        URL
+                    }
+                }
+        
+            }
+        }
+        """.trimIndent()
+        )
+    }
+
+    return ret.data.removeRelated
+
+}

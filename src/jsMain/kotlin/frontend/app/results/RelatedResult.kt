@@ -37,14 +37,6 @@ val RelatedResult = FC<RelatedResultProps> { props ->
             marginBottom = 10.px
         }
 
-        this.onClick = {
-            navigate("/id/${props.data.ID}",
-                options = object : NavigateOptions {
-                    override var replace: Boolean? = false
-                    override var state: Any? = null
-                })
-        }
-
         key = props.data.ID
         variant = PaperVariant.outlined
         CardActionArea {
@@ -53,6 +45,13 @@ val RelatedResult = FC<RelatedResultProps> { props ->
                 maxWidth = 1200.px
             }
             CardContent {
+                this.onClick = {
+                    navigate("/id/${props.data.ID}",
+                        options = object : NavigateOptions {
+                            override var replace: Boolean? = false
+                            override var state: Any? = null
+                        })
+                }
                 Typography {
                    sx {
                        fontSize = FontSize.medium

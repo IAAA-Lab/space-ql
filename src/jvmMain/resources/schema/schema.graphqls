@@ -4,6 +4,11 @@ type Query {
     getRecord(id: String) : MetadataRecord
 }
 
+type Mutation {
+    # Recibe el id del registro y el id del registro relacionado a desactivar
+    removeRelated(recordId: String, relatedId: String) : MetadataRecord
+}
+
 type MetaDataPage {
     facets: [Facets]
     totalPages: Int,

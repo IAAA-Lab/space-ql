@@ -377,4 +377,29 @@ class BasicService(
             facets.find { it.name == facet }?.values?.find { it.field == subFacet }?.docNum = numDocs + 1
         }
     }
+
+    fun removeRelated(recordId: String, relatedId: String): MetadataRecord {
+        val value = metadataRepository.findById(recordId)
+
+        val retValue = value.get()
+
+        if(retValue.type == "service"){
+            val service = serviceRepository.findById(recordId).get()
+            val auxCoupled : MutableList<RelatedElements> = ArrayList(service.coupledDatasets)
+
+            auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false
+            service.coupledDatasets = auxCoupled
+            serviceRepository.save(service)
+
+        } else if(retValue.type == "dataset"){
+            val dataset = datasetRepository.findById(recordId).get()
+            val auxCoupled : MutableList<RelatedElements> = ArrayList(dataset.coupledServices)
+
+            auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false
+            dataset.coupledServices = auxCoupled
+            datasetRepository.save(dataset)
+        }
+
+        return getRecord(recordId)
+    }
 }

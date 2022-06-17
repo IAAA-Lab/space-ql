@@ -9,6 +9,6 @@ data class Dataset(
     @Id val id: String,
     val type: String = "Dataset",
     val title: String,
-    val coupledServices: List<RelatedElements>
+    var coupledServices: List<RelatedElements>
 )
 // end::dataset[]

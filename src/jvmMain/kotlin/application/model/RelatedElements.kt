@@ -1,6 +1,6 @@
 package application.model
 
 data class RelatedElements(
-    val related : Boolean,
+    var related : Boolean,
     val relatedRecord : MetadataRecord
 )

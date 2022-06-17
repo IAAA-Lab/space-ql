@@ -10,6 +10,11 @@ data class GraphQuery(
     )
 
 @Serializable
+data class GraphMutation(
+    val mutation: String
+)
+
+@Serializable
 data class GraphResponse<T>(
     val data: T
 )
@@ -26,4 +31,9 @@ data class SearchResponse(
 @Serializable
 data class RecordResponse(
     val getRecord: MetadataRecord
+)
+
+@Serializable
+data class RemoveRelatedResponse(
+    val removeRelated: MetadataRecord
 )

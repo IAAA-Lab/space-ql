@@ -19,6 +19,7 @@ import mui.system.Box
 import mui.system.sx
 import react.*
 import frontend.app.results.result
+import frontend.removeRelated
 import react.router.Navigate
 import react.router.NavigateOptions
 import react.router.useNavigate
@@ -148,6 +149,13 @@ val resultContent = FC<ResultContentProps> { props ->
                                     if(it.related) {
                                         RelatedResult {
                                             this.data = it.relatedRecord
+                                            this.removeRelated = {
+                                                scope.launch {
+                                                    console.log(data.ID, it.relatedRecord.ID)
+                                                    val obtained = removeRelated(data.ID, it.relatedRecord.ID)
+                                                    setData(obtained)
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -157,7 +165,10 @@ val resultContent = FC<ResultContentProps> { props ->
                                         RelatedResult {
                                             this.data = it.relatedRecord
                                             this.removeRelated = {
-                                                console.log("removed " + it.relatedRecord.ID)
+                                                scope.launch {
+                                                    val obtained = removeRelated(data.ID, it.relatedRecord.ID)
+                                                    setData(obtained)
+                                                }
                                             }
                                         }
                                     }
