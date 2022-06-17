@@ -156,16 +156,18 @@ class BasicService(
     private fun checkTopic(record : MetadataRecord, filter : ArrayList<Int>, plusThree : Boolean ) : Boolean {
         val topic = record.primaryTopic
         return if(topic is application.model.Service) {
+            val trueSize = topic.coupledDatasets.filter { it.related }.size
             if(plusThree){
-                (topic.coupledDatasets.size in filter) || (topic.coupledDatasets.size > 3)
+                (trueSize in filter) || (trueSize > 3)
             }else{
-                topic.coupledDatasets.size in filter
+                trueSize in filter
             }
         } else if(topic is Dataset) {
+            val trueSize = topic.coupledServices.filter { it.related }.size
             if(plusThree){
-                (topic.coupledServices.size in filter) || (topic.coupledServices.size > 3)
+                (trueSize in filter) || (trueSize > 3)
             }else{
-                topic.coupledServices.size in filter
+                trueSize in filter
             }
         } else {
             false
@@ -333,12 +335,12 @@ class BasicService(
                 "service" -> {
                     addDoc(ret, "Resource type", "Service")
                     val service = it.primaryTopic as application.model.Service
-                    related = service.coupledDatasets.size
+                    related = service.coupledDatasets.filter { it.related }.size
                 }
                 "dataset" -> {
                     addDoc(ret, "Resource type", "Dataset")
                     val dataset = it.primaryTopic as Dataset
-                    related = dataset.coupledServices.size
+                    related = dataset.coupledServices.filter { it.related }.size
                 }
                 else -> {
                     addDoc(ret, "Resource type", "Other")

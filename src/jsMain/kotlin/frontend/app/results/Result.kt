@@ -128,9 +128,9 @@ val result = FC<ResultProps> { props ->
                         }
                         val topic = props.data.primaryTopic
                         if(topic != null && topic is Service) {
-                                +"Related Datasets: ${topic.coupledDatasets?.size}"
+                                +"Related Datasets: ${topic.coupledDatasets?.filter{it.related}?.size}"
                         } else if(topic != null && topic is Dataset){
-                                +"Related Services: ${topic.coupledServices?.size}"
+                                +"Related Services: ${topic.coupledServices?.filter{it.related}?.size}"
                         }
                     }
 
