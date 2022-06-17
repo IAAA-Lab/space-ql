@@ -10,19 +10,10 @@ data class GraphQuery(
     )
 
 @Serializable
-data class GraphMutation(
-    val mutation: String
-)
-
-@Serializable
 data class GraphResponse<T>(
     val data: T
 )
 
-@Serializable
-data class AllMetadataResponse(
-    val allMetadata: List<MetadataRecord>
-)
 @Serializable
 data class SearchResponse(
     val search: MetaDataPage
