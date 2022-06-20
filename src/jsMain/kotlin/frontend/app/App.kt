@@ -3,6 +3,8 @@ package frontend.app
 import Facets
 import MetadataRecord
 import csstype.*
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.LangContextObject
 import frontend.app.header.Header
 import frontend.common.Area
 import frontend.common.Sizes
@@ -91,95 +93,99 @@ val app = FC<Props> {
         }
     }
 
-    Box {
-        sx {
-            display = Display.grid
-            gridTemplateRows = array(
-                Sizes.Header.Height,
-                Auto.auto,
-            )
+    val setLang = { newLang : String ->
+        console.log("App")
+        setLanguage(newLang)
+    }
 
-            gridTemplateColumns = array(
-                Auto.auto,
-            )
-            gridTemplateAreas = GridTemplateAreas(
-                arrayOf(Area.Header),
-                arrayOf(Area.Content),
-            )
-        }
 
-        Header {
-            this.setLang = {setLanguage(it)}
-            this.currentLang = language
-        }
+    LangContext.Provider {
+        value = LangContextObject(language, setLang)
 
-        BrowserRouter {
-            Routes {
-                Route {
-                    path="/"
+        Box {
+            sx {
+                display = Display.grid
+                gridTemplateRows = array(
+                    Sizes.Header.Height,
+                    Auto.auto,
+                )
+
+                gridTemplateColumns = array(
+                    Auto.auto,
+                )
+                gridTemplateAreas = GridTemplateAreas(
+                    arrayOf(Area.Header),
+                    arrayOf(Area.Content),
+                )
+            }
+
+            Header()
+
+            BrowserRouter {
+                Routes {
                     Route {
-                        index = true
-                        element = createElement(homeContent,
-                            props = jso{
-                                this.lang = language
-                                this.facets = facetsList
-                                this.setChecked = { facet, subfacet, checked ->
-
-                                    // Esta copia es necesaria porque si no el estado
-                                    // no se actualiza y el componente no se vuelve
-                                    // a renderizar (Deep copy)
-                                    val facetsAux : MutableList<Facets> = ArrayList(facetsList)
-
-                                    facetsAux
-                                        .find { el -> el.name == facet }
-                                        ?.values
-                                        ?.find{ el -> el.field == subfacet}?.checked = checked
-
-                                    facetsList = facetsAux
-                                    updateWithFacets()
-                                }
-                                this.setSingleCheck = { checkedFacet, checkedSubFacet ->
-                                    val facetsAux : MutableList<Facets> = ArrayList(facetsList)
-
-                                    facetsAux.forEach {facet ->
-                                        facet.values?.forEach {
-                                            it.checked = it.field == checkedSubFacet
-                                        }
-                                    }
-
-                                    facetsList = facetsAux
-                                    updateWithFacets()
-                                }
-                                this.resultsLimit = resultsLimit
-                                this.resultsOrder = resultsOrder
-                                this.searchTerm = searchTerm
-                                this.currentPage = currentPage
-                                this.maxPage = maxPage
-                                this.resultList = resultList
-                                this.setResultList = {resultList = it}
-                                this.setMaxPage = {setMaxPage(it)}
-                                this.setSearchTerm = {setSearchTerm(it)}
-                                this.setResultsOrder = {setResultsOrder(it)}
-                                this.setCurrentPage = {setCurrentPage(it)}
-                                this.getResultsProp = {term, offset, order ->
-                                    getResultsProp(term, offset, order) }
-                            })
-                    }
-                    Route {
-                        path = "id"
+                        path="/"
                         Route {
-                            path=":metadata"
-                            element = createElement(resultContent,
-                            props = jso{
-                                this.lang = language
-                            })
+                            index = true
+                            element = createElement(homeContent,
+                                props = jso{
+                                    this.facets = facetsList
+                                    this.setChecked = { facet, subfacet, checked ->
+
+                                        // Esta copia es necesaria porque si no el estado
+                                        // no se actualiza y el componente no se vuelve
+                                        // a renderizar (Deep copy)
+                                        val facetsAux : MutableList<Facets> = ArrayList(facetsList)
+
+                                        facetsAux
+                                            .find { el -> el.name == facet }
+                                            ?.values
+                                            ?.find{ el -> el.field == subfacet}?.checked = checked
+
+                                        facetsList = facetsAux
+                                        updateWithFacets()
+                                    }
+                                    this.setSingleCheck = { checkedFacet, checkedSubFacet ->
+                                        val facetsAux : MutableList<Facets> = ArrayList(facetsList)
+
+                                        facetsAux.forEach {facet ->
+                                            facet.values?.forEach {
+                                                it.checked = it.field == checkedSubFacet
+                                            }
+                                        }
+
+                                        facetsList = facetsAux
+                                        updateWithFacets()
+                                    }
+                                    this.resultsLimit = resultsLimit
+                                    this.resultsOrder = resultsOrder
+                                    this.searchTerm = searchTerm
+                                    this.currentPage = currentPage
+                                    this.maxPage = maxPage
+                                    this.resultList = resultList
+                                    this.setResultList = {resultList = it}
+                                    this.setMaxPage = {setMaxPage(it)}
+                                    this.setSearchTerm = {setSearchTerm(it)}
+                                    this.setResultsOrder = {setResultsOrder(it)}
+                                    this.setCurrentPage = {setCurrentPage(it)}
+                                    this.getResultsProp = {term, offset, order ->
+                                        getResultsProp(term, offset, order) }
+                                })
+                        }
+                        Route {
+                            path = "id"
+                            Route {
+                                path=":metadata"
+                                element = createElement(resultContent)
+                            }
                         }
                     }
                 }
             }
-        }
 
+        }
     }
+
 
 
 }

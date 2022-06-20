@@ -1,23 +1,25 @@
 package frontend.app.header
 
 import csstype.Color
-import mui.icons.material.FormatAlignJustify
-import mui.icons.material.FormatAlignLeft
+import frontend.app.Languages.LangContext
 import mui.material.ToggleButton
 import mui.material.ToggleButtonGroup
 import mui.material.ToggleButtonGroupColor
 import mui.system.sx
 import react.FC
 import react.Props
-import react.dom.aria.ariaLabel
-import react.useState
+import react.useContext
 
-external interface LangButtonProps : Props {
-    var currLang : String
-    var setLang : (String) -> Unit
-}
 
-val LanguageButton = FC<LangButtonProps> {
+val LanguageButton = FC<Props> {
+
+    val lang = useContext(LangContext).lang
+    val setter = useContext(LangContext).setLang
+
+    fun setLang(newLang : String) {
+        console.log("Button")
+        setter(newLang)
+    }
 
     ToggleButtonGroup {
         sx {
@@ -25,8 +27,8 @@ val LanguageButton = FC<LangButtonProps> {
         }
 
         exclusive = true
-        onChange = {_, newLang -> it.setLang(newLang as String)}
-        value = it.currLang
+        onChange = {_, newLang -> setLang(newLang as String)}
+        value = lang
         color = ToggleButtonGroupColor.primary
 
         ToggleButton {

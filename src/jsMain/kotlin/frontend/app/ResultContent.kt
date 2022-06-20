@@ -25,11 +25,8 @@ import react.router.NavigateOptions
 import react.router.useNavigate
 import react.router.useParams
 
-external interface ResultContentProps : Props {
-    var lang : String
-}
 
-val resultContent = FC<ResultContentProps> { props ->
+val resultContent = FC<Props> { props ->
 
     val (data, setData) = useState(MetadataRecord())
     val navigate = useNavigate()
@@ -51,9 +48,7 @@ val resultContent = FC<ResultContentProps> { props ->
         }
 
         Box {
-            title{
-                this.lang = props.lang
-            }
+            title{}
             if(data.ID != ""){
                 Box {
                     sx {

@@ -1,6 +1,5 @@
 package frontend.app.header
 
-import csstype.ident
 import csstype.integer
 import csstype.number
 import frontend.common.Area
@@ -14,12 +13,8 @@ import react.dom.aria.ariaHasPopup
 import react.dom.aria.ariaLabel
 import react.dom.html.ReactHTML.div
 
-external interface HeaderProps : Props {
-    var currentLang : String
-    var setLang : (String) -> Unit
-}
 
-val Header = FC<HeaderProps> {props->
+val Header = FC<Props> {props->
 
     AppBar {
         position = AppBarPosition.fixed
@@ -37,8 +32,6 @@ val Header = FC<HeaderProps> {props->
             }
 
             LanguageButton {
-                this.currLang = props.currentLang
-                this.setLang = {props.setLang(it)}
             }
 
             Tooltip {
