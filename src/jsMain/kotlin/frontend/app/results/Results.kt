@@ -2,6 +2,8 @@ package frontend.app.results
 
 import MetadataRecord
 import csstype.*
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.langMap
 import frontend.app.results.OrderSelector.OrderSelector
 import frontend.app.results.PageNav.PageNav
 import frontend.common.Area
@@ -11,6 +13,7 @@ import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
+import react.useContext
 
 external interface ResultsProps : Props {
     var resultList : List<MetadataRecord>
@@ -22,6 +25,7 @@ external interface ResultsProps : Props {
 }
 
 val Results = FC<ResultsProps> { props ->
+    val lang = useContext(LangContext).lang
 
     Box {
         sx {
@@ -54,7 +58,7 @@ val Results = FC<ResultsProps> { props ->
             Typography {
 
                 variant = TypographyVariant.h3
-                +"Results"
+                +langMap["results"]!![lang]!!
             }
 
             OrderSelector {

@@ -1,5 +1,7 @@
 package frontend.app.results.OrderSelector
 
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.langMap
 import mui.material.FormControl
 import mui.material.InputLabel
 import mui.material.MenuItem
@@ -7,6 +9,7 @@ import mui.material.Select
 import react.FC
 import react.Props
 import react.ReactNode
+import react.useContext
 
 external interface OrderSelectorProps : Props {
     var onOrderSelect: (String) -> Unit
@@ -14,15 +17,17 @@ external interface OrderSelectorProps : Props {
 }
 
 val OrderSelector = FC<OrderSelectorProps> { props ->
+    val lang = useContext(LangContext).lang
+
     FormControl {
         InputLabel {
             id = "order-select-label"
-            +"Order"
+            +langMap["order"]!![lang]!!
         }
         Select {
             labelId = "order-label"
             id = "order-select"
-            label = ReactNode("Order")
+            label = ReactNode(langMap["order"]!![lang]!!)
 
             onChange = {event,_ ->
                 props.onOrderSelect(event.target.value)
@@ -32,15 +37,15 @@ val OrderSelector = FC<OrderSelectorProps> { props ->
 
             MenuItem {
                 value = "Relevance"
-                +"Relevance"
+                +langMap["relevance"]!![lang]!!
             }
             MenuItem {
                 value = "Date"
-                +"Date"
+                +langMap["date"]!![lang]!!
             }
             MenuItem {
                 value = "Name"
-                +"Name"
+                +langMap["name"]!![lang]!!
             }
         }
     }

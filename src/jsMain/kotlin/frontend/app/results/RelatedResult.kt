@@ -4,6 +4,8 @@ import Dataset
 import MetadataRecord
 import Service
 import csstype.*
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.langMap
 import mui.icons.material.Cloud
 import mui.icons.material.InsertDriveFileOutlined
 import mui.icons.material.Storage
@@ -11,11 +13,8 @@ import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import org.w3c.dom.HTMLButtonElement
-import react.FC
-import react.Props
-import react.ReactNode
+import react.*
 import react.dom.events.MouseEventHandler
-import react.key
 import react.router.NavigateOptions
 import react.router.useNavigate
 
@@ -27,6 +26,7 @@ external interface RelatedResultProps : Props {
 val RelatedResult = FC<RelatedResultProps> { props ->
     val navigate = useNavigate()
     val extra = (if(props.data.description.length > 500)"..." else "")
+    val lang = useContext(LangContext).lang
 
     val removeFromRelated : MouseEventHandler<HTMLButtonElement> = {
         props.removeRelated()
@@ -67,7 +67,7 @@ val RelatedResult = FC<RelatedResultProps> { props ->
                                 }
                                 Cloud()
                             }
-                            +" Service"
+                            +" ${langMap["Service"]!![lang]!!}"
                         }
                         "dataset" -> {
                             Icon {
@@ -77,7 +77,7 @@ val RelatedResult = FC<RelatedResultProps> { props ->
                                 }
                                 Storage()
                             }
-                            +" Dataset"
+                            +" ${langMap["Dataset"]!![lang]!!}"
                         }
                         else -> {
                             Icon {
@@ -87,7 +87,7 @@ val RelatedResult = FC<RelatedResultProps> { props ->
                                 }
                                 InsertDriveFileOutlined()
                             }
-                            +" Unknown type"
+                            +" ${langMap["UnkType"]!![lang]!!}"
                         }
                     }
                 }
@@ -133,9 +133,9 @@ val RelatedResult = FC<RelatedResultProps> { props ->
                         }
                         val topic = props.data.primaryTopic
                         if(topic != null && topic is Service) {
-                                +"Related Datasets: ${topic.coupledDatasets?.size}"
+                                +"${langMap["relDatasets"]!![lang]!!}: ${topic.coupledDatasets?.size}"
                         } else if(topic != null && topic is Dataset){
-                                +"Related Services: ${topic.coupledServices?.size}"
+                                +"${langMap["relServices"]!![lang]!!}: ${topic.coupledServices?.size}"
                         }
                     }
 
@@ -146,7 +146,7 @@ val RelatedResult = FC<RelatedResultProps> { props ->
                             fontSize = 1.rem
                             marginInline = 10.px
                         }
-                        +"Language: ${props.data.details?.language}"
+                        +"${langMap["lang"]!![lang]!!}: ${props.data.details?.language}"
                     }
                 }
             }
@@ -155,7 +155,7 @@ val RelatedResult = FC<RelatedResultProps> { props ->
             Button {
                 color = ButtonColor.error
                 onClick = removeFromRelated
-                +"Not Related"
+                +langMap["notRelated"]!![lang]!!
             }
         }
 

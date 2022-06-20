@@ -4,6 +4,8 @@ import Dataset
 import MetadataRecord
 import Service
 import csstype.*
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.langMap
 import frontend.app.Title.title
 import frontend.app.results.RelatedResult
 import frontend.common.Area
@@ -30,6 +32,8 @@ val resultContent = FC<Props> { props ->
 
     val (data, setData) = useState(MetadataRecord())
     val navigate = useNavigate()
+
+    val lang = useContext(LangContext).lang
 
     val id = useParams()["metadata"]?: run {
         return@FC Navigate {
@@ -70,7 +74,7 @@ val resultContent = FC<Props> { props ->
                                     }
                                     Cloud()
                                 }
-                                +" Service"
+                                +" ${langMap["Service"]!![lang]!!}"
                             }
                             "dataset" -> {
                                 Icon {
@@ -80,7 +84,7 @@ val resultContent = FC<Props> { props ->
                                     }
                                     Storage()
                                 }
-                                +" Dataset"
+                                +" ${langMap["Dataset"]!![lang]!!}"
                             }
                             else -> {
                                 Icon {
@@ -90,7 +94,7 @@ val resultContent = FC<Props> { props ->
                                     }
                                     InsertDriveFileOutlined()
                                 }
-                                +" Unknown type"
+                                +" ${langMap["UnkType"]!![lang]!!}"
                             }
                         }
                     }
@@ -126,14 +130,14 @@ val resultContent = FC<Props> { props ->
                                 sx{
                                     fontWeight= FontWeight.bolder
                                 }
-                                +"Related Resources"
+                                +langMap["RelResources"]!![lang]!!
                             }
                             Typography{
                                 sx {
                                     marginLeft=20.px
                                 }
                                 asDynamic().color = "text.secondary"
-                                +"Other records that could be relevant"
+                                +langMap["RelResSubtext"]!![lang]!!
                             }
                         }
                         AccordionDetails{
@@ -184,7 +188,7 @@ val resultContent = FC<Props> { props ->
                                 sx{
                                     fontWeight= FontWeight.bolder
                                 }
-                                +"Contact Point"
+                                +langMap["ContactPoint"]!![lang]!!
                             }
                         }
                         AccordionDetails {
@@ -202,7 +206,7 @@ val resultContent = FC<Props> { props ->
                                             sx {
                                                 fontWeight = FontWeight.bold
                                             }
-                                            primary = ReactNode("Name")
+                                            primary = ReactNode(langMap["name"]!![lang]!!)
                                         }
                                         Link {
                                             sx{
@@ -230,7 +234,7 @@ val resultContent = FC<Props> { props ->
                                             sx {
                                                 fontWeight = FontWeight.bold
                                             }
-                                            primary = ReactNode("Individual")
+                                            primary = ReactNode(langMap["individual"]!![lang]!!)
                                         }
                                         Typography {
                                             sx{
@@ -250,7 +254,7 @@ val resultContent = FC<Props> { props ->
                                             sx {
                                                 fontWeight = FontWeight.bold
                                             }
-                                            primary = ReactNode("Mail")
+                                            primary = ReactNode(langMap["mail"]!![lang]!!)
                                         }
                                         Typography {
                                             sx{
@@ -270,7 +274,7 @@ val resultContent = FC<Props> { props ->
                                             sx {
                                                 fontWeight = FontWeight.bold
                                             }
-                                            primary = ReactNode("Phone")
+                                            primary = ReactNode(langMap["phone"]!![lang]!!)
                                         }
                                         Typography {
                                             sx{
@@ -290,7 +294,7 @@ val resultContent = FC<Props> { props ->
                                             sx {
                                                 fontWeight = FontWeight.bold
                                             }
-                                            primary = ReactNode("Online Source")
+                                            primary = ReactNode(langMap["onlineSource"]!![lang]!!)
                                         }
                                         Typography {
                                             sx{
@@ -313,14 +317,14 @@ val resultContent = FC<Props> { props ->
                                 sx{
                                     fontWeight= FontWeight.bolder
                                 }
-                                +"More Information"
+                                +langMap["moreInfo"]!![lang]!!
                             }
                             Typography{
                                 sx {
                                     marginLeft=20.px
                                 }
                                 asDynamic().color = "text.secondary"
-                                +"Extra information about the Metadata"
+                                +langMap["moreInfoSubtext"]!![lang]!!
                             }
                         }
                         AccordionDetails{
@@ -337,7 +341,7 @@ val resultContent = FC<Props> { props ->
                                         sx {
                                             fontWeight= FontWeight.bolder
                                         }
-                                        primary= ReactNode("Language")
+                                        primary= ReactNode(langMap["lang"]!![lang]!!)
                                     }
                                     Typography{
                                         variant = TypographyVariant.body2
@@ -352,7 +356,7 @@ val resultContent = FC<Props> { props ->
                                         sx {
                                             fontWeight= FontWeight.bolder
                                         }
-                                        primary= ReactNode("Upload date")
+                                        primary= ReactNode(langMap["uplDate"]!![lang]!!)
                                     }
                                     Typography{
                                         variant = TypographyVariant.body2

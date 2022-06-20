@@ -4,16 +4,15 @@ import Dataset
 import MetadataRecord
 import Service
 import csstype.*
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.langMap
 import mui.icons.material.Cloud
 import mui.icons.material.InsertDriveFileOutlined
 import mui.icons.material.Storage
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import react.FC
-import react.Props
-import react.ReactNode
-import react.key
+import react.*
 import react.router.NavigateOptions
 import react.router.useNavigate
 
@@ -23,6 +22,8 @@ external interface ResultProps : Props {
 
 val result = FC<ResultProps> { props ->
     val navigate = useNavigate()
+    val lang = useContext(LangContext).lang
+
     val extra = (if(props.data.description.length > 500)"..." else "")
 
     Card {
@@ -62,7 +63,7 @@ val result = FC<ResultProps> { props ->
                                 }
                                 Cloud()
                             }
-                            +" Service"
+                            +" ${langMap["Service"]!![lang]!!}"
                         }
                         "dataset" -> {
                             Icon {
@@ -72,7 +73,7 @@ val result = FC<ResultProps> { props ->
                                 }
                                 Storage()
                             }
-                            +" Dataset"
+                            +" ${langMap["Dataset"]!![lang]!!}"
                         }
                         else -> {
                             Icon {
@@ -82,7 +83,7 @@ val result = FC<ResultProps> { props ->
                                 }
                                 InsertDriveFileOutlined()
                             }
-                            +" Unknown type"
+                            +" ${langMap["UnkType"]!![lang]!!}"
                         }
                     }
                 }
@@ -128,9 +129,9 @@ val result = FC<ResultProps> { props ->
                         }
                         val topic = props.data.primaryTopic
                         if(topic != null && topic is Service) {
-                                +"Related Datasets: ${topic.coupledDatasets?.filter{it.related}?.size}"
+                                +"${langMap["relDatasets"]!![lang]!!}: ${topic.coupledDatasets?.filter{it.related}?.size}"
                         } else if(topic != null && topic is Dataset){
-                                +"Related Services: ${topic.coupledServices?.filter{it.related}?.size}"
+                                +"${langMap["relServices"]!![lang]!!}: ${topic.coupledServices?.filter{it.related}?.size}"
                         }
                     }
 
@@ -141,7 +142,7 @@ val result = FC<ResultProps> { props ->
                             fontSize = 1.rem
                             marginInline = 10.px
                         }
-                        +"Language: ${props.data.details?.language}"
+                        +"${langMap["lang"]!![lang]!!}: ${props.data.details?.language}"
                     }
 
                 }

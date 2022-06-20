@@ -3,6 +3,8 @@ package frontend.app.searchbar
 import csstype.Display
 import csstype.JustifyContent
 import csstype.px
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.langMap
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLDivElement
@@ -21,6 +23,7 @@ external interface SearchbarProps : Props {
 
 val SearchBar = FC<SearchbarProps> { props ->
     val (text, setText) = useState("")
+    val lang = useContext(LangContext).lang
 
     val submitHandler: FormEventHandler<HTMLDivElement> = {
         it.preventDefault()
@@ -48,10 +51,10 @@ val SearchBar = FC<SearchbarProps> { props ->
                width = 600.px
            }
            id = "searchbar-form"
-           label = ReactNode("Search")
+           label = ReactNode(langMap["search"]!![lang]!!)
            variant = FormControlVariant.outlined
            value = text
-           placeholder = "Document's title"
+           placeholder = langMap["searchPlaceholder"]!![lang]!!
            onChange = changeHandler
        }
 
