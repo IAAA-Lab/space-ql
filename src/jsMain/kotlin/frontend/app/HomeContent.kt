@@ -21,6 +21,7 @@ import react.router.useLocation
 import react.useEffectOnce
 
 external interface HomeProps : Props {
+    var lang : String
     var facets : List<Facets>
     var setChecked : (String, String, Boolean) -> Unit
     var setSingleCheck : (String, String) -> Unit
@@ -72,7 +73,9 @@ val homeContent = FC<HomeProps> { props ->
                 gridArea = Area.ResultsContent
             }
 
-            title{}
+            title{
+                this.lang = props.lang
+            }
 
             SearchBar {
                 onSubmit = { input ->

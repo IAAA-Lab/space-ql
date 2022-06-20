@@ -30,6 +30,7 @@ val app = FC<Props> {
     val typeFacet by useState(mutableListOf<String>())
     val contactFacet by useState(mutableListOf<String>())
     val relatedFacet by useState(mutableListOf<String>())
+    val (language, setLanguage) = useState("Esp")
     val resultsLimit = 10
 
     useEffectOnce {
@@ -107,7 +108,10 @@ val app = FC<Props> {
             )
         }
 
-        Header()
+        Header {
+            this.setLang = {setLanguage(it)}
+            this.currentLang = language
+        }
 
         BrowserRouter {
             Routes {
@@ -117,6 +121,7 @@ val app = FC<Props> {
                         index = true
                         element = createElement(homeContent,
                             props = jso{
+                                this.lang = language
                                 this.facets = facetsList
                                 this.setChecked = { facet, subfacet, checked ->
 
@@ -164,7 +169,10 @@ val app = FC<Props> {
                         path = "id"
                         Route {
                             path=":metadata"
-                            element = createElement(resultContent)
+                            element = createElement(resultContent,
+                            props = jso{
+                                this.lang = language
+                            })
                         }
                     }
                 }

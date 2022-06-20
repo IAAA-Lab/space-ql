@@ -14,7 +14,12 @@ import react.dom.aria.ariaHasPopup
 import react.dom.aria.ariaLabel
 import react.dom.html.ReactHTML.div
 
-val Header = FC<Props> {
+external interface HeaderProps : Props {
+    var currentLang : String
+    var setLang : (String) -> Unit
+}
+
+val Header = FC<HeaderProps> {props->
 
     AppBar {
         position = AppBarPosition.fixed
@@ -28,7 +33,12 @@ val Header = FC<Props> {
                 sx { flexGrow = number(1.0) }
                 noWrap = true
                 component = div
-                +"Space-QL v0.1.0"
+                +"Space-QL v1.0.0"
+            }
+
+            LanguageButton {
+                this.currLang = props.currentLang
+                this.setLang = {props.setLang(it)}
             }
 
             Tooltip {
