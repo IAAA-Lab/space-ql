@@ -1,0 +1,31 @@
+= Viabilidad de un sistema de búsqueda de metadatos basado en GraphQL
+Alejandro Magallón <779354@unizar.es>
+2022-06-01
+:revnumber: {project-version}
+:example-caption!:
+ifndef::imagesdir[:imagesdir: images]
+:icons: font
+:listing-caption:
+:sectnums:
+:toc-title: Índice
+:toc:
+:toclevels: 3
+:footer-text: Mis memorias
+:media: prepress
+:chapter-label:
+:source-highlighter: rouge
+
+
+[abstract]
+En este documento se van a analizar las distintas clases y componentes de todo el sistema implicado en la aplicación, desde el servidor y el cliente hasta la interacción con GraphQL y Elasticsearch.
+
+{sp} +
+
+<<<
+
+include::chapters/chapterGraphEls.asciidoc[]
+
+include::chapters/chapterServer.asciidoc[]
+
+
+

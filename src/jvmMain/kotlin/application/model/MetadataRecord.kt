@@ -57,9 +57,9 @@ data class ContactPoint (
 data class ContentMetadata (
     val language: String?,
     val uploadDate: String?,
-    val contactPoint: ContactPoint,
+    val contactPoint: ContactPoint, // <1>
     val accessUrl: String?,
-    val distributionFormats: List<Format>?,
-    val distributionTransfers: List<Transfer>?
+    val distributionFormats: List<Format>?, // <2>
+    val distributionTransfers: List<Transfer>? // <2>
 )
 //end::content[]

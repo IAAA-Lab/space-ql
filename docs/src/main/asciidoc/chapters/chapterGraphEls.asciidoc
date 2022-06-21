@@ -1,0 +1,25 @@
+== Tecnologías en el lado del servidor
+ifndef::sourcedir[:sourcedir: ../../../../../src]
+ifndef::graphSchema[:graphSchema: /jvmMain/resources/schema]
+:icons: font
+
+[abstract]
+En este apartado se va a hablar de Spring Boot y los plugins y tecnologías utilizados en el lado del servidor.
+
+=== Spring Boot
+Spring Boot es una tecnología que permite crear aplicaciones autocontenidas, encargandose de tareas como la configuración de dependencias y el despliegue del sistema. Es muy utilizado hoy en día en las empresas.
+
+Otra de las ventajas que otorga Spring Boot es el uso de "extensiones" o "plugins" que envuelven gran cantidad de funcionalidades simplificando enormemente el uso de las mismas. Un ejemplo de extensiones utilizadas en este proyecto son el "framework" *DGS*, desarrollado por Netflix, y *Spring Data Elasticsearch*.
+
+=== GraphQL y el framework DGS:
+El framework DGS desarrollado por Netflix hace que sea muy fácil crear un servidor con soporte a GraphQL. Utiliza la sintáxis de Spring Boot para "enmascarar" y contener las funciones de diseño de los elementos de un sistema GraphQL.
+
+Todo sistema GraphQL necesita un esquema que represente los tipos y funciones existentes en el mismo. En este caso el esquema en cuestión es el siguiente:
+
+
+[source,graphql]
+----
+include::{sourcedir}{graphSchema}/schema.graphqls[tags=functions]
+----
+
+Más adelante se verán los distintos elementos y su contenido

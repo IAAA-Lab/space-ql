@@ -1,13 +1,13 @@
+# tag::functions[]
 type Query {
-    search(text: String, limit: Int, offset: Int, order: String, language: [String], resType: [String], related: [String], contactPoints: [String]): MetaDataPage
-    # Falta una funcion que devuelva un elemento concreto con toda la informacion relevante
-    getRecord(id: String) : MetadataRecord
+    search(text: String, limit: Int, offset: Int, order: String, language: [String], resType: [String], related: [String], contactPoints: [String]): MetaDataPage # <1>
+    getRecord(id: String) : MetadataRecord # <2>
 }
 
-type Mutation {
-    # Recibe el id del registro y el id del registro relacionado a desactivar
-    removeRelated(recordId: String, relatedId: String) : MetadataRecord
+type Mutation { # <3>
+    removeRelated(recordId: String, relatedId: String) : MetadataRecord # <3>
 }
+#end::functions[]
 
 type MetaDataPage {
     facets: [Facets]
@@ -25,15 +25,13 @@ type SubFacets {
     docNum: Int
 }
 
-# Colección de metadatos
-type MetadataRecord { # Orientado lo exclusivo del metadato y cualquier truco para aumentar riqueza en la lista
-    ID: String # fileIdentifier
-    title: String # computar segun title del recurso
+type MetadataRecord {
+    ID: String
+    title: String
     description: String
     primaryTopic: Resource
-    type: String # MD_ScopeCode
+    type: String
     details: ContentMetadata
-#   content
 }
 
 type ResourceElement {
@@ -41,7 +39,7 @@ type ResourceElement {
     data: Resource
 }
 
-union Resource = Dataset | Service  # MD_ScopeCode
+union Resource = Dataset | Service
 
 
 type RelatedElements {
@@ -49,21 +47,16 @@ type RelatedElements {
     relatedRecord: MetadataRecord
 }
 
-# Colección de servicios
 type Service {
     type: String
-    # El id no hace falta, no es lo mismo ELS que Graph
-    # En ELS si que estara el id para poder relacionarlo
-    title: String # identificationInfo/SV_ServiceIdentification ... title
-    coupledDatasets: [RelatedElements] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
-                                      # inspire-cobertura-terrestre-sigpac-atom => inspire-cobertura-terrestre-sigpac {primartyTopic es un Dataset
+    title: String
+    coupledDatasets: [RelatedElements]
 }
-# coleccion de datasets
+
 type Dataset {
     type: String
     title: String
-    coupledServices: [RelatedElements] # Versión 0 - jugar con los identificadores, sabemos que hay relaciones explícitas en algunos
-                                        # inspire-cobertura-terrestre-sigpac => inspire-cobertura-terrestre-sigpac-atom, -wms {primartyTopic es un Dataset
+    coupledServices: [RelatedElements]
 }
 
 type Format {
@@ -84,18 +77,10 @@ type ContactPoint {
 }
 
 type ContentMetadata {
-#    son necesarios aqui??
-#    title: String,
-#    description: String
-    language: String,     # Hay mas de un lenguaje para cada elemento
+    language: String,
     uploadDate: String,
-#    scope: String,
     contactPoint: ContactPoint,
     accessUrl: String,
     distributionFormats: [Format],
     distributionTransfers: [Transfer]
-    #    standard: String,
-    #    standardVersion: String,
-    #    fileName: String,      # Mas que filename lo que tenemos es el titulo del documento
-    #    fileDescription: String,
 }
