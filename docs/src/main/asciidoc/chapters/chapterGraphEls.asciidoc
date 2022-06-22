@@ -1,6 +1,7 @@
 == Tecnologías en el lado del servidor
 ifndef::sourcedir[:sourcedir: ../../../../../src]
 ifndef::graphSchema[:graphSchema: /jvmMain/resources/schema]
+ifndef::jvmGraph[:jvmGraph: /jvmMain/kotlin/application/graphQL]
 :icons: font
 
 [abstract]
@@ -12,14 +13,47 @@ Spring Boot es una tecnología que permite crear aplicaciones autocontenidas, en
 Otra de las ventajas que otorga Spring Boot es el uso de "extensiones" o "plugins" que envuelven gran cantidad de funcionalidades simplificando enormemente el uso de las mismas. Un ejemplo de extensiones utilizadas en este proyecto son el "framework" *DGS*, desarrollado por Netflix, y *Spring Data Elasticsearch*.
 
 === GraphQL y el framework DGS:
-El framework DGS desarrollado por Netflix hace que sea muy fácil crear un servidor con soporte a GraphQL. Utiliza la sintáxis de Spring Boot para "enmascarar" y contener las funciones de diseño de los elementos de un sistema GraphQL.
+El framework DGS desarrollado por Netflix hace que sea muy fácil crear un servidor con soporte a GraphQL. Utiliza la sintaxis de Spring Boot para "enmascarar" y contener las funciones de diseño de los elementos de un sistema GraphQL. Además, lo provee de una URL en la que recibe todas las llamadas a GraphQL, que por defecto sería "/graphql". En esta ruta se reciben las peticiones POST que en el "body" o cuerpo de la petición contendría la llamada en formato JSON para GraphQL. El propio framework se encarga de mapearla y traducirla a los objetos y llamadas internas del sistema.
 
-Todo sistema GraphQL necesita un esquema que represente los tipos y funciones existentes en el mismo. En este caso el esquema en cuestión es el siguiente:
+Todo servidor GraphQL necesita un esquema que represente los tipos y funciones existentes en el mismo. En este caso las funciones del esquema en cuestión son las siguientes:
 
 
 [source,graphql]
 ----
 include::{sourcedir}{graphSchema}/schema.graphqls[tags=functions]
 ----
+<1> La consulta "search" devuelve una página de resultados basándose en el texto introducido y a varios parámetros que indican el número de página que se desea así como el orden de los resultados y los distintos filtros aplicados a la búsqueda
+<2> La consulta "getRecord" devuleve un dato a partir del id del mismo.
+<3> La mutación "removeRelated" indica que el elemento con el id "relatedId" ya no está relacionado con el elemento con id "recordId"
 
-Más adelante se verán los distintos elementos y su contenido
+Más adelante se verán los distintos elementos y su contenido. Este apartado se centra en las funciones principales del framework DGS y el comportamiento de GraphQL.
+
+Los elementos de tipo query definen las consultas a la API y se corresponden con lo que comúnmente sería una petición de tipo GET. DGS se encarga de "envolver" con el esquema la funcionalidad de la aplicación.
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmGraph}/fetcher/AllMetadataDataFetcher.kt[tags=fetcher]
+----
+<1> La etiqueta DgsComponent indica que la clase contiene elementos del framework que se relacionarán con el esquema de GraphQL
+<2> Los elementos etiquetados con DgsQuery mapean la función con los elementos de tipo query definidos en el esquema que tengan el mismo nombre
+<3> La etiqueta InputArgument representa los argumentos de la función del esquema.
+<4> Este elemento tiene una dependencia sobre la clase BasicService, que, como su nombre indica, es un servicio o conjunto de funciones que realizan las llamadas a la base de datos y ejecutan la lógica de las funciones de GraphQL.
+
+De esta forma, cuando DGS recibe una petición a la URL de GraphQL, automáticamente realiza la llamada a la función pertinente, que a su vez, invoca las funciones correspondientes dentro del BasicService.
+
+El BasicService se encarga de hacer las llamadas a la base de datos y de recuperar toda la información extra que haga falta de cara a completar la información que se sirve al usuario. Se obtienen los elementos relacionados, se ordenan y filtran los resultados y se calculan las facetas/filtros en tiempo real.
+
+WARNING: Pensar si vale la pena añadir el código de BasicService aquí (Lo considero más relevante en Elasticsearch)
+
+Por otro lado, los elementos de tipo mutation son lo que correspondería con un POST o un PUT. Son llamadas que buscan modificar de algún modo la base de datos.
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmGraph}/mutator/RelatedMutation.kt[tags=mutator]
+----
+<1> Etiqueta que indica que la llamada es una "mutation"
+
+En este caso, la función del BasicService recupera el elemento, modifica el valor del campo que indica si se relaciona o no para marcarlo como "no relacionado" y guarda el dato modificado. A continuación devuelve el propio dato con la información ya modificada al usuario.
+
+Las funciones de BasicService se pueden ver más en profundidad en el apartado dedicado a Elasticsearch.
+

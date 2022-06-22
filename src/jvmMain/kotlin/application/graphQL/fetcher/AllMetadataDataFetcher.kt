@@ -7,14 +7,15 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
 
-@DgsComponent
+// tag::fetcher[]
+@DgsComponent // <1>
 class AllMetadataDataFetcher(
-    private val basicService: BasicService
+    private val basicService: BasicService // <4>
 ){
 
-    @DgsQuery
+    @DgsQuery // <2>
     fun search(
-        @InputArgument text: String?,
+        @InputArgument text: String?, // <3>
         @InputArgument limit: Int,
         @InputArgument offset: Int,
         @InputArgument order: String,
@@ -31,3 +32,4 @@ class AllMetadataDataFetcher(
     ) : MetadataRecord = basicService.getRecord(id)
 
 }
+// end::fetcher[]
