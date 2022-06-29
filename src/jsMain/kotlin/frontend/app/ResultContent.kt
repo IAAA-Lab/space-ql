@@ -1,8 +1,8 @@
 package frontend.app
 
-import Dataset
-import MetadataRecord
-import Service
+import application.model.Dataset
+import application.model.MetadataRecord
+import application.model.Service
 import csstype.*
 import frontend.app.Languages.LangContext
 import frontend.app.Languages.langMap
@@ -101,7 +101,7 @@ val resultContent = FC<Props> { props ->
                     // Title of the element
                     Typography {
                         variant = TypographyVariant.h6
-                        +data.title
+                        +data.title!!
                     }
                     Divider{
                         variant=DividerVariant.middle
@@ -112,7 +112,7 @@ val resultContent = FC<Props> { props ->
                     }
                     Typography {
                         variant = TypographyVariant.body1
-                        +data.description
+                        +data.description!!
                     }
                     Divider{
                         variant=DividerVariant.middle
@@ -147,13 +147,13 @@ val resultContent = FC<Props> { props ->
                             val topic = data.primaryTopic
                             if(topic != null && topic is Service){
                                 topic.coupledDatasets?.forEach{
-                                    if(it.related) {
+                                    if(it.related == true) {
                                         RelatedResult {
-                                            this.data = it.relatedRecord
+                                            this.data = it.relatedRecord!!
                                             this.removeRelated = {
                                                 scope.launch {
-                                                    console.log(data.ID, it.relatedRecord.ID)
-                                                    val obtained = removeRelated(data.ID, it.relatedRecord.ID)
+                                                    console.log(data.ID, it.relatedRecord?.ID!!)
+                                                    val obtained = removeRelated(data.ID!!, it.relatedRecord?.ID!!)
                                                     setData(obtained)
                                                 }
                                             }
@@ -162,12 +162,12 @@ val resultContent = FC<Props> { props ->
                                 }
                             }else if(topic != null && topic is Dataset){
                                 topic.coupledServices?.forEach{
-                                    if(it.related){
+                                    if(it.related == true){
                                         RelatedResult {
-                                            this.data = it.relatedRecord
+                                            this.data = it.relatedRecord!!
                                             this.removeRelated = {
                                                 scope.launch {
-                                                    val obtained = removeRelated(data.ID, it.relatedRecord.ID)
+                                                    val obtained = removeRelated(data.ID!!, it.relatedRecord?.ID!!)
                                                     setData(obtained)
                                                 }
                                             }
@@ -197,7 +197,7 @@ val resultContent = FC<Props> { props ->
                                 sx {
                                     width = 70.ch
                                 }
-                                if(data.details?.contactPoint?.name!=null && data.details.contactPoint.name !="" ){
+                                if(data.details?.contactPoint?.name!=null && data.details?.contactPoint?.name !="" ){
                                     ListItem {
                                         sx {
                                             paddingLeft = 10.px
@@ -217,15 +217,15 @@ val resultContent = FC<Props> { props ->
                                             onClick={
                                                 navigate(to="/", options = object : NavigateOptions {
                                                     override var replace: Boolean? = null
-                                                    override var state: Any? = data.details.contactPoint.name
+                                                    override var state: Any? = data.details?.contactPoint?.name
 
                                                 })
                                             }
-                                            +data.details.contactPoint.name
+                                            +data.details?.contactPoint?.name!!
                                         }
                                     }
                                 }
-                                if(data.details?.contactPoint?.individual != null && data.details.contactPoint.individual != ""){
+                                if(data.details?.contactPoint?.individual != null && data.details?.contactPoint?.individual != ""){
                                     ListItem {
                                         sx {
                                             paddingLeft = 10.px
@@ -241,11 +241,11 @@ val resultContent = FC<Props> { props ->
                                                 marginLeft = 30.px
                                             }
                                             variant = TypographyVariant.body2
-                                            +data.details.contactPoint.individual
+                                            +data.details?.contactPoint?.individual!!
                                         }
                                     }
                                 }
-                                if(data.details?.contactPoint?.mail !=null && data.details.contactPoint.mail != ""){
+                                if(data.details?.contactPoint?.mail !=null && data.details?.contactPoint?.mail != ""){
                                     ListItem {
                                         sx {
                                             paddingLeft = 10.px
@@ -261,11 +261,11 @@ val resultContent = FC<Props> { props ->
                                                 marginLeft = 30.px
                                             }
                                             variant = TypographyVariant.body2
-                                            +data.details.contactPoint.mail
+                                            +data.details?.contactPoint?.mail!!
                                         }
                                     }
                                 }
-                                if(data.details?.contactPoint?.phone!=null && data.details.contactPoint.phone !=""){
+                                if(data.details?.contactPoint?.phone!=null && data.details?.contactPoint?.phone !=""){
                                     ListItem {
                                         sx {
                                             paddingLeft = 10.px
@@ -281,11 +281,11 @@ val resultContent = FC<Props> { props ->
                                                 marginLeft = 30.px
                                             }
                                             variant = TypographyVariant.body2
-                                            +data.details.contactPoint.phone
+                                            +data.details?.contactPoint?.phone!!
                                         }
                                     }
                                 }
-                                if(data.details?.contactPoint?.onlineSource!=null && data.details.contactPoint.onlineSource !=""){
+                                if(data.details?.contactPoint?.onlineSource!=null && data.details?.contactPoint?.onlineSource !=""){
                                     ListItem {
                                         sx {
                                             paddingLeft = 10.px
@@ -301,7 +301,7 @@ val resultContent = FC<Props> { props ->
                                                 marginLeft = 30.px
                                             }
                                             variant = TypographyVariant.body2
-                                            +data.details.contactPoint.onlineSource
+                                            +data.details?.contactPoint?.onlineSource!!
                                         }
                                     }
                                 }

@@ -1,7 +1,7 @@
 package frontend.app
 
-import Facets
-import MetadataRecord
+import application.model.Facets
+import application.model.MetadataRecord
 import csstype.Auto
 import csstype.Display
 import csstype.GridTemplateAreas

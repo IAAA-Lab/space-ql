@@ -1,9 +1,12 @@
+import com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask
+
 plugins {
     kotlin("multiplatform") version Versions.kotlin
     kotlin("plugin.spring") version Versions.kotlin
     kotlin("plugin.serialization") version Versions.kotlin
     id("org.springframework.boot") version Versions.springBoot
     id("io.spring.dependency-management") version Versions.springDependencyManagement
+    id("com.netflix.dgs.codegen") version "5.1.17"
     application
 }
 
@@ -26,8 +29,8 @@ kotlin {
         }
     }
     js(IR) {
+        binaries.executable()
         browser {
-            binaries.executable()
             commonWebpackConfig {
                 cssSupport.enabled = true
                 outputPath = File(buildDir, "processedResources/jvm/main/static")
@@ -113,5 +116,12 @@ tasks.named<Copy>("jvmProcessResources") {
 
 tasks.named<JavaExec>("run") {
     dependsOn(tasks.named<Jar>("jvmJar"))
-    classpath(tasks.named<Jar>("jvmJar"))
+//    classpath(tasks.named<Jar>("jvmJar"))
+}
+
+tasks.named<GenerateJavaTask>("generateJava"){
+    schemaPaths = mutableListOf("${projectDir}/src/jvmMain/resources/schema")
+    packageName = "com.common.gqlmodel"
+    generateClient = true
+    language = "KOTLIN"
 }

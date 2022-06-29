@@ -1,13 +1,16 @@
 package frontend.app.Sidebar
 
-import SubFacets
+import application.model.SubFacets
 import csstype.px
+import frontend.app.Languages.LangContext
+import frontend.app.Languages.langMap
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
 import react.ReactNode
+import react.useContext
 
 external interface FacetProps : Props {
     var title : String
@@ -16,9 +19,12 @@ external interface FacetProps : Props {
 }
 
 val Facet = FC<FacetProps> {
+    val lang = useContext(LangContext).lang
+
     Typography{
         variant = TypographyVariant.subtitle1
-        +it.title
+//        +it.title
+        +langMap[it.title]!![lang]!!
     }
     List {
         it.subFacets.forEach { subFacet ->

@@ -1,8 +1,7 @@
 package frontend.app.results
 
-import Dataset
-import MetadataRecord
-import Service
+
+import application.model.*
 import csstype.*
 import frontend.app.Languages.LangContext
 import frontend.app.Languages.langMap
@@ -24,7 +23,7 @@ val result = FC<ResultProps> { props ->
     val navigate = useNavigate()
     val lang = useContext(LangContext).lang
 
-    val extra = (if(props.data.description.length > 500)"..." else "")
+    val extra = (if(props.data.description?.length!! > 500)"..." else "")
 
     Card {
         sx {
@@ -89,7 +88,7 @@ val result = FC<ResultProps> { props ->
                 }
                 Typography {
                     variant = TypographyVariant.h5
-                    +props.data.title
+                    +props.data.title!!
                 }
                 Box{
                     sx{
@@ -101,7 +100,7 @@ val result = FC<ResultProps> { props ->
                         sx {
                             marginBottom = 15.px
                         }
-                        +"${props.data.description.take(500)}${extra}"
+                        +"${props.data.description?.take(500)}${extra}"
                     }
 
                     Box{
@@ -111,7 +110,7 @@ val result = FC<ResultProps> { props ->
                         }
                         props.data.details?.distributionFormats?.forEach {
                             Chip{
-                                label = ReactNode(it.name)
+                                label = ReactNode(it.name!!)
                             }
                         }
                     }
@@ -128,10 +127,10 @@ val result = FC<ResultProps> { props ->
                             fontSize = 1.rem
                         }
                         val topic = props.data.primaryTopic
-                        if(topic != null && topic is Service) {
-                                +"${langMap["relDatasets"]!![lang]!!}: ${topic.coupledDatasets?.filter{it.related}?.size}"
-                        } else if(topic != null && topic is Dataset){
-                                +"${langMap["relServices"]!![lang]!!}: ${topic.coupledServices?.filter{it.related}?.size}"
+                        if(topic != null && topic is cliService) {
+                                +"${langMap["relDatasets"]!![lang]!!}: ${topic.coupledDatasets?.filter{it.related!!}?.size}"
+                        } else if(topic != null && topic is cliDataset){
+                                +"${langMap["relServices"]!![lang]!!}: ${topic.coupledServices?.filter{it.related!!}?.size}"
                         }
                     }
 

@@ -1,8 +1,8 @@
 package application.model
 
 // tag::related[]
-data class RelatedElements(
+data class ElsRelatedElements(
     var related : Boolean,
-    val relatedRecord : MetadataRecord
+    val relatedRecord : ElsMetadataRecord
 )
 // end::related[]

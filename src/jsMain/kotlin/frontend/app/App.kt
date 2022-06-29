@@ -1,7 +1,7 @@
 package frontend.app
 
-import Facets
-import MetadataRecord
+import application.model.Facets
+import application.model.MetadataRecord
 import csstype.*
 import frontend.app.Languages.LangContext
 import frontend.app.Languages.LangContextObject
@@ -9,6 +9,7 @@ import frontend.app.header.Header
 import frontend.common.Area
 import frontend.common.Sizes
 import frontend.getResults
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.js.jso
@@ -20,6 +21,10 @@ import react.router.Routes
 import react.router.dom.BrowserRouter
 
 val scope = MainScope()
+
+val handler = CoroutineExceptionHandler { _, exception ->
+    println("CoroutineExceptionHandler got $exception")
+}
 
 val app = FC<Props> {
     var resultList by useState(emptyList<MetadataRecord>())
@@ -36,10 +41,10 @@ val app = FC<Props> {
     val resultsLimit = 10
 
     useEffectOnce {
-        scope.launch {
+        scope.launch(handler) {
             val mdPage = getResults(null, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet)
-            setMaxPage(mdPage.totalPages)
-            resultList = mdPage.metaData
+            setMaxPage(mdPage.totalPages!!)
+            resultList = mdPage.metaData!!
             facetsList = mdPage.facets as MutableList<Facets>
         }
     }
@@ -54,13 +59,13 @@ val app = FC<Props> {
 
             scope.launch {
                 val mdPage = getResults(searchTerm, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet)
-                setMaxPage(mdPage.totalPages)
-                resultList = mdPage.metaData
+                setMaxPage(mdPage.totalPages!!)
+                resultList = mdPage.metaData!!
                 var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
 
                 facetsAux.forEach {facet ->
                     facet.values?.forEach {subfacet ->
-                        var number = mdPage.facets.find{ el -> el.name == facet.name}
+                        var number = mdPage.facets?.find{ el -> el.name == facet.name}
                             ?.values?.find{ el -> el.field == subfacet.field}?.docNum
                         if(number == null) number = 0
                         subfacet.docNum = number
@@ -78,19 +83,31 @@ val app = FC<Props> {
     }
 
     fun getResultsProp(term: String, offset: Int, order: String) {
-        scope.launch {
-            val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet, contactFacet)
-            setMaxPage(mdPage.totalPages)
-            resultList = mdPage.metaData
-            var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
+        console.log("resultprops")
+        scope.launch(handler) {
+            try{
+                val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet, contactFacet)
+                setMaxPage(mdPage.totalPages!!)
+                resultList = mdPage.metaData!!
+                var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
 
-            facetsAux.forEach {facet ->
-                facet.values?.forEach {subfacet ->
-                    subfacet.docNum = mdPage.facets.find{el -> el.name == facet.name}?.values?.find{ el -> el.field == subfacet.field}?.docNum
+                console.log("MDMDMDMDMDMD____${mdPage.facets}")
+
+                facetsAux.forEach {facet ->
+                    facet.values?.forEach {subfacet ->
+                        subfacet.docNum =
+                            mdPage.facets?.find { el -> el.name == facet.name }?.values?.find { el -> el.field == subfacet.field }?.docNum
+                                ?: 0
+                    }
                 }
+
+                facetsList = facetsAux
+
+            } finally {
+                println("${facetsList}")
             }
-            facetsList = facetsAux
         }
+
     }
 
     val setLang = { newLang : String ->

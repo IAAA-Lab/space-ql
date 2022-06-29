@@ -4,11 +4,13 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.elasticsearch.annotations.Document
 
 // tag::service[]
+// tag::elasticsearch[]
 @Document(indexName = "sql_services")
-data class Service(
+data class ElsService(
     @Id val id: String,
+// end::elasticsearch[]
     val type: String = "Service",
     val title: String,
-    var coupledDatasets: List<RelatedElements>
+    var coupledDatasets: List<ElsRelatedElements>
 )
 // end::service[]

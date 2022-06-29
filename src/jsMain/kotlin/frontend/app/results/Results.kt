@@ -1,6 +1,6 @@
 package frontend.app.results
 
-import MetadataRecord
+import application.model.MetadataRecord
 import csstype.*
 import frontend.app.Languages.LangContext
 import frontend.app.Languages.langMap

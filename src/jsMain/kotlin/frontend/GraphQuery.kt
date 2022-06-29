@@ -1,7 +1,7 @@
 package frontend
 
-import MetadataRecord
-import MetaDataPage
+import application.model.MetadataPage
+import application.model.MetadataRecord
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,7 +16,7 @@ data class GraphResponse<T>(
 
 @Serializable
 data class SearchResponse(
-    val search: MetaDataPage
+    val search: MetadataPage
 )
 
 @Serializable

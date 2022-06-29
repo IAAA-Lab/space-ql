@@ -1,24 +1,20 @@
 package frontend
 
-import Dataset
-import MetaDataPage
-import MetadataRecord
-import Resource
-import Service
+import application.model.*
 import io.ktor.client.*
 import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
+import kotlinx.serialization.json.Json
 
 private val serializer = SerializersModule {
     polymorphic(Resource::class){
-        subclass(Service::class)
-        subclass(Dataset::class)
+        subclass(cliService::class)
+        subclass(cliDataset::class)
     }
 }
 
@@ -30,7 +26,7 @@ val jsonClient = HttpClient {
     install(JsonFeature) { serializer = KotlinxSerializer(JSON) }
 }
 
-suspend fun getSingleResult(id: String) : MetadataRecord{
+suspend fun getSingleResult(id: String) : MetadataRecord {
 
     val ret: GraphResponse<RecordResponse> = jsonClient.post("http://localhost:8080/graphql") {
         contentType(ContentType.Application.Json)
@@ -167,8 +163,9 @@ suspend fun getSingleResult(id: String) : MetadataRecord{
 
 }
 
-suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>, contactPoints: List<String>): MetaDataPage {
+suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>, contactPoints: List<String>): MetadataPage {
     val ret: GraphResponse<SearchResponse> = jsonClient.post("http://localhost:8080/graphql") {
+        console.log("getResults")
         contentType(ContentType.Application.Json)
         var graphSearchText = ""
         if(input != null && input != "") {
@@ -277,7 +274,7 @@ suspend fun removeRelated(recordId: String, relatedId: String) : MetadataRecord{
                                     primaryTopic{
                                         __typename
                                         ...on Dataset {
-                                            type,
+                                            type,   
                                             title,
                                             coupledServices{
                                                 relatedRecord {
@@ -286,7 +283,7 @@ suspend fun removeRelated(recordId: String, relatedId: String) : MetadataRecord{
                                                 related
                                             }
                                         }
-                                        ...on Service {
+                                        ...on Service { 
                                             type,
                                             title,
                                             coupledDatasets{

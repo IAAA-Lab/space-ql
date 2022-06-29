@@ -17,6 +17,14 @@ val langMap = mapOf(
         "Esp" to "Tipo desconocido",
         "Eng" to "Unknown type"
     ),
+    "Resource type" to mapOf(
+        "Esp" to "Tipo de recurso",
+        "Eng" to "Resource type"
+    ),
+    "Related Resources" to mapOf(
+        "Esp" to "Recursos relacionados",
+        "Eng" to "Related resources"
+    ),
     "RelResources" to mapOf(
         "Esp" to "Recursos relacionados",
         "Eng" to "Related resources"
@@ -24,6 +32,10 @@ val langMap = mapOf(
     "RelResSubtext" to mapOf(
         "Esp" to "Otros recursos que podrían ser relevantes",
         "Eng" to "Other records that could be relevant"
+    ),
+    "Contact Points" to mapOf(
+        "Esp" to "Puntos de contacto",
+        "Eng" to "Contact Points"
     ),
     "ContactPoint" to mapOf(
         "Esp" to "Punto de contacto",
@@ -58,6 +70,10 @@ val langMap = mapOf(
         "Eng" to "Extra information about the Metadata"
     ),
     "lang" to mapOf(
+        "Esp" to "Idioma",
+        "Eng" to "Language"
+    ),
+    "Language" to mapOf(
         "Esp" to "Idioma",
         "Eng" to "Language"
     ),

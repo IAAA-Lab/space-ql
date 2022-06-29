@@ -3,59 +3,61 @@ package application
 import application.model.*
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
+
+// tag::elasticimport[]
 @Service
 class BasicService(
     private val metadataRepository : MetadataElasticsearchRepository,
     private val serviceRepository : ServiceElasticsearchRepository,
     private val datasetRepository : DatasetElasticsearchRepository
 ) {
+// end::elasticimport[]
 
+    // tag::getrecord[]
     fun getRecord(id: String) : MetadataRecord {
         // Obtiene el record
-        val value = metadataRepository.findById(id)
-
-        // Obtiene el record del Optional
-        val retValue = value.get()
+        val elsValue = metadataRepository.findById(id).get() // <1>
 
         // Es servicio, obtener los coupled datasets
-        if(retValue.type == "service"){
-            val topic = serviceRepository.findById(id).get()
+        if(elsValue.type == "service"){
+            val topic = serviceRepository.findById(id).get() // <2>
 
-            // Para cada coupled dataset no tenemos sus propios coupled services, asi que toca cogerlos
-            // como sabemos que es un dataset simplemente hay que coger el dataset con su id
-            // del contenedor de datasets
+            // Para cada coupled dataset no tenemos sus propios coupled services, asi que toca cogerlos.
+            // Como sabemos que es un dataset simplemente hay que coger el dataset gracias a su id
+            // del índice de datasets
             for(i in 0 until topic.coupledDatasets.size){
                 val ds = topic.coupledDatasets[i]
-                ds.relatedRecord.primaryTopic = datasetRepository.findById(ds.relatedRecord.ID).get()
+                ds.relatedRecord.primaryTopic = datasetRepository.findById(ds.relatedRecord.ID).get() // <3>
             }
 
-            retValue.primaryTopic = topic
-
-        } else if(retValue.type == "dataset"){
-            val topic = datasetRepository.findById(id).get()
+            elsValue.primaryTopic = topic
+        } else if(elsValue.type == "dataset"){
+            val topic = datasetRepository.findById(id).get() // <2>
 
             for(i in 0 until topic.coupledServices.size){
                 val ds = topic.coupledServices[i]
-                ds.relatedRecord.primaryTopic = serviceRepository.findById(ds.relatedRecord.ID).get()
+                ds.relatedRecord.primaryTopic = serviceRepository.findById(ds.relatedRecord.ID).get() // <3>
             }
 
-            retValue.primaryTopic = topic
+            elsValue.primaryTopic = topic
         }
-        return retValue
+
+        return getMDRecord(elsValue)
     }
+    // end::getrecord[]
 
     /*
      * Esta función implementa el sistema de búsqueda paginada, devolviendo los
      * resultados de la página indicada en el orden indicado.
      *
      */
+    // tag::search[]
     fun search(text: String?, limit: Int, offset: Int, order: String,
                language: List<String>?, resType: List<String>?,
                related: List<String>?, contactPoints: List<String>?): MetadataPage {
-        var foundList = findData(text, order)
 
-        // TODO - refactor to change the multiple lists of facets into a single list
-        // of facets with a name and a internal list of strings
+        var foundList = findData(text, order) // <1>
+
         foundList = filterFacets(foundList, language, resType, related, contactPoints)
 
         val foundFacets = getFacets(foundList)
@@ -75,6 +77,7 @@ class BasicService(
 
         return MetadataPage(foundFacets, totalPages, foundPage)
     }
+    // end::search[]
 
     private fun filterFacets(
         foundList: List<MetadataRecord>,
@@ -108,7 +111,7 @@ class BasicService(
         var retList : MutableList<MetadataRecord> = ArrayList(recordList)
 
         retList = retList.filter {el ->
-            el.details.contactPoint.name in contactPoints
+            el.details?.contactPoint?.name in contactPoints
         } as MutableList<MetadataRecord>
 
         return retList
@@ -156,16 +159,16 @@ class BasicService(
     private fun checkTopic(record : MetadataRecord, filter : ArrayList<Int>, plusThree : Boolean ) : Boolean {
         val topic = record.primaryTopic
         return if(topic is application.model.Service) {
-            val trueSize = topic.coupledDatasets.filter { it.related }.size
+            val trueSize = topic.coupledDatasets?.filter { it.related!! }?.size
             if(plusThree){
-                (trueSize in filter) || (trueSize > 3)
+                (trueSize in filter) || (trueSize!! > 3)
             }else{
                 trueSize in filter
             }
         } else if(topic is Dataset) {
-            val trueSize = topic.coupledServices.filter { it.related }.size
+            val trueSize = topic.coupledServices?.filter { it.related!! }?.size
             if(plusThree){
-                (trueSize in filter) || (trueSize > 3)
+                (trueSize in filter) || (trueSize!! > 3)
             }else{
                 trueSize in filter
             }
@@ -225,57 +228,53 @@ class BasicService(
         }
 
         if(otherLang){
-            retList = retList.filter { el -> el.details.language in langFilter || (el.details.language !in spaFilter && el.details.language !in engFilter )  } as MutableList<MetadataRecord>
+            retList = retList.filter { el -> el.details?.language in langFilter || (el.details?.language !in spaFilter && el.details?.language !in engFilter )  } as MutableList<MetadataRecord>
         } else if(spa || eng){
-            retList = retList.filter { el -> el.details.language in langFilter } as MutableList<MetadataRecord>
+            retList = retList.filter { el -> el.details?.language in langFilter } as MutableList<MetadataRecord>
         }
 
         return retList
 
     }
 
+    // tag::finddata[]
     fun findData(text: String?, order: String) : List<MetadataRecord> {
-        // Elasticsearch doesn't apply sorting to text fields, only keyword fields can be used for sorting
-        // So it is going to be done in the server
 
-        val found: List<MetadataRecord> = if(text != null){
-            metadataRepository.findByTitleOrDescription(text, text, PageRequest.of(0,527)).toList()
+        val found: List<ElsMetadataRecord> = if(text != null){
+            metadataRepository.findByTitleOrDescription(text, text, PageRequest.of(0,527)).toList() // <1>
         } else {
-            metadataRepository.findAll().toList()
+            metadataRepository.findAll().toList() // <1>
         }
 
-        // Get all the elements found and calculate the facets
+        val allServices = serviceRepository.findAll() // <2>
+        val allDatasets = datasetRepository.findAll() // <2>
 
-        val allServices = serviceRepository.findAll()
-        val allDatasets = datasetRepository.findAll()
-
-
-        // Assign the related resources AKA primary topic
-        for(i in 0 until found.size){
-            val record = found[i]
-            if(record.type == "service"){
-                val service = allServices.find { service -> service.id == record.ID }
-                record.primaryTopic = service
-            } else if(record.type == "dataset") {
-                val dataset = allDatasets.find { dataset -> dataset.id == record.ID }
-                record.primaryTopic = dataset
+        // Asignar los valores relacionados (primaryTopic)
+        for(element in found){
+            if(element.type == "service") {
+                val service = allServices.find { service -> service.id == element.ID }
+                element.primaryTopic = service
+            } else if(element.type == "dataset") {
+                val dataset = allDatasets.find { dataset -> dataset.id == element.ID }
+                element.primaryTopic = dataset
             }
         }
+    // end::finddata[]
 
-
+        val retList = found.map{ getMDRecord(it) }
         return when(order) {
             "Date" -> {
-                found.sortedBy {
-                    it.details.uploadDate
+                retList.sortedBy {
+                    it.details?.uploadDate
                 }
             }
             "Name" -> {
-                found.sortedBy {
+                retList.sortedBy {
                     it.title
                 }
             }
             else -> {
-                found
+                retList
             }
         }
 
@@ -310,13 +309,14 @@ class BasicService(
         ret.add(getContactFacets(foundList))
 
         foundList.forEach {
+
             // Contact points
-            if(it.details.contactPoint.name != null){
-                addDoc(ret, "Contact Points", it.details.contactPoint.name)
+            if(it.details?.contactPoint?.name != null){
+                addDoc(ret, "Contact Points", it.details?.contactPoint?.name!!)
             }
 
             // Lang
-            val lang = it.details.language
+            val lang = it.details?.language
             if (lang != null) {
                 if( lang == "spa" || lang == "Español" || lang.contains("Spanish")) {
                     addDoc(ret, "Language", "Spanish")
@@ -335,12 +335,12 @@ class BasicService(
                 "service" -> {
                     addDoc(ret, "Resource type", "Service")
                     val service = it.primaryTopic as application.model.Service
-                    related = service.coupledDatasets.filter { it.related }.size
+                    related = service.coupledDatasets?.filter { it.related!! }?.size!!
                 }
                 "dataset" -> {
                     addDoc(ret, "Resource type", "Dataset")
                     val dataset = it.primaryTopic as Dataset
-                    related = dataset.coupledServices.filter { it.related }.size
+                    related = dataset.coupledServices?.filter { it.related!! }?.size!!
                 }
                 else -> {
                     addDoc(ret, "Resource type", "Other")
@@ -363,10 +363,10 @@ class BasicService(
     private fun getContactFacets(foundList: List<MetadataRecord>): Facets {
         val subFacets : MutableList<SubFacets> = mutableListOf()
 
-        val distinctValues = foundList.distinctBy { it.details.contactPoint.name }
+        val distinctValues = foundList.distinctBy { it.details?.contactPoint?.name }
 
         distinctValues.forEach {
-            subFacets.add(SubFacets(it.details.contactPoint.name, 0))
+            subFacets.add(SubFacets(it.details?.contactPoint?.name, 0))
         }
 
         return Facets("Contact Points", subFacets)
@@ -387,7 +387,7 @@ class BasicService(
 
         if(retValue.type == "service"){
             val service = serviceRepository.findById(recordId).get()
-            val auxCoupled : MutableList<RelatedElements> = ArrayList(service.coupledDatasets)
+            val auxCoupled : MutableList<ElsRelatedElements> = ArrayList(service.coupledDatasets)
 
             auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false
             service.coupledDatasets = auxCoupled
@@ -395,7 +395,7 @@ class BasicService(
 
         } else if(retValue.type == "dataset"){
             val dataset = datasetRepository.findById(recordId).get()
-            val auxCoupled : MutableList<RelatedElements> = ArrayList(dataset.coupledServices)
+            val auxCoupled : MutableList<ElsRelatedElements> = ArrayList(dataset.coupledServices)
 
             auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false
             dataset.coupledServices = auxCoupled

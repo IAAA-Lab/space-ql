@@ -1,7 +1,6 @@
 package frontend.app.Sidebar
 
-
-import Facets
+import application.model.Facets
 import frontend.common.Area
 import frontend.common.Sizes
 import mui.material.*
