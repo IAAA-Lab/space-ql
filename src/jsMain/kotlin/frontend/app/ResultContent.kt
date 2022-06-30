@@ -20,7 +20,6 @@ import mui.material.styles.TypographyVariant
 import mui.system.Box
 import mui.system.sx
 import react.*
-import frontend.app.results.result
 import frontend.removeRelated
 import react.router.Navigate
 import react.router.NavigateOptions
@@ -53,7 +52,7 @@ val resultContent = FC<Props> { props ->
 
         Box {
             title{}
-            if(data.ID != ""){
+            if(data.ID != null){
                 Box {
                     sx {
                         marginInline = 80.px
@@ -121,6 +120,7 @@ val resultContent = FC<Props> { props ->
                             marginBottom=10.px
                         }
                     }
+                    // Related Resources accordion
                     Accordion {
                         AccordionSummary {
                             this.id = "relatedResources"
@@ -152,7 +152,6 @@ val resultContent = FC<Props> { props ->
                                             this.data = it.relatedRecord!!
                                             this.removeRelated = {
                                                 scope.launch {
-                                                    console.log(data.ID, it.relatedRecord?.ID!!)
                                                     val obtained = removeRelated(data.ID!!, it.relatedRecord?.ID!!)
                                                     setData(obtained)
                                                 }
@@ -178,7 +177,7 @@ val resultContent = FC<Props> { props ->
                         }
 
                     }
-
+                    // Contact Point Accordion
                     Accordion{
                         AccordionSummary {
                             this.id = "ContactPoint"
@@ -217,8 +216,7 @@ val resultContent = FC<Props> { props ->
                                             onClick={
                                                 navigate(to="/", options = object : NavigateOptions {
                                                     override var replace: Boolean? = null
-                                                    override var state: Any? = data.details?.contactPoint?.name
-
+                                                    override var state: Any? = "Contact;${data.details?.contactPoint?.name}"
                                                 })
                                             }
                                             +data.details?.contactPoint?.name!!
@@ -308,6 +306,7 @@ val resultContent = FC<Props> { props ->
                             }
                         }
                     }
+                    // Extra information about the result
                     Accordion {
                         AccordionSummary {
                             this.id = "resultInfo"
@@ -343,8 +342,18 @@ val resultContent = FC<Props> { props ->
                                         }
                                         primary= ReactNode(langMap["lang"]!![lang]!!)
                                     }
-                                    Typography{
-                                        variant = TypographyVariant.body2
+                                    Link {
+                                        sx{
+                                            marginLeft = 30.px
+                                        }
+                                        underline=LinkUnderline.hover
+                                        variant="body2"
+                                        onClick={
+                                            navigate(to="/", options = object : NavigateOptions {
+                                                override var replace: Boolean? = null
+                                                override var state: Any? = "Language;${data.details?.language!!}"
+                                            })
+                                        }
                                         +data.details?.language!!
                                     }
                                 }

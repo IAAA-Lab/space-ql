@@ -40,11 +40,16 @@ external interface HomeProps : Props {
 
 val homeContent = FC<HomeProps> { props ->
     val location = useLocation()
-    val cpCheckedName = location.state as? String
+    val checkedName = location.state as? String
 
+    // The checked facet is stored into a string following the
     useEffectOnce {
-        if(cpCheckedName != null){
-            props.setSingleCheck("Contact Points", cpCheckedName)
+        if(checkedName != null){
+            val items = checkedName.split(";")
+            when(items[0]){
+                "Contact" -> props.setSingleCheck("Contact Points", items[1])
+                "Language" -> props.setSingleCheck("Language", items[1])
+            }
         }
     }
 

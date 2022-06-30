@@ -38,7 +38,7 @@ val Sidebar = FC<SidebarProps> { props ->
                     props.facets.forEach {
                         Facet{
                             this.title = it.name!!
-                            this.subFacets = it.values?.sortedByDescending { it.docNum }!!
+                            this.subFacets = it.values!!
                             this.setChecked = { subfacet, checked -> props.setChecked(it.name!!, subfacet, checked)}
                         }
                     }

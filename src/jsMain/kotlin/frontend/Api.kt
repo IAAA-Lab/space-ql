@@ -165,7 +165,6 @@ suspend fun getSingleResult(id: String) : MetadataRecord {
 
 suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>, contactPoints: List<String>): MetadataPage {
     val ret: GraphResponse<SearchResponse> = jsonClient.post("http://localhost:8080/graphql") {
-        console.log("getResults")
         contentType(ContentType.Application.Json)
         var graphSearchText = ""
         if(input != null && input != "") {

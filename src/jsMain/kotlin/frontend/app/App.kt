@@ -73,8 +73,6 @@ val app = FC<Props> {
                 }
 
                 facetsList = facetsAux
-
-                // Coger las facets y cambiarle el valor de docnum por el de estas
             }
         }
 
@@ -83,15 +81,12 @@ val app = FC<Props> {
     }
 
     fun getResultsProp(term: String, offset: Int, order: String) {
-        console.log("resultprops")
         scope.launch(handler) {
             try{
                 val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet, contactFacet)
                 setMaxPage(mdPage.totalPages!!)
                 resultList = mdPage.metaData!!
                 var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
-
-                console.log("MDMDMDMDMDMD____${mdPage.facets}")
 
                 facetsAux.forEach {facet ->
                     facet.values?.forEach {subfacet ->
@@ -102,16 +97,14 @@ val app = FC<Props> {
                 }
 
                 facetsList = facetsAux
-
             } finally {
-                println("${facetsList}")
+
             }
         }
 
     }
 
     val setLang = { newLang : String ->
-        console.log("App")
         setLanguage(newLang)
     }
 

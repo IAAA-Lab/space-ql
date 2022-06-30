@@ -10,14 +10,13 @@ import react.FC
 import react.Props
 import react.useContext
 
-
+// Used to change the language of the application, (between Spanish and English)
 val LanguageButton = FC<Props> {
 
     val lang = useContext(LangContext).lang
     val setter = useContext(LangContext).setLang
 
     fun setLang(newLang : String) {
-        console.log("Button")
         setter(newLang)
     }
 

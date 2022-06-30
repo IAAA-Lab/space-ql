@@ -12,7 +12,6 @@ class BasicService(
     private val datasetRepository : DatasetElasticsearchRepository
 ) {
 // end::elasticimport[]
-
     // tag::getrecord[]
     fun getRecord(id: String) : MetadataRecord {
         // Obtiene el record
@@ -217,18 +216,16 @@ class BasicService(
         val otherLang = "Other/Unknown" in language
 
         val langFilter = ArrayList<String>()
-        val spaFilter = arrayOf("Spanish", "Español", "spa" )
-        val engFilter = arrayOf("eng", "English")
 
         if(spa){
-            langFilter.addAll(spaFilter)
+            langFilter.add("Spanish")
         }
         if(eng){
-            langFilter.addAll(engFilter)
+            langFilter.add("English")
         }
 
         if(otherLang){
-            retList = retList.filter { el -> el.details?.language in langFilter || (el.details?.language !in spaFilter && el.details?.language !in engFilter )  } as MutableList<MetadataRecord>
+            retList = retList.filter { el -> el.details?.language in langFilter || (el.details?.language != "Spanish" && el.details?.language != "English" )  } as MutableList<MetadataRecord>
         } else if(spa || eng){
             retList = retList.filter { el -> el.details?.language in langFilter } as MutableList<MetadataRecord>
         }
@@ -318,15 +315,8 @@ class BasicService(
             // Lang
             val lang = it.details?.language
             if (lang != null) {
-                if( lang == "spa" || lang == "Español" || lang.contains("Spanish")) {
-                    addDoc(ret, "Language", "Spanish")
-                } else if(lang == "eng" || lang == "English"){
-                    addDoc(ret, "Language", "English")
-                } else {
-                    addDoc(ret, "Language", "Other/Unknown")
-                }
+                addDoc(ret, "Language", lang)
             }
-
 
             var related = 0
 
@@ -355,6 +345,28 @@ class BasicService(
                 3 -> addDoc(ret, "Related Resources", "3")
                 else -> addDoc(ret, "Related Resources", "+3")
             }
+        }
+
+        ret.add(Facets("Language", mutableListOf(
+            SubFacets("Spanish", 0),
+            SubFacets("English", 0),
+            SubFacets("Other/Unknown", 0),
+        )))
+        ret.add(Facets("Resource type", mutableListOf(
+            SubFacets("Service", 0),
+            SubFacets("Dataset", 0),
+            SubFacets("Other", 0),
+        )))
+        ret.add(Facets("Related Resources", mutableListOf(
+            SubFacets("0", 0),
+            SubFacets("1", 0),
+            SubFacets("2", 0),
+            SubFacets("3", 0),
+            SubFacets("+3", 0),
+        )))
+
+        for(i:Int in 0..ret.size-1){
+            ret[i] = Facets(ret[i].name, ret[i].values?.sortedByDescending { it.docNum }!!)
         }
 
         return ret

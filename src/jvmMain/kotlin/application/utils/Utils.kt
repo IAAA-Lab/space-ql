@@ -1,5 +1,8 @@
 package application.model
 
+import application.aliases.getFormatAlias
+import application.aliases.getLangAlias
+
 fun getMDRecord(elsRecord : ElsMetadataRecord) : MetadataRecord {
     return MetadataRecord(
         ID = elsRecord.ID,
@@ -13,11 +16,11 @@ fun getMDRecord(elsRecord : ElsMetadataRecord) : MetadataRecord {
 
 fun getMDContent(elsDetails: ElsContentMetadata): ContentMetadata {
     return ContentMetadata(
-        language = elsDetails.language,
+        language = getLangAlias(elsDetails.language),
         uploadDate = elsDetails.uploadDate,
         contactPoint = getMDContactPoint(elsDetails.contactPoint),
         accessUrl = elsDetails.accessUrl,
-        distributionFormats = elsDetails.distributionFormats?.map{ Format(it.name, it.version) },
+        distributionFormats = elsDetails.distributionFormats?.map{ Format(getFormatAlias(it.name), it.version) },
         distributionTransfers = elsDetails.distributionTransfers?.map{ Transfer(it.URL) }
 
     )
