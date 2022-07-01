@@ -1,11 +1,11 @@
-package frontend.app.results
+package frontend.app.components.results
 
 import application.model.MetadataRecord
 import csstype.*
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.langMap
-import frontend.app.results.OrderSelector.OrderSelector
-import frontend.app.results.PageNav.PageNav
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.langMap
+import frontend.app.components.results.OrderSelector.OrderSelector
+import frontend.app.components.results.PageNav.PageNav
 import frontend.common.Area
 import frontend.common.Sizes
 import mui.material.*

@@ -1,9 +1,9 @@
-package frontend.app.Sidebar
+package frontend.app.components.sidebar
 
 import application.model.SubFacets
 import csstype.px
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.langMap
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.langMap
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx

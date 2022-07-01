@@ -1,4 +1,4 @@
-package frontend.app
+package frontend.app.pageview
 
 import application.model.Facets
 import application.model.MetadataRecord
@@ -6,10 +6,10 @@ import csstype.Auto
 import csstype.Display
 import csstype.GridTemplateAreas
 import csstype.array
-import frontend.app.Sidebar.Sidebar
-import frontend.app.Title.title
-import frontend.app.results.Results
-import frontend.app.searchbar.SearchBar
+import frontend.app.components.sidebar.Sidebar
+import frontend.app.components.title.title
+import frontend.app.components.results.Results
+import frontend.app.components.searchbar.SearchBar
 import frontend.common.Area
 import frontend.common.Sizes
 import mui.system.Box

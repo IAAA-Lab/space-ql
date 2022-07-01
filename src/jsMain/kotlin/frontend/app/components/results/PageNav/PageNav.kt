@@ -1,4 +1,4 @@
-package frontend.app.results.PageNav
+package frontend.app.components.results.PageNav
 
 import csstype.Display
 import csstype.JustifyContent

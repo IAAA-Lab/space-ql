@@ -1,10 +1,10 @@
-package frontend.app.searchbar
+package frontend.app.components.searchbar
 
 import csstype.Display
 import csstype.JustifyContent
 import csstype.px
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.langMap
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.langMap
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLDivElement

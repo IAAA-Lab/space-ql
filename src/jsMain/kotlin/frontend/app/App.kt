@@ -3,12 +3,14 @@ package frontend.app
 import application.model.Facets
 import application.model.MetadataRecord
 import csstype.*
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.LangContextObject
-import frontend.app.header.Header
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.LangContextObject
+import frontend.app.components.header.Header
+import frontend.app.pageview.homeContent
+import frontend.app.pageview.resultContent
 import frontend.common.Area
 import frontend.common.Sizes
-import frontend.getResults
+import frontend.common.getResults
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -137,7 +139,8 @@ val app = FC<Props> {
                         path="/"
                         Route {
                             index = true
-                            element = createElement(homeContent,
+                            element = createElement(
+                                homeContent,
                                 props = jso{
                                     this.facets = facetsList
                                     this.setChecked = { facet, subfacet, checked ->

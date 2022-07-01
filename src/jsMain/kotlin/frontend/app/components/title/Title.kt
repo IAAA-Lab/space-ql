@@ -1,10 +1,10 @@
-package frontend.app.Title
+package frontend.app.components.title
 
 import csstype.None
 import csstype.TextAlign
 import emotion.react.css
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.langMap
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.langMap
 import mui.material.Typography
 import mui.material.styles.TypographyVariant
 import mui.system.sx

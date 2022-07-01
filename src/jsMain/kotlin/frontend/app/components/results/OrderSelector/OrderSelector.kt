@@ -1,7 +1,7 @@
-package frontend.app.results.OrderSelector
+package frontend.app.components.results.OrderSelector
 
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.langMap
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.langMap
 import mui.material.FormControl
 import mui.material.InputLabel
 import mui.material.MenuItem

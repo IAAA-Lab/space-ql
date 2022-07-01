@@ -1,4 +1,4 @@
-package frontend
+package frontend.common
 
 import application.model.MetadataPage
 import application.model.MetadataRecord

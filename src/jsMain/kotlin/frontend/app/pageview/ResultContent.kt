@@ -1,15 +1,16 @@
-package frontend.app
+package frontend.app.pageview
 
 import application.model.Dataset
 import application.model.MetadataRecord
 import application.model.Service
 import csstype.*
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.langMap
-import frontend.app.Title.title
-import frontend.app.results.RelatedResult
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.langMap
+import frontend.app.components.title.title
+import frontend.app.components.results.RelatedResult
+import frontend.app.scope
 import frontend.common.Area
-import frontend.getSingleResult
+import frontend.common.getSingleResult
 import kotlinx.coroutines.launch
 import mui.icons.material.Cloud
 import mui.icons.material.ExpandMore
@@ -20,7 +21,7 @@ import mui.material.styles.TypographyVariant
 import mui.system.Box
 import mui.system.sx
 import react.*
-import frontend.removeRelated
+import frontend.common.removeRelated
 import react.router.Navigate
 import react.router.NavigateOptions
 import react.router.useNavigate

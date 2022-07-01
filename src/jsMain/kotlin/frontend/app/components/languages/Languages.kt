@@ -1,4 +1,4 @@
-package frontend.app.Languages
+package frontend.app.components.languages
 
 val langMap = mapOf(
     "title" to mapOf(

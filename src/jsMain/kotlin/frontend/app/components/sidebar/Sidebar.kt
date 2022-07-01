@@ -1,4 +1,4 @@
-package frontend.app.Sidebar
+package frontend.app.components.sidebar
 
 import application.model.Facets
 import frontend.common.Area

@@ -1,4 +1,4 @@
-package frontend
+package frontend.common
 
 import application.model.*
 import io.ktor.client.*

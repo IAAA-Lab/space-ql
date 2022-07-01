@@ -1,10 +1,10 @@
-package frontend.app.results
+package frontend.app.components.results
 
 
 import application.model.*
 import csstype.*
-import frontend.app.Languages.LangContext
-import frontend.app.Languages.langMap
+import frontend.app.components.languages.LangContext
+import frontend.app.components.languages.langMap
 import mui.icons.material.Cloud
 import mui.icons.material.InsertDriveFileOutlined
 import mui.icons.material.Storage

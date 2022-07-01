@@ -1,4 +1,4 @@
-package frontend.app.header
+package frontend.app.components.header
 
 import csstype.integer
 import csstype.number

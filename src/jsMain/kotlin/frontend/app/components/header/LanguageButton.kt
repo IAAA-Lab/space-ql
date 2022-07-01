@@ -1,7 +1,7 @@
-package frontend.app.header
+package frontend.app.components.header
 
 import csstype.Color
-import frontend.app.Languages.LangContext
+import frontend.app.components.languages.LangContext
 import mui.material.ToggleButton
 import mui.material.ToggleButtonGroup
 import mui.material.ToggleButtonGroupColor
