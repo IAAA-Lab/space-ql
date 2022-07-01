@@ -1,7 +1,11 @@
 package application
 
 import application.model.*
+import org.elasticsearch.search.suggest.SuggestBuilder
+import org.elasticsearch.search.suggest.SuggestBuilders
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations
+import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder
 import org.springframework.stereotype.Service
 
 // tag::elasticimport[]
@@ -9,7 +13,8 @@ import org.springframework.stereotype.Service
 class BasicService(
     private val metadataRepository : MetadataElasticsearchRepository,
     private val serviceRepository : ServiceElasticsearchRepository,
-    private val datasetRepository : DatasetElasticsearchRepository
+    private val datasetRepository : DatasetElasticsearchRepository,
+    private val elasticsearchOperations: ElasticsearchOperations
 ) {
 // end::elasticimport[]
     // tag::getrecord[]
@@ -415,5 +420,30 @@ class BasicService(
         }
 
         return getRecord(recordId)
+    }
+
+    fun suggest(text: String): List<String?> {
+        val suggestionBuilder = SuggestBuilders.completionSuggestion("title").prefix(text).size(5)
+
+        val suggestBuilder = SuggestBuilder()
+        suggestBuilder.addSuggestion("title",suggestionBuilder)
+
+        val query = NativeSearchQueryBuilder()
+            .withSuggestBuilder(suggestBuilder).build()
+
+        val search = elasticsearchOperations.search(query, ElsMetadataRecord::class.java)
+
+        if(query.query != null) println(query.query.toString())
+
+        val ret = mutableListOf<String>()
+
+        search.suggest
+            ?.suggestions?.get(0)
+            ?.entries?.get(0)
+            ?.options?.forEach {
+            ret.add(it.text)
+        }
+
+        return ret
     }
 }
