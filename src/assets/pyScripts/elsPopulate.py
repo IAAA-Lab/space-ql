@@ -200,138 +200,150 @@ def getDist(jsonObj):
 metadataFile = pd.read_csv('../metadata.csv', encoding='ISO-8859-1', delimiter=',')
 es = Elasticsearch(hosts='http://localhost:9200')
 
-
-serviceMapping = {
-        "properties": {
-            "title": {
-                "type": "text" 
-            },
-            "id": {
-                "type": "keyword"
-            },
-            "coupledDatasets": {
-                "ID" : {
-                    "type" : "keyword"
-                },
-                "title" : {
-                    "type": "text" 
-                },
-                "description" : {
-                    "type": "text" 
-                },
-                "type" : {
-                    "type": "text" 
-                },
-                "details" : {
-                    "language" :  {
-                        "type": "text" 
-                    },
-                    "uploadDate" :   {
-                        "type": "text" 
-                    },
-                    "contactPoint" : {
-                            "individual" :   {
-                                "type": "text" 
-                            },
-                            "phone" :   {
-                                "type": "text" 
-                            },
-                            "name" :   {
-                                "type": "text" 
-                            },
-                            "mail" :   {
-                                "type": "text" 
-                            },
-                            "onlineSource" :   {
-                                "type": "text" 
-                            },
-                    },
-                    "distributionFormats" :    {
-                                "name" : {
-                                    "type" : "text"
-                                },
-                                "version" : {
-                                    "type" : "text"
-                                }
-                            },
-                    "distributionTransfers" :   {
-                                "URL": {
-                                    "type" : "text"
+recordMapping = {
+    "properties": {
+        "ID": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                }
+            }
+        },
+        "description": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                }
+            }
+        },
+        "details": {
+            "properties": {
+                "contactPoint": {
+                    "properties": {
+                        "individual": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
                                 }
                             }
+                        },
+                        "mail": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "onlineSource": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "phone": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "distributionFormats": {
+                    "properties": {
+                        "name": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        },
+                        "version": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "distributionTransfers": {
+                    "properties": {
+                        "URL": {
+                            "type": "text",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword",
+                                    "ignore_above": 256
+                                }
+                            }
+                        }
+                    }
+                },
+                "language": {
+                    "type": "text",
+                    "fields": {
+                        "keyword": {
+                            "type": "keyword",
+                            "ignore_above": 256
+                        }
+                    }
+                },
+                "uploadDate": {
+                    "type": "date"
+                }
+            }
+        },
+        "title": {
+            "type": "completion",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
+                }
+            }
+        },
+        "type": {
+            "type": "text",
+            "fields": {
+                "keyword": {
+                    "type": "keyword",
+                    "ignore_above": 256
                 }
             }
         }
+    }
 }
 
 
-datasetMapping = {
-        "properties": {
-            "title": {
-                "type": "text" 
-            },
-            "id": {
-                "type": "keyword"
-            },
-            "coupledServices": {
-                "ID" : {
-                    "type" : "keyword"
-                },
-                "title" : {
-                    "type": "text" 
-                },
-                "description" : {
-                    "type": "text" 
-                },
-                "type" : {
-                    "type": "text" 
-                },
-                "details" : {
-                    "language" :  {
-                        "type": "text" 
-                    },
-                    "uploadDate" :   {
-                        "type": "text" 
-                    },
-                    "contactPoint" : {
-                            "individual" :   {
-                                "type": "text" 
-                            },
-                            "phone" :   {
-                                "type": "text" 
-                            },
-                            "name" :   {
-                                "type": "text" 
-                            },
-                            "mail" :   {
-                                "type": "text" 
-                            },
-                            "onlineSource" :   {
-                                "type": "text" 
-                            },
-                    },
-                    "distributionFormats" :    {
-                                "name" : {
-                                    "type" : "text"
-                                },
-                                "version" : {
-                                    "type" : "text"
-                                }
-                            },
-                    "distributionTransfers" :   {
-                                "URL": {
-                                    "type" : "text"
-                                }
-                            }
-                }
-            }
-        }
-}
-
-# response = es.indices.create(index=INDICES['datasets'], mappings=datasetMapping, ignore=400)
-# print(response)
-# reponse = es.indices.create(index=INDICES['services'], mappings=serviceMapping)
-# print(response)
+response = es.indices.create(index=INDICES['records'], mappings=recordMapping, ignore=400)
+print(response)
 
 
 for index, row in metadataFile.iterrows():

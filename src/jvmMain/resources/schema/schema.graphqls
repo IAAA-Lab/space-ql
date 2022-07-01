@@ -2,6 +2,7 @@
 type Query {
     search(text: String, limit: Int, offset: Int, order: String, language: [String], resType: [String], related: [String], contactPoints: [String]): MetaDataPage # <1>
     getRecord(id: String) : MetadataRecord # <2>
+    getSuggestions(text: String) : [String]
 }
 
 type Mutation { # <3>
