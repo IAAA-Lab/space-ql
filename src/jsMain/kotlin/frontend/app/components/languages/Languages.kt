@@ -116,5 +116,9 @@ val langMap = mapOf(
     "search" to mapOf(
         "Esp" to "Buscar",
         "Eng" to "Search"
+    ),
+    "autocompleteNoOpt" to mapOf(
+        "Esp" to "Sin opciones",
+        "Eng" to "No options"
     )
 )

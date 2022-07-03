@@ -17,6 +17,12 @@ class BasicService(
     private val elasticsearchOperations: ElasticsearchOperations
 ) {
 // end::elasticimport[]
+
+    fun getTitles() : List<String> {
+        val elements = metadataRepository.findAll()
+        return elements.map { it.title }
+    }
+
     // tag::getrecord[]
     fun getRecord(id: String) : MetadataRecord {
         // Obtiene el record

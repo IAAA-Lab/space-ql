@@ -32,6 +32,9 @@ class AllMetadataDataFetcher(
     ): List<String?> = basicService.suggest(text)
 
     @DgsQuery
+    fun getTitles(): List<String?> = basicService.getTitles()
+
+    @DgsQuery
     fun getRecord(
         @InputArgument id : String
     ) : MetadataRecord = basicService.getRecord(id)

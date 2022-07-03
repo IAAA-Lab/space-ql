@@ -20,6 +20,16 @@ data class SearchResponse(
 )
 
 @Serializable
+data class SuggestReponse(
+    val getSuggestions: List<String>
+)
+
+@Serializable
+data class TitlesResponse(
+    val getTitles: List<String>
+)
+
+@Serializable
 data class RecordResponse(
     val getRecord: MetadataRecord
 )

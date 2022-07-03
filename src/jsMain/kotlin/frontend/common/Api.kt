@@ -236,6 +236,39 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, l
     return ret.data.search
 }
 
+
+suspend fun getSuggestions(input: String?): List<String> {
+    val ret: GraphResponse<SuggestReponse> = jsonClient.post("http://localhost:8080/graphql") {
+        contentType(ContentType.Application.Json)
+
+        body = GraphQuery("""
+            {
+                getSuggestions(
+                    text: $input
+                ) {}
+            }""".trimIndent()
+        )
+    }
+
+    return ret.data.getSuggestions
+}
+
+suspend fun getTitles(): List<String> {
+    val ret: GraphResponse<TitlesResponse> = jsonClient.post("http://localhost:8080/graphql") {
+        contentType(ContentType.Application.Json)
+
+        body = GraphQuery("""
+            {
+                getTitles
+            }""".trimIndent()
+        )
+    }
+
+    return ret.data.getTitles
+}
+
+
+
 suspend fun removeRelated(recordId: String, relatedId: String) : MetadataRecord{
 
     val ret: GraphResponse<RemoveRelatedResponse> = jsonClient.post("http://localhost:8080/graphql") {

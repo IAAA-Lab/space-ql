@@ -5,6 +5,10 @@ import csstype.JustifyContent
 import csstype.px
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
+import frontend.app.scope
+import frontend.common.getTitles
+import kotlinx.coroutines.launch
+import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLDivElement
@@ -23,7 +27,15 @@ external interface SearchbarProps : Props {
 
 val SearchBar = FC<SearchbarProps> { props ->
     val (text, setText) = useState("")
+    var suggestions by useState(emptyList<String>())
     val lang = useContext(LangContext).lang
+
+    useEffectOnce {
+        scope.launch {
+            val allTitles = getTitles()
+            suggestions = allTitles
+        }
+    }
 
     val submitHandler: FormEventHandler<HTMLDivElement> = {
         it.preventDefault()
@@ -43,19 +55,29 @@ val SearchBar = FC<SearchbarProps> { props ->
            marginTop = 10.px
        }
        component = form
-
        onSubmit = submitHandler
 
-       TextField {
-           sx {
-               width = 600.px
+       @Suppress("UPPER_BOUND_VIOLATED")
+       Autocomplete<AutocompleteProps<String>> {
+           sx {width = 600.px}
+           disablePortal = true
+           this.noOptionsText = ReactNode(langMap["autocompleteNoOpt"]!![lang]!!)
+           options = suggestions.toTypedArray()
+           onChange = {_,newValue,_,_ ->
+               setText(newValue as String)
            }
-           id = "searchbar-form"
-           label = ReactNode(langMap["search"]!![lang]!!)
-           variant = FormControlVariant.outlined
-           value = text
-           placeholder = langMap["searchPlaceholder"]!![lang]!!
-           onChange = changeHandler
+           renderInput = { params ->
+               TextField.create{
+                   +params
+                   sx {width = 600.px}
+                   id = "searchbar-form"
+                   label = ReactNode(langMap["search"]!![lang]!!)
+                   variant = FormControlVariant.outlined
+                   value = text
+                   placeholder = langMap["searchPlaceholder"]!![lang]!!
+                   onChange = changeHandler
+               }
+           }
        }
 
    }
