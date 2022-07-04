@@ -37,6 +37,10 @@ val langMap = mapOf(
         "Esp" to "Puntos de contacto",
         "Eng" to "Contact Points"
     ),
+    "Formats" to mapOf(
+        "Esp" to "Formatos",
+        "Eng" to "Formats"
+    ),
     "ContactPoint" to mapOf(
         "Esp" to "Punto de contacto",
         "Eng" to "Contact Point"

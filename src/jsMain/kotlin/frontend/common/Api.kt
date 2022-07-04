@@ -163,7 +163,9 @@ suspend fun getSingleResult(id: String) : MetadataRecord {
 
 }
 
-suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>, resType: List<String>, related: List<String>, contactPoints: List<String>): MetadataPage {
+suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, language: List<String>,
+                       resType: List<String>, related: List<String>,
+                       contactPoints: List<String>, formats: List<String>): MetadataPage {
     val ret: GraphResponse<SearchResponse> = jsonClient.post("http://localhost:8080/graphql") {
         contentType(ContentType.Application.Json)
         var graphSearchText = ""
@@ -180,7 +182,8 @@ suspend fun getResults(input: String?, limit: Int, offset: Int, order: String, l
                 language: [${language.joinToString { "\"${it}\"" }}],
                 resType: [${resType.joinToString { "\"${it}\"" }}],
                 related: [${related.joinToString { "\"${it}\"" }}],
-                contactPoints: [${contactPoints.joinToString { "\"${it}\"" }}]) {
+                contactPoints: [${contactPoints.joinToString { "\"${it}\"" }}],
+                formats: [${formats.joinToString { "\"${it}\"" }}]) {
                     facets {
                         name,
                         values {

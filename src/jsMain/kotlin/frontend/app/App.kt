@@ -38,13 +38,14 @@ val app = FC<Props> {
     val langFacet by useState(mutableListOf<String>())
     val typeFacet by useState(mutableListOf<String>())
     val contactFacet by useState(mutableListOf<String>())
+    val formatFacet by useState(mutableListOf<String>())
     val relatedFacet by useState(mutableListOf<String>())
     val (language, setLanguage) = useState("Esp")
     val resultsLimit = 10
 
     useEffectOnce {
         scope.launch(handler) {
-            val mdPage = getResults(null, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet)
+            val mdPage = getResults(null, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet, formatFacet)
             setMaxPage(mdPage.totalPages!!)
             resultList = mdPage.metaData!!
             facetsList = mdPage.facets as MutableList<Facets>
@@ -58,9 +59,10 @@ val app = FC<Props> {
             getTypeFacets(facetsList, typeFacet)
             getRelatedFacets(facetsList, relatedFacet)
             getContactFacets(facetsList, contactFacet)
+            getFormatFacets(facetsList, formatFacet)
 
             scope.launch {
-                val mdPage = getResults(searchTerm, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet)
+                val mdPage = getResults(searchTerm, resultsLimit, 0, resultsOrder, langFacet, typeFacet, relatedFacet, contactFacet, formatFacet)
                 setMaxPage(mdPage.totalPages!!)
                 resultList = mdPage.metaData!!
                 var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
@@ -85,7 +87,7 @@ val app = FC<Props> {
     fun getResultsProp(term: String, offset: Int, order: String) {
         scope.launch(handler) {
             try{
-                val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet, contactFacet)
+                val mdPage = getResults(term, resultsLimit, offset, order, langFacet, typeFacet, relatedFacet, contactFacet, formatFacet)
                 setMaxPage(mdPage.totalPages!!)
                 resultList = mdPage.metaData!!
                 var facetsAux : MutableList<Facets>  = ArrayList(facetsList)
@@ -198,9 +200,6 @@ val app = FC<Props> {
 
         }
     }
-
-
-
 }
 
 private fun getContactFacets(
@@ -218,8 +217,24 @@ private fun getContactFacets(
             } while(obtained)
         }
     }
-
 }
+private fun getFormatFacets(
+    facetsList: MutableList<Facets>,
+    formatFacet: MutableList<String>
+) {
+    val formats = facetsList.find {el -> el.name == "Formats"}
+
+    formats?.values?.forEach {
+        if (it.checked){
+            formatFacet.add(it.field!!)
+        } else {
+            do{
+                val obtained = formatFacet.remove(it.field!!)
+            } while(obtained)
+        }
+    }
+}
+
 
 private fun getLangFacets(
     facetsList: MutableList<Facets>,

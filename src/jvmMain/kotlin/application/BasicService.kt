@@ -64,11 +64,12 @@ class BasicService(
     // tag::search[]
     fun search(text: String?, limit: Int, offset: Int, order: String,
                language: List<String>?, resType: List<String>?,
-               related: List<String>?, contactPoints: List<String>?): MetadataPage {
+               related: List<String>?, contactPoints: List<String>?,
+               formats: List<String>?): MetadataPage {
 
         var foundList = findData(text, order) // <1>
 
-        foundList = filterFacets(foundList, language, resType, related, contactPoints)
+        foundList = filterFacets(foundList, language, resType, related, contactPoints, formats)
 
         val foundFacets = getFacets(foundList)
 
@@ -94,12 +95,16 @@ class BasicService(
         language: List<String>?,
         resType: List<String>?,
         related: List<String>?,
-        contactPoints: List<String>?
+        contactPoints: List<String>?,
+        formats: List<String>?
     ): List<MetadataRecord> {
         var retList : MutableList<MetadataRecord> = ArrayList(foundList)
 
         if(language != null && language.isNotEmpty()){
             retList = filterLanguage(retList, language)
+        }
+        if(formats != null && formats.isNotEmpty()){
+            retList = filterFormats(retList, formats)
         }
         if(resType != null && resType.isNotEmpty()){
             retList = filterType(retList, resType)
@@ -128,6 +133,19 @@ class BasicService(
 
     }
 
+    private fun filterFormats(
+        recordList: MutableList<MetadataRecord>,
+        formats: List<String>
+    ): MutableList<MetadataRecord> {
+        var retList : MutableList<MetadataRecord> = ArrayList(recordList)
+
+        retList = retList.filter {el ->
+            el.details?.distributionFormats?.any { format -> format.name in formats  }?: false
+        } as MutableList<MetadataRecord>
+
+        return retList
+
+    }
 
     private fun filterRelated(
         recordList: MutableList<MetadataRecord>,
@@ -315,6 +333,7 @@ class BasicService(
         )))
 
         ret.add(getContactFacets(foundList))
+        ret.add(getFormatFacets(foundList))
 
         foundList.forEach {
 
@@ -322,6 +341,14 @@ class BasicService(
             if(it.details?.contactPoint?.name != null){
                 addDoc(ret, "Contact Points", it.details?.contactPoint?.name!!)
             }
+
+            // Formats
+            it.details?.distributionFormats?.forEach { format ->
+                if(format.name != null){
+                    addDoc(ret, "Formats", format.name!!)
+                }
+            }
+
 
             // Lang
             val lang = it.details?.language
@@ -358,25 +385,7 @@ class BasicService(
             }
         }
 
-        ret.add(Facets("Language", mutableListOf(
-            SubFacets("Spanish", 0),
-            SubFacets("English", 0),
-            SubFacets("Other/Unknown", 0),
-        )))
-        ret.add(Facets("Resource type", mutableListOf(
-            SubFacets("Service", 0),
-            SubFacets("Dataset", 0),
-            SubFacets("Other", 0),
-        )))
-        ret.add(Facets("Related Resources", mutableListOf(
-            SubFacets("0", 0),
-            SubFacets("1", 0),
-            SubFacets("2", 0),
-            SubFacets("3", 0),
-            SubFacets("+3", 0),
-        )))
-
-        for(i:Int in 0..ret.size-1){
+        for(i:Int in 0 until ret.size){
             ret[i] = Facets(ret[i].name, ret[i].values?.sortedByDescending { it.docNum }!!)
         }
 
@@ -393,6 +402,20 @@ class BasicService(
         }
 
         return Facets("Contact Points", subFacets)
+    }
+
+    private fun getFormatFacets(foundList: List<MetadataRecord>): Facets {
+        val subFacets : MutableList<SubFacets> = mutableListOf()
+
+        val allValues = foundList.flatMap { element -> mutableListOf<String>().also { it.addAll(element.details?.distributionFormats?.map {format -> format.name!! }
+            ?: emptyList()) } }
+        val distinctValues = allValues.distinct()
+
+        distinctValues.forEach {
+            subFacets.add(SubFacets(it, 0))
+        }
+
+        return Facets("Formats", subFacets)
     }
 
     // It adds 1 to the number of documents of the subfacet of a facet
