@@ -8,7 +8,7 @@ import frontend.app.components.languages.langMap
 import frontend.app.scope
 import frontend.common.getTitles
 import kotlinx.coroutines.launch
-import kotlinx.js.jso
+import mui.base.AutocompleteChangeReason
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLDivElement
@@ -60,12 +60,16 @@ val SearchBar = FC<SearchbarProps> { props ->
        @Suppress("UPPER_BOUND_VIOLATED")
        Autocomplete<AutocompleteProps<String>> {
            sx {width = 600.px}
-           disablePortal = true
+//           disablePortal = true
            this.noOptionsText = ReactNode(langMap["autocompleteNoOpt"]!![lang]!!)
            options = suggestions.toTypedArray()
-           onChange = {_,newValue,_,_ ->
-               setText(newValue as String)
+           onChange = {_,newValue,reason,_ ->
+               when(reason){
+                   AutocompleteChangeReason.clear -> setText("")
+                   else -> setText(newValue as String)
+               }
            }
+
            renderInput = { params ->
                TextField.create{
                    +params
