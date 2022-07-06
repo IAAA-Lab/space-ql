@@ -2,6 +2,7 @@ package frontend.app.components.searchbar
 
 import csstype.Display
 import csstype.JustifyContent
+import csstype.pct
 import csstype.px
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
@@ -49,6 +50,7 @@ val SearchBar = FC<SearchbarProps> { props ->
     }
 
    Box {
+       id="searchbar-container"
        sx {
            display = Display.grid
            justifyContent = JustifyContent.center
@@ -59,7 +61,7 @@ val SearchBar = FC<SearchbarProps> { props ->
 
        @Suppress("UPPER_BOUND_VIOLATED")
        Autocomplete<AutocompleteProps<String>> {
-           sx {width = 600.px}
+           sx {width = 100.pct }
 //           disablePortal = true
            this.noOptionsText = ReactNode(langMap["autocompleteNoOpt"]!![lang]!!)
            options = suggestions.toTypedArray()
@@ -73,8 +75,7 @@ val SearchBar = FC<SearchbarProps> { props ->
            renderInput = { params ->
                TextField.create{
                    +params
-                   sx {width = 600.px}
-                   id = "searchbar-form"
+                   sx {width = 100.pct}
                    label = ReactNode(langMap["search"]!![lang]!!)
                    variant = FormControlVariant.outlined
                    value = text

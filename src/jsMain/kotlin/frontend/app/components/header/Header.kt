@@ -6,6 +6,7 @@ import frontend.common.Area
 import kotlinx.browser.window
 import mui.icons.material.GitHub
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*
 import react.dom.aria.AriaHasPopup.`false`
@@ -25,14 +26,14 @@ val Header = FC<Props> {props->
 
         Toolbar {
             Typography {
+                variant = TypographyVariant.h5
                 sx { flexGrow = number(1.0) }
                 noWrap = true
                 component = div
                 +"Space-QL v1.0.0"
             }
 
-            LanguageButton {
-            }
+            LanguageButton {}
 
             Tooltip {
                 title = ReactNode("View Sources")

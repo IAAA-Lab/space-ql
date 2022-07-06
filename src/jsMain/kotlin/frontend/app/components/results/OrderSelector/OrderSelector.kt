@@ -1,11 +1,13 @@
 package frontend.app.components.results.OrderSelector
 
+import csstype.pct
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
 import mui.material.FormControl
 import mui.material.InputLabel
 import mui.material.MenuItem
 import mui.material.Select
+import mui.system.sx
 import react.FC
 import react.Props
 import react.ReactNode
@@ -20,6 +22,9 @@ val OrderSelector = FC<OrderSelectorProps> { props ->
     val lang = useContext(LangContext).lang
 
     FormControl {
+        sx {
+            width = 100.pct
+        }
         InputLabel {
             id = "order-select-label"
             +langMap["order"]!![lang]!!

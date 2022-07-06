@@ -2,10 +2,7 @@ package frontend.app.pageview
 
 import application.model.Facets
 import application.model.MetadataRecord
-import csstype.Auto
-import csstype.Display
-import csstype.GridTemplateAreas
-import csstype.array
+import csstype.*
 import frontend.app.components.sidebar.Sidebar
 import frontend.app.components.title.title
 import frontend.app.components.results.Results
@@ -53,28 +50,37 @@ val homeContent = FC<HomeProps> { props ->
         }
     }
 
+
     Box {
-        component = ReactHTML.main
         sx {
             display = Display.grid
+            gap = Gap.normal
             gridTemplateColumns = array(
-                Sizes.Sidebar.Width,
-                Auto.auto
+                Sizes.Sidebar.TotalWidth,
+                Sizes.ContentNoSidebar.Width
             )
             gridTemplateAreas = GridTemplateAreas(
-                arrayOf(Area.Sidebar, Area.ResultsContent)
+                arrayOf(Area.Sidebar, Area.Results)
             )
-
+            justifyItems = JustifyItems.stretch
+            alignItems = AlignItems.stretch
             gridArea = Area.Content
         }
+
         Sidebar{
             this.facets = props.facets
             this.setChecked = { facet, subfacet, checked -> props.setChecked(facet, subfacet, checked)}
+            this.resultsOrder = props.resultsOrder
+            this.onOrderSelect = {
+                props.setResultsOrder(it)
+                props.getResultsProp(props.searchTerm, 0, it)
+            }
         }
 
         Box {
+            id="main-container"
             sx {
-                gridArea = Area.ResultsContent
+                gridArea = Area.Results
             }
 
             title{}
@@ -90,11 +96,7 @@ val homeContent = FC<HomeProps> { props ->
                 this.resultList = props.resultList
                 this.currentPage = props.currentPage
                 this.maxPages = props.maxPage
-                this.resultsOrder = props.resultsOrder
-                this.onOrderSelect = {
-                    props.setResultsOrder(it)
-                    props.getResultsProp(props.searchTerm, 0, it)
-                }
+
                 this.onPageSelect = { pageNum ->
                     props.setCurrentPage(pageNum)
                     val offset = (pageNum - 1) * props.resultsLimit
@@ -104,7 +106,61 @@ val homeContent = FC<HomeProps> { props ->
             }
 
         }
-
-
     }
+
+
+//    Box {
+//        component = ReactHTML.main
+//        sx {
+//            display = Display.grid
+//            gridTemplateColumns = array(
+//                Sizes.Sidebar.Width,
+//                Auto.auto
+//            )
+//            gridTemplateAreas = GridTemplateAreas(
+//                arrayOf(Area.Sidebar, Area.ResultsContent)
+//            )
+//
+//            gridArea = Area.Content
+//        }
+//        Sidebar{
+//            this.facets = props.facets
+//            this.setChecked = { facet, subfacet, checked -> props.setChecked(facet, subfacet, checked)}
+//        }
+//
+//        Box {
+//            sx {
+//                gridArea = Area.ResultsContent
+//            }
+//
+//            title{}
+//
+//            SearchBar {
+//                onSubmit = { input ->
+//                    props.getResultsProp(input, 0, props.resultsOrder)
+//                    props.setSearchTerm(input)
+//                }
+//            }
+//
+//            Results {
+//                this.resultList = props.resultList
+//                this.currentPage = props.currentPage
+//                this.maxPages = props.maxPage
+//                this.resultsOrder = props.resultsOrder
+//                this.onOrderSelect = {
+//                    props.setResultsOrder(it)
+//                    props.getResultsProp(props.searchTerm, 0, it)
+//                }
+//                this.onPageSelect = { pageNum ->
+//                    props.setCurrentPage(pageNum)
+//                    val offset = (pageNum - 1) * props.resultsLimit
+//                    props.getResultsProp(props.searchTerm, offset, props.resultsOrder)
+//                }
+//
+//            }
+//
+//        }
+//
+//
+//    }
 }

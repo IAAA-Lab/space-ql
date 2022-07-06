@@ -20,8 +20,6 @@ external interface ResultsProps : Props {
     var maxPages: Int 
     var currentPage: Int
     var onPageSelect: (Int) -> Unit
-    var onOrderSelect: (String) -> Unit
-    var resultsOrder: String
 }
 
 val Results = FC<ResultsProps> { props ->
@@ -31,57 +29,86 @@ val Results = FC<ResultsProps> { props ->
         sx {
             display = Display.grid
             justifyContent = JustifyContent.center
-
-            marginRight = 100.px
-            marginLeft = 100.px
-
-            gridTemplateRows = array(
-                Sizes.Header.Height,
-                Auto.auto,
-            )
-
-            gridTemplateAreas = GridTemplateAreas(
-                arrayOf(Area.ResultTitle),
-                arrayOf(Area.Results)
-            )
-
-            marginTop = 10.px
         }
-
-        id = "results"
-        Box{
-            sx {
-                gridArea = Area.ResultTitle
-                display = Display.flex
-                justifyContent = JustifyContent.spaceBetween
-            }
-            Typography {
-
-                variant = TypographyVariant.h3
-                +langMap["results"]!![lang]!!
-            }
-
-            OrderSelector {
-                this.resultsOrder = props.resultsOrder
-                this.onOrderSelect = props.onOrderSelect
-            }
-
+        Typography {
+            variant = TypographyVariant.h3
+            +langMap["results"]!![lang]!!
         }
-
         Box {
             sx {
-                gridArea = Area.Results
+                display = Display.grid
+                justifyContent = JustifyContent.center
             }
+
             props.resultList.forEach { result ->
                 result {
                     data = result
                 }
             }
-            PageNav{
+            PageNav {
                 this.maxPages = props.maxPages
                 this.currentPage = props.currentPage
                 this.onPageClick = props.onPageSelect
             }
         }
     }
+
+
+//    Box {
+//        sx {
+//            display = Display.grid
+//            justifyContent = JustifyContent.center
+//
+//            marginRight = 100.px
+//            marginLeft = 100.px
+//
+//            gridTemplateRows = array(
+//                Sizes.Header.Height,
+//                Auto.auto,
+//            )
+//
+//            gridTemplateAreas = GridTemplateAreas(
+//                arrayOf(Area.ResultTitle),
+//                arrayOf(Area.Results)
+//            )
+//
+//            marginTop = 10.px
+//        }
+//
+//        id = "results"
+//        Box{
+//            sx {
+//                gridArea = Area.ResultTitle
+//                display = Display.flex
+//                justifyContent = JustifyContent.spaceBetween
+//            }
+//            Typography {
+//
+//                variant = TypographyVariant.h3
+//                +langMap["results"]!![lang]!!
+//            }
+//
+//            OrderSelector {
+//                this.resultsOrder = props.resultsOrder
+//                this.onOrderSelect = props.onOrderSelect
+//            }
+//
+//        }
+//
+//        Box {
+//            sx {
+//                gridArea = Area.Results
+//            }
+//            props.resultList.forEach { result ->
+//                result {
+//                    data = result
+//                }
+//            }
+//            PageNav{
+//                this.maxPages = props.maxPages
+//                this.currentPage = props.currentPage
+//                this.onPageClick = props.onPageSelect
+//            }
+//        }
+//    }
 }

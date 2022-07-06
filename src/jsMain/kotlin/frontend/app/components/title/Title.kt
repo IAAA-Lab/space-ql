@@ -23,6 +23,7 @@ val title = FC<Props>{
         }
         to = "/"
         Typography {
+            id = "title1"
             sx{
                 textAlign = TextAlign.center
             }
@@ -30,6 +31,7 @@ val title = FC<Props>{
             +"SpaceQL"
         }
         Typography {
+            id = "title2"
             sx{
                 textAlign = TextAlign.center
             }

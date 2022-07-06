@@ -123,10 +123,6 @@ val app = FC<Props> {
                     Sizes.Header.Height,
                     Auto.auto,
                 )
-
-                gridTemplateColumns = array(
-                    Auto.auto,
-                )
                 gridTemplateAreas = GridTemplateAreas(
                     arrayOf(Area.Header),
                     arrayOf(Area.Content),

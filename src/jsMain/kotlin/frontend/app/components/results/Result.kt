@@ -3,6 +3,7 @@ package frontend.app.components.results
 
 import application.model.*
 import csstype.*
+import emotion.react.css
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
 import mui.icons.material.Cloud
@@ -12,14 +13,19 @@ import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.*
+import react.dom.html.ReactHTML.img
 import react.router.NavigateOptions
 import react.router.useNavigate
+import styled.css
 
 external interface ResultProps : Props {
     var data: MetadataRecord
 }
 
 val result = FC<ResultProps> { props ->
+
+    val spainImg = "./spain.png"
+    val ukImg = "./uk.png"
     val navigate = useNavigate()
     val lang = useContext(LangContext).lang
 
@@ -27,7 +33,8 @@ val result = FC<ResultProps> { props ->
 
     Card {
         sx {
-            marginBottom = 10.px
+            marginBlock = 16.px
+            marginRight = 24.px
         }
 
         this.onClick = {
@@ -39,18 +46,13 @@ val result = FC<ResultProps> { props ->
         }
 
         key = props.data.ID
-        variant = PaperVariant.outlined
         CardActionArea {
-            sx {
-                marginBottom = 10.px
-                maxWidth = 1200.px
-            }
             CardContent {
-
                 Typography {
-                   sx {
+                    variant = TypographyVariant.h4
+                    sx {
                        fontSize = FontSize.medium
-                   }
+                    }
                     asDynamic().color = "text.secondary"
 
                     when(props.data.type) {
@@ -87,6 +89,9 @@ val result = FC<ResultProps> { props ->
                     }
                 }
                 Typography {
+                    sx {
+                        marginBottom = 10.px
+                    }
                     variant = TypographyVariant.h5
                     +props.data.title!!
                 }
@@ -94,22 +99,24 @@ val result = FC<ResultProps> { props ->
                     sx{
                         display= Display.grid
                         gridTemplateColumns = array(6.fr, 1.fr)
+                        columnGap = 24.px
                     }
                     Typography {
-//                    variant = TypographyVariant.body2
                         sx {
-                            marginBottom = 15.px
+                            marginBottom = 10.px
                         }
+                        variant = TypographyVariant.body2
                         +"${props.data.description?.take(500)}${extra}"
                     }
-
                     Box{
                         sx{
-                            display= Display.grid
-                            gridTemplateColumns = array(1.fr)
+                            display = Display.grid
+                            rowGap = 8.px
                         }
                         props.data.details?.distributionFormats?.forEach {
                             Chip{
+                                color = ChipColor.primary
+                                // TODO variant =
                                 label = ReactNode(it.name!!)
                             }
                         }
@@ -124,7 +131,7 @@ val result = FC<ResultProps> { props ->
                         variant = TypographyVariant.body2
                         sx{
                             fontWeight = FontWeight.bold
-                            fontSize = 1.rem
+                            fontSize = 1.3.rem
                         }
                         val topic = props.data.primaryTopic
                         if(topic != null && topic is cliService) {
@@ -138,11 +145,45 @@ val result = FC<ResultProps> { props ->
                         variant = TypographyVariant.body2
                         sx{
                             fontWeight = FontWeight.bold
-                            fontSize = 1.rem
-                            marginInline = 10.px
+                            fontSize = 1.3.rem
+                            marginInline = 32.px
+                            marginRight = 8.px
                         }
-                        +"${langMap["lang"]!![lang]!!}: ${props.data.details?.language}"
+                        +"${langMap["lang"]!![lang]!!}: "//${props.data.details?.language}"
                     }
+
+                    when (props.data.details?.language) {
+                        "Spanish" -> {
+                            img {
+                                css {
+                                    width = 30.px
+                                    height = 30.px
+                                }
+                                src = spainImg
+                            }
+                        }
+                        "English" -> {
+                            img {
+                                css {
+                                    width = 30.px
+                                    height = 30.px
+                                }
+                                src = ukImg
+                            }
+                        }
+                        else -> {
+                            Typography {
+                                variant = TypographyVariant.body2
+                                sx{
+                                    fontWeight = FontWeight.bold
+                                    fontSize = 1.3.rem
+                                }
+                                +props.data.details?.language!!
+                            }
+                        }
+                    }
+
+
 
                 }
             }
