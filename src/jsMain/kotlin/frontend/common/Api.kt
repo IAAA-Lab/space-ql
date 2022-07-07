@@ -246,9 +246,7 @@ suspend fun getSuggestions(input: String?): List<String> {
 
         body = GraphQuery("""
             {
-                getSuggestions(
-                    text: $input
-                ) {}
+                getSuggestions( text: "$input" )
             }""".trimIndent()
         )
     }

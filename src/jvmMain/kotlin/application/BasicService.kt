@@ -100,19 +100,19 @@ class BasicService(
     ): List<MetadataRecord> {
         var retList : MutableList<MetadataRecord> = ArrayList(foundList)
 
-        if(language != null && language.isNotEmpty()){
+        if(!language.isNullOrEmpty()){
             retList = filterLanguage(retList, language)
         }
-        if(formats != null && formats.isNotEmpty()){
+        if(!formats.isNullOrEmpty()){
             retList = filterFormats(retList, formats)
         }
-        if(resType != null && resType.isNotEmpty()){
+        if(!resType.isNullOrEmpty()){
             retList = filterType(retList, resType)
         }
-        if(related != null && related.isNotEmpty()){
+        if(!related.isNullOrEmpty()){
             retList = filterRelated(retList, related)
         }
-        if(contactPoints != null && contactPoints.isNotEmpty()){
+        if(!contactPoints.isNullOrEmpty()){
             retList = filterContactPoints(retList, contactPoints)
         }
 
@@ -338,13 +338,13 @@ class BasicService(
         foundList.forEach {
 
             // Contact points
-            if(it.details?.contactPoint?.name != null){
+            if(it.details?.contactPoint?.name != null && it.details?.contactPoint?.name != ""){
                 addDoc(ret, "Contact Points", it.details?.contactPoint?.name!!)
             }
 
             // Formats
             it.details?.distributionFormats?.forEach { format ->
-                if(format.name != null){
+                if(format.name != null && format.name != ""){
                     addDoc(ret, "Formats", format.name!!)
                 }
             }
@@ -386,7 +386,9 @@ class BasicService(
         }
 
         for(i:Int in 0 until ret.size){
-            ret[i] = Facets(ret[i].name, ret[i].values?.sortedByDescending { it.docNum }!!)
+            var elementSubFacets = ret[i].values?.sortedByDescending { it.docNum }!!
+            elementSubFacets = elementSubFacets.filter { it.docNum!! > 0 }
+            ret[i] = Facets(ret[i].name, elementSubFacets)
         }
 
         return ret
@@ -398,7 +400,7 @@ class BasicService(
         val distinctValues = foundList.distinctBy { it.details?.contactPoint?.name }
 
         distinctValues.forEach {
-            subFacets.add(SubFacets(it.details?.contactPoint?.name, 0))
+            if(it.details?.contactPoint?.name != ""){subFacets.add(SubFacets(it.details?.contactPoint?.name, 0))}
         }
 
         return Facets("Contact Points", subFacets)
@@ -452,7 +454,7 @@ class BasicService(
     }
 
     fun suggest(text: String): List<String?> {
-        val suggestionBuilder = SuggestBuilders.completionSuggestion("title").prefix(text).size(5)
+        val suggestionBuilder = SuggestBuilders.completionSuggestion("title").prefix(text).size(20)
 
         val suggestBuilder = SuggestBuilder()
         suggestBuilder.addSuggestion("title",suggestionBuilder)
@@ -473,6 +475,6 @@ class BasicService(
             ret.add(it.text)
         }
 
-        return ret
+        return ret.distinct()
     }
 }

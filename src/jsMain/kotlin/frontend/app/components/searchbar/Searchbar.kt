@@ -7,6 +7,7 @@ import csstype.px
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
 import frontend.app.scope
+import frontend.common.getSuggestions
 import frontend.common.getTitles
 import kotlinx.coroutines.launch
 import mui.base.AutocompleteChangeReason
@@ -47,6 +48,9 @@ val SearchBar = FC<SearchbarProps> { props ->
     val changeHandler: FormEventHandler<HTMLDivElement> = {
         val target = it.target as HTMLInputElement
         setText(target.value)
+        scope.launch{
+            suggestions = getSuggestions(target.value)
+        }
     }
 
    Box {
