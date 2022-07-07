@@ -124,5 +124,13 @@ val langMap = mapOf(
     "autocompleteNoOpt" to mapOf(
         "Esp" to "Sin opciones",
         "Eng" to "No options"
+    ),
+    "showLess" to mapOf(
+        "Esp" to "Mostrar menos",
+        "Eng" to "Show less"
+    ),
+    "showMore" to mapOf(
+        "Eng" to "Show more",
+        "Esp" to "Mostrar más"
     )
 )

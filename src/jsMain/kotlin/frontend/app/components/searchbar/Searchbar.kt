@@ -55,6 +55,7 @@ val SearchBar = FC<SearchbarProps> { props ->
            display = Display.grid
            justifyContent = JustifyContent.center
            marginTop = 10.px
+           marginBottom = 10.px
        }
        component = form
        onSubmit = submitHandler

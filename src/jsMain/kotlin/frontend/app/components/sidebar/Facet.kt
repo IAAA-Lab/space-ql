@@ -1,19 +1,16 @@
 package frontend.app.components.sidebar
 
 import application.model.SubFacets
-import csstype.TextAlign
-import csstype.pct
-import csstype.px
+import csstype.*
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
 import frontend.common.Sizes
+import mui.icons.material.ExpandLess
+import mui.icons.material.ExpandMore
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import react.FC
-import react.Props
-import react.ReactNode
-import react.useContext
+import react.*
 
 external interface FacetProps : Props {
     var title : String
@@ -23,7 +20,8 @@ external interface FacetProps : Props {
 
 val Facet = FC<FacetProps> {
     val lang = useContext(LangContext).lang
-
+    val (isOpen, setIsOpen) = useState(false)
+    val subfacetsNum = it.subFacets.size
 
     Paper {
         elevation = 6
@@ -42,12 +40,13 @@ val Facet = FC<FacetProps> {
             sx {
                 width = Sizes.Facet.Width
             }
-            it.subFacets.forEach { subFacet ->
+            it.subFacets.forEachIndexed { index, subFacet ->
                 if(subFacet.docNum!! > 0){
                     ListItem{
                         sx {
                             paddingLeft=10.px
                             width = 100.pct
+                            if(index >=5 && !isOpen){display = None.none}
                         }
                         ListItemIcon {
                             Checkbox{
@@ -65,6 +64,29 @@ val Facet = FC<FacetProps> {
                             +"(${subFacet.docNum})"
                         }
                     }
+                }
+            }
+            if(subfacetsNum > 5){
+                Divider{}
+                ListItem{
+                    sx {
+                        paddingLeft = 24.px
+                        paddingRight = 0.px
+                        width = 100.pct
+                        this.cursor = Cursor.pointer
+                    }
+                    onClick = {_ -> setIsOpen(!isOpen)}
+                    ListItemText{
+                        primary = if(isOpen){ ReactNode(langMap["showLess"]!![lang]!!)} else {ReactNode(langMap["showMore"]!![lang]!!)}
+                    }
+                    ListItemIcon {
+                        if(isOpen){
+                            ExpandLess{}
+                        } else{
+                            ExpandMore{}
+                        }
+                    }
+
                 }
             }
 
