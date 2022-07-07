@@ -21,7 +21,7 @@ external interface FacetProps : Props {
 val Facet = FC<FacetProps> {
     val lang = useContext(LangContext).lang
     val (isOpen, setIsOpen) = useState(false)
-    val subfacetsNum = it.subFacets.size
+    val subfacetsNum = it.subFacets.filter{ subFacet -> subFacet.docNum!! > 0}.size
 
     Paper {
         elevation = 6
@@ -40,7 +40,7 @@ val Facet = FC<FacetProps> {
             sx {
                 width = Sizes.Facet.Width
             }
-            it.subFacets.forEachIndexed { index, subFacet ->
+            it.subFacets.filter{ subFacet -> subFacet.docNum!! > 0}.forEachIndexed { index, subFacet ->
                 if(subFacet.docNum!! > 0){
                     ListItem{
                         sx {
