@@ -16,7 +16,6 @@ import react.*
 import react.dom.html.ReactHTML.img
 import react.router.NavigateOptions
 import react.router.useNavigate
-import styled.css
 
 external interface ResultProps : Props {
     var data: MetadataRecord
@@ -116,7 +115,6 @@ val result = FC<ResultProps> { props ->
                         props.data.details?.distributionFormats?.forEach {
                             Chip{
                                 color = ChipColor.primary
-                                // TODO variant =
                                 label = ReactNode(it.name!!)
                             }
                         }

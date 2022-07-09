@@ -13,5 +13,7 @@ object Versions {
     const val springDependencyManagement = "1.0.11.RELEASE"
     const val orgJson = "20211205"
     const val ktorClient = "1.6.7"
+    const val config4k = "0.4.2"
+    const val typesafeConfig = "1.4.1"
 }
 

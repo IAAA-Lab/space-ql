@@ -40,6 +40,8 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(Config4k.config4k)
+                implementation(Config4k.typesafe)
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
                 implementation("io.ktor:ktor-client-core:1.6.7")
             }
@@ -78,6 +80,7 @@ kotlin {
             dependencies {
                 implementation(SpringBootStarter.test)
                 implementation(SpringDependencies.reactorTest)
+                implementation("com.varabyte.truthish:truthish-jvm:0.6.3")
             }
         }
         val jsMain by getting {
@@ -95,11 +98,15 @@ kotlin {
                 implementation(KtorClient.js)
                 implementation(KtorClient.json)
                 implementation(KtorClient.serialization)
+                implementation(Config4k.config4k)
+                implementation(Config4k.typesafe)
             }
         }
         val jsTest by getting {
             dependencies {
-                implementation(kotlin("test"))
+                implementation("com.varabyte.truthish:truthish-js:0.6.3")
+                implementation(kotlin("test-js"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.3")
             }
         }
     }

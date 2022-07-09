@@ -57,3 +57,8 @@ object KtorClient {
     val json = ktorClient("json")
     val serialization = ktorClient("serialization")
 }
+
+object Config4k {
+    val config4k = "io.github.config4k:config4k:${Versions.config4k}"
+    val typesafe = "com.typesafe:config:${Versions.typesafeConfig}"
+}
