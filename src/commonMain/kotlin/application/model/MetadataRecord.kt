@@ -2,12 +2,6 @@ package application.model
 
 
 import kotlinx.serialization.*
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.descriptors.serialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
@@ -50,28 +44,44 @@ data class SubFacets(
     var checked : Boolean = false
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Facets(
     var name: String? = null,
     var values: List<SubFacets>? = null
 )
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Format (
     var name: String? = null,
     var version: String? = null
     )
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class Transfer (
     var URL: String? = null
     )
 
-@kotlinx.serialization.Serializable
-data class ContactPoint (
+@Serializable
+data class OldContactPoint (
     var individual: String? = null,
     var phone: String? = null,
     var name: String? = null,
+    var mail: String? = null,
+    var onlineSource: String? = null,
+)
+
+@Serializable
+data class Organization(
+    var name: String? = null,
+    var subOrganization : String? = null,
+    var wholeName : String? = null
+)
+
+@Serializable
+data class ContactPoint (
+    var individual: String? = null,
+    var phone: String? = null,
+    var organization: Organization? = null,
     var mail: String? = null,
     var onlineSource: String? = null,
 )

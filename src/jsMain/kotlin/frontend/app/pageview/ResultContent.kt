@@ -197,7 +197,7 @@ val resultContent = FC<Props> { props ->
                                 sx {
                                     width = 70.ch
                                 }
-                                if(data.details?.contactPoint?.name!=null && data.details?.contactPoint?.name !="" ){
+                                if(data.details?.contactPoint?.organization?.name!=null && data.details?.contactPoint?.organization?.name !="" ){
                                     ListItem {
                                         sx {
                                             paddingLeft = 10.px
@@ -206,7 +206,7 @@ val resultContent = FC<Props> { props ->
                                             sx {
                                                 fontWeight = FontWeight.bold
                                             }
-                                            primary = ReactNode(langMap["name"]!![lang]!!)
+                                            primary = ReactNode(langMap["org"]!![lang]!!)
                                         }
                                         Link {
                                             sx{
@@ -217,10 +217,30 @@ val resultContent = FC<Props> { props ->
                                             onClick={
                                                 navigate(to="/", options = object : NavigateOptions {
                                                     override var replace: Boolean? = null
-                                                    override var state: Any? = "Contact;${data.details?.contactPoint?.name}"
+                                                    override var state: Any? = "Contact;${data.details?.contactPoint?.organization?.name}"
                                                 })
                                             }
-                                            +data.details?.contactPoint?.name!!
+                                            +"${data.details?.contactPoint?.organization?.name!!} ${if(data.details?.contactPoint?.organization?.wholeName != null){"- ${data.details?.contactPoint?.organization?.wholeName}"}else{""}}"
+                                        }
+                                    }
+                                }
+                                if(data.details?.contactPoint?.organization?.subOrganization != null && data.details?.contactPoint?.organization?.subOrganization !="" ){
+                                    ListItem {
+                                        sx {
+                                            paddingLeft = 10.px
+                                        }
+                                        ListItemText {
+                                            sx {
+                                                fontWeight = FontWeight.bold
+                                            }
+                                            primary = ReactNode(langMap["subOrg"]!![lang]!!)
+                                        }
+                                        Link {
+                                            sx{
+                                                marginLeft = 30.px
+                                            }
+                                            variant="body2"
+                                            +data.details?.contactPoint?.organization?.subOrganization!!
                                         }
                                     }
                                 }

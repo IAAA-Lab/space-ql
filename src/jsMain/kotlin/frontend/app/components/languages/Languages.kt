@@ -132,5 +132,13 @@ val langMap = mapOf(
     "showMore" to mapOf(
         "Eng" to "Show more",
         "Esp" to "Mostrar más"
+    ),
+    "org" to mapOf(
+        "Eng" to "Organization",
+        "Esp" to "Organización"
+    ),
+    "subOrg" to mapOf(
+        "Eng" to "Sub-Organization",
+        "Esp" to "Sub Organización"
     )
 )

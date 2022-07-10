@@ -141,7 +141,11 @@ suspend fun getSingleResult(id: String) : MetadataRecord {
                     contactPoint {
                         individual,
                         phone,
-                        name,
+                        organization {
+                            name,
+                            subOrganization,
+                            wholeName
+                        },
                         mail,
                         onlineSource
                     },

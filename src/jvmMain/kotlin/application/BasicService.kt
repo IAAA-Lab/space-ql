@@ -126,7 +126,7 @@ class BasicService(
         var retList : MutableList<MetadataRecord> = ArrayList(recordList)
 
         retList = retList.filter {el ->
-            el.details?.contactPoint?.name in contactPoints
+            el.details?.contactPoint?.organization?.name in contactPoints
         } as MutableList<MetadataRecord>
 
         return retList
@@ -338,8 +338,8 @@ class BasicService(
         foundList.forEach {
 
             // Contact points
-            if(it.details?.contactPoint?.name != null && it.details?.contactPoint?.name != ""){
-                addDoc(ret, "Contact Points", it.details?.contactPoint?.name!!)
+            if(it.details?.contactPoint?.organization?.name != null && it.details?.contactPoint?.organization?.name != ""){
+                addDoc(ret, "Contact Points", it.details?.contactPoint?.organization?.name!!)
             }
 
             // Formats
@@ -397,10 +397,10 @@ class BasicService(
     private fun getContactFacets(foundList: List<MetadataRecord>): Facets {
         val subFacets : MutableList<SubFacets> = mutableListOf()
 
-        val distinctValues = foundList.distinctBy { it.details?.contactPoint?.name }
+        val distinctValues = foundList.distinctBy { it.details?.contactPoint?.organization?.name }
 
         distinctValues.forEach {
-            if(it.details?.contactPoint?.name != ""){subFacets.add(SubFacets(it.details?.contactPoint?.name, 0))}
+            if(it.details?.contactPoint?.organization?.name != ""){subFacets.add(SubFacets(it.details?.contactPoint?.organization?.name, 0))}
         }
 
         return Facets("Contact Points", subFacets)

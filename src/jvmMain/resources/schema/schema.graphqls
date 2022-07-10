@@ -70,10 +70,16 @@ type Transfer {
     URL: String
 }
 
+type Organization {
+    name: String,
+    subOrganization: String,
+    wholeName: String
+}
+
 type ContactPoint {
     individual: String,
     phone: String,
-    name: String,
+    organization: Organization,
     mail: String,
     onlineSource: String
 }

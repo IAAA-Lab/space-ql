@@ -1,5 +1,6 @@
 package application.model
 
+import application.aliases.contactPointAliases
 import application.aliases.getFormatAlias
 import application.aliases.getLangAlias
 
@@ -27,10 +28,12 @@ fun getMDContent(elsDetails: ElsContentMetadata): ContentMetadata {
 }
 
 fun getMDContactPoint(elsContactPoint: ElsContactPoint): ContactPoint {
+    println("NAME -${elsContactPoint.name}-")
+    println("VALUE ${contactPointAliases[elsContactPoint.name]}")
     return ContactPoint(
         individual = elsContactPoint.individual,
         phone = elsContactPoint.phone,
-        name = elsContactPoint.name,
+        organization = contactPointAliases[elsContactPoint.name],
         mail = elsContactPoint.mail,
         onlineSource = elsContactPoint.onlineSource
     )
