@@ -28,8 +28,6 @@ fun getMDContent(elsDetails: ElsContentMetadata): ContentMetadata {
 }
 
 fun getMDContactPoint(elsContactPoint: ElsContactPoint): ContactPoint {
-    println("NAME -${elsContactPoint.name}-")
-    println("VALUE ${contactPointAliases[elsContactPoint.name]}")
     return ContactPoint(
         individual = elsContactPoint.individual,
         phone = elsContactPoint.phone,

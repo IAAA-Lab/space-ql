@@ -21,7 +21,7 @@ repositories {
 kotlin {
     jvm {
         compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
+            kotlinOptions.jvmTarget = "14"
         }
         withJava()
         testRuns["test"].executionTask.configure {
@@ -38,6 +38,9 @@ kotlin {
         }
     }
     sourceSets {
+        all {
+            languageSettings.optIn("kotlin.OptIn")
+        }
         val commonMain by getting {
             dependencies {
                 implementation(Config4k.config4k)

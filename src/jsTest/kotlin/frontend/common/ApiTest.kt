@@ -19,10 +19,10 @@ class ApiTest {
         assertThat(2+2).isEqualTo(4)
     }
 
-    @Test
-    fun testTruthisAssertsFails() {
-        assertThat(2+2).isEqualTo(3)
-    }
+//    @Test
+//    fun testTruthisAssertsFails() {
+//        assertThat(2+2).isEqualTo(3)
+//    }
 
     suspend fun doubleWithDelay(value: Int) : Int {
         delay(1000L)
@@ -36,22 +36,22 @@ class ApiTest {
         assertThat(result).isEqualTo(4)
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun testKotlinxCoroutineTestWithTruthishFails() = runTest {
-        val result = doubleWithDelay(2)
-        assertThat(result).isEqualTo(3)
-    }
-
-    // This is the closest I've been to an integration test
-    // it uses kotlinx-coroutines-test and truthish but
-    // it doesn't get anything
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @Test
-    fun testGetSingleResult() = runTest {
-        val TESTED_ID = "ES.GFA.WMS"
-
-        val result = getSingleResult(TESTED_ID)
-        assertThat(result.ID).isEqualTo(TESTED_ID)
-    }
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    @Test
+//    fun testKotlinxCoroutineTestWithTruthishFails() = runTest {
+//        val result = doubleWithDelay(2)
+//        assertThat(result).isEqualTo(3)
+//    }
+//
+//    // This is the closest I've been to an integration test
+//    // it uses kotlinx-coroutines-test and truthish but
+//    // it doesn't get anything
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    @Test
+//    fun testGetSingleResult() = runTest {
+//        val TESTED_ID = "ES.GFA.WMS"
+//
+//        val result = getSingleResult(TESTED_ID)
+//        assertThat(result.ID).isEqualTo(TESTED_ID)
+//    }
 }

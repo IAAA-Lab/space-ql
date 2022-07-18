@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 
 class ElsTest(
-    @Autowired private val metadataElasticsearchRepository: MetadataElasticsearchRepository
+//    @Autowired private val metadataElasticsearchRepository: MetadataElasticsearchRepository
 ) {
 
-    @Test
-    @DisplayName("Find all test")
-    fun testFindAllReturnsAllResults() {
-        val results = metadataElasticsearchRepository.findAll().toList()
-        assertThat(results.size).isEqualTo(523)
-    }
+//    @Test
+//    @DisplayName("Find all test")
+//    fun testFindAllReturnsAllResults() {
+//        val results = metadataElasticsearchRepository.findAll().toList()
+//        assertThat(results.size).isEqualTo(523)
+//    }
 
 }
