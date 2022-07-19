@@ -12,7 +12,7 @@ WARNING:    Habrá que explicar el esquema de graphql en el capítulo anterior
 
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/MetadataRecord.kt[tags=mdpage]
+include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=mdpage]
 ----
 <1> Lista de "facetas" vinculadas a la página.
 <2> Número total de páginas que resultan de la búsqueda actual
@@ -23,7 +23,7 @@ WARNING: Hay que añadir todo el código en el que se trabaja con todos estos el
 El servidor se encarga de poblar estos campos al generar la respuesta para el cliente en el *Fetcher de GraphQL*. La lista de facetas también se calcula en el momento. Cada "Facet" se compone de los siguientes campos:
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/MetadataRecord.kt[tags=facets]
+include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=facets]
 ----
 <1> Nombre del campo a filtrar (p.e. "Idioma")
 <2> La lista de subfacetas por las que se puede filtrar el campo en cuestión (p.e. "Inglés", "Español"...)
@@ -36,7 +36,7 @@ Dentro de la página se devuelve una lista de elementos. Estos elementos tienen 
 
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/MetadataRecord.kt[tags=mdrecord]
+include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=mdrecord]
 ----
 <1> Identificador único del elemento
 <2> Título del documento original
@@ -53,20 +53,20 @@ El campo *primaryTopic*, como se explica al pie del bloque de código, puede ser
 *Servicio*:
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/Service.kt[tags=service]
+include::{sourcedir}{jvmModel}/ElsService.kt[tags=service]
 ----
 
 *Dataset*:
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/Dataset.kt[tags=dataset]
+include::{sourcedir}{jvmModel}/ElsDataset.kt[tags=dataset]
 ----
 
 Los campos coupledDatasets y coupledServices mencionados previamente, son del tipo "*RelatedElements*". Este tipo representa un metadato (de tipo MetadataRecord) junto a un booleano que representa *si el valor está o no realmente relacionado*. Este campo se ha añadido para que el usuario pueda indicar, si así lo desea, que un recurso no está relacionado con otro. De esta forma los registros que el usuario marca como "no relacionados" no se eliminan de la base de datos, simplemente cambian su valor de related a "false". La funcionalidad que realiza estos cambios se puede encontrar en el apartado dedicado a GraphQL.
 
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/RelatedElements.kt[tags=related]
+include::{sourcedir}{jvmModel}/ElsRelatedElements.kt[tags=related]
 ----
 
 Se puede observar además, que ambos tipos de datos están vinculados a los índices de Elasticsearch que representan, al igual que el tipo "MetadataRecord".
@@ -75,14 +75,14 @@ El tipo "MetadataRecord" cuenta además con un campo "details" que, como se ha m
 
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/MetadataRecord.kt[tags=content]
+include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=content]
 ----
 <1> El tipo punto de contacto se representa como un objeto "ContactPoint" que contiene toda la información relevante del punto de contacto del documento.
 <2> Los formatos y los "transfers" de distribución se representan en listas de los tipos "Format" y "Transfer" respectivamente, que sigue el esquema que aparece a continuación:
 
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/MetadataRecord.kt[tags=formtrans]
+include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=formtrans]
 ----
 Donde el formato se representa como el nombre y la versión del formato de distribución, y el "transfer" indica la URL de la distribución en sí.
 
@@ -90,7 +90,7 @@ Como se ha mencionado en el párrafo anterior, los puntos de contacto se represe
 
 [source,kotlin, linenums]
 ----
-include::{sourcedir}{jvmModel}/MetadataRecord.kt[tags=contactpoint]
+include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=contactpoint]
 ----
 
 

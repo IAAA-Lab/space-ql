@@ -1,6 +1,8 @@
 == Tecnologías en el lado del servidor
 ifndef::sourcedir[:sourcedir: ../../../../../src]
 ifndef::graphSchema[:graphSchema: /jvmMain/resources/schema]
+ifndef::jvmModel[:jvmModel: /jvmMain/kotlin/application/model]
+ifndef::jvmApplication[:jvmApplication: /jvmMain/kotlin/application]
 ifndef::jvmGraph[:jvmGraph: /jvmMain/kotlin/application/graphQL]
 :icons: font
 
@@ -57,3 +59,71 @@ En este caso, la función del BasicService recupera el elemento, modifica el val
 
 Las funciones de BasicService se pueden ver más en profundidad en el apartado dedicado a Elasticsearch.
 
+=== Elasticsearch y spring-data elasticsearch:
+Elasticsearch es un motor de búsqueda y analítica distribuido, gratuito y abierto https://www.elastic.co/es/what-is/elasticsearch[REF]. Está desarrollado sobre Apache Lucene y facilita el acceso a los datos mediante API REST muy simples. Para cargar los datos se han creado dos scripts de Python que procesan y almacenan los datos en los índices de Elasticsearch. Cuando un dato se almacena en Elasticsearch, el sistema lo analiza e indexa de forma que se pueden obtener datos buscando a través de múltiples parámetros (ID, palabras clave, texto, tamaño de resultados o cantidad de resultados a analizar, entre otros). Como los índices se construyen por campos, se facilita el filtrado y búsqueda de los distintos documentos. Esto permite, dentro de una aplicación como la que se está planteando en este trabajo, almacenar e indexar un conjunto de documentos y posteriormente buscar, por ejemplo, en su título y contenido como se haría en un buscador habitual añadiendo incluso palabras clave o cualquier elemento extra que se considere oportuno.
+
+WARNING: Hablar del despliegue de Elasticsearch - Un Docker para todo el sistema o un docker solo para Elastic y se entiende que el sistema se despliega manualmente?
+
+Spring-data Elasticsearch, por su parte, es un proyecto que permite conectar fácilmente instancias de Elasticsearch con una aplicación de Spring Boot.  Mediante notación de Spring se encarga de crear interfaces y plantillas que enmascaran el acceso a la información, haciendo que sea mucho más simple. A continuación se va a ver cómo se ha utilizado en este proyecto:
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmModel}/MetadataElasticsearchRepository.kt[tags=repository]
+----
+
+<1> Declara una interfaz de nombre "MetadataElasticsearchRepository" que más adelante se vinculará con el repositorio que almacena los metadatos al completo
+<2> Interfaz que conectará con el índice que contiene los conjuntos de datos
+<3> Interfaz que conectará con el índice que contiene los servicios
+<4> Dentro del repositorio de metadatos se aprovecha la sintaxis de Spring para declarar una función que busca por título o descripción de un objeto y recibe por parámetro el título y la descripción por los que se desea buscar. Esta sintaxis, llama de forma ajena al usuario a la API que se ha mencionado previamente de Elasticsearch y busca dentro del repositorio los campos "title" y "description" de cada documento para compararlos con los proporcionados como parámetros sin que haya que configurar nada más.
+
+Para indicar qué índice se debe utilizar en cada repositorio, se añade en la declaración de los tipos en Kotlin la siguiente información:
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmModel}/ElsService.kt[tags=elasticsearch]
+----
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmModel}/ElsDataset.kt[tags=elasticsearch]
+----
+
+La etiqueta "@Document" de la primera línea indica el nombre del índice en el que se almacenan esos objetos. Cuando se crea un "Repository" como los vistos en el párrafo anterior, se vincula con un tipo, que indica el tipo de objetos que almacena y el tipo de clave/id que se utiliza, en este caso la clave es la etiquetada como "@Id" y el tipo es el objeto en cuestión. Los campos de los objetos se corresponden con los campos de cada documento en el índice. En el índice de Elasticsearch la información se guarda en un formato JSON, que el propio spring-data se encarga de mapear y recuperar en forma de objetos de Kotlin.
+
+Finalmente, se va a ver cómo se utilizan las funciones de spring-data en el código de nuestra aplicación:
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmApplication}/BasicService.kt[tags=elasticimport]
+----
+
+En primer lugar, se crea un servicio dentro de la aplicación que sirva las funciones que se necesiten. En este caso, se van a implementar las funciones que se han indicado en el esquema de GraphQL. Para dar acceso a los repositorios, se pasan como dependencias o parámetros de la clase los distintos repositorios. Gracias a la sintaxis de Spring, las dependencias entre el servicio y los repositorios se resuelven de forma automática y al desplegar la aplicación, el servicio tiene acceso a los repositorios sin necesitar ninguna configuración más.
+
+Una vez se ha creado el servicio, se definen dentro las funciones:
+
+Las funciones "getRecord" y "search" tienen una serie de parámetros que son equivalentes a los que se han planteado en el esquema de graphQL para las funciones homónimas.
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmApplication}/BasicService.kt[tags=getrecord]
+----
+<1> En primer lugar, se obtiene el metadato al completo del repositorio de registros de metadatos
+<2> En segundo lugar, según este registro sea un servicio o un conjunto de datos, se obtiene la información del mismo del repositorio que corresponda, para poder completar los valores de los elementos relacionados
+<3> Para almacenar los elementos relacionados de cada elemento relacionado, se sigue el mismo proceso que para el elemento principal y según sea servicio o conjunto de datos se busca en el repositorio que corresponda el elemento que completa el "primaryTopic".
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmApplication}/BasicService.kt[tags=search]
+----
+<1> La obtención de los elementos de los distintos repositorios se realiza en una función auxiliar.
+
+La función de "search" se encarga de calcular los filtros además de obtener los datos que se buscan.
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmApplication}/BasicService.kt[tags=finddata]
+----
+<1> Si hay elementos para la búsqueda, se utilizan para buscar por título o descripción los posibles recursos, indicando que es una búsqueda paginada
+<2> Se obtienen todos los elementos de los servicios y conjuntos de datos para obtener más fácilmente los distintos valores haciendo uso de la función "find" de Kotlin
+
+El uso de GraphQL permite enmascarar todas estas funciones y llamadas de cara al usuario, completando mucha información que no estaría presente originalmente, como los contenidos de los elementos relacionados. Además de calcular los filtros y de hacer la ordenación de los resultados en el servidor sin depender del tipo de base de datos que se utilice.

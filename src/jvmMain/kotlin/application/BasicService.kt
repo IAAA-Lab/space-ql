@@ -14,7 +14,8 @@ class BasicService(
     private val metadataRepository : MetadataElasticsearchRepository,
     private val serviceRepository : ServiceElasticsearchRepository,
     private val datasetRepository : DatasetElasticsearchRepository,
-    private val elasticsearchOperations: ElasticsearchOperations
+    private val elasticsearchOperations: ElasticsearchOperations,
+    private val elsToModelService: ElsToModelService
 ) {
 // end::elasticimport[]
 
@@ -52,7 +53,7 @@ class BasicService(
             elsValue.primaryTopic = topic
         }
 
-        return getMDRecord(elsValue)
+        return elsToModelService.getMDRecord(elsValue)
     }
     // end::getrecord[]
 
@@ -287,7 +288,7 @@ class BasicService(
         }
     // end::finddata[]
 
-        val retList = found.map{ getMDRecord(it) }
+        val retList = found.map{ elsToModelService.getMDRecord(it) }
         return when(order) {
             "Date" -> {
                 retList.sortedBy {
