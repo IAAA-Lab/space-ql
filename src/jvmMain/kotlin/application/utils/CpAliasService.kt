@@ -3,14 +3,17 @@ package application.utils
 import application.model.Organization
 import org.springframework.stereotype.Service
 
+// tag::consts[]
 // Parents
-const val gobNavarra = "Gobierno de Navarra"
+const val gobNavarra = "Gobierno de Navarra" // <1>
 const val dirCadastre = "Directorate General for Cadastre. Spain"
 const val gipProvCouncil = "Gipuzkoa Provincial Council"
 const val SITNA = "SITNA"
 const val dipBcn = "Diputación de Barcelona"
 const val ICGC = "ICGC"
 const val ACA = "ACA"
+// ...
+//end::consts[]
 const val DTES = "DTES"
 const val puertosEstado = "Puertos del Estado"
 const val DARP = "DARP"
@@ -41,19 +44,19 @@ const val juntaExtremadura = "Junta de Extremadura"
 const val centroInfExtremadura = "Centro de Información Cartográfica y Territorial de Extremadura"
 const val gobAragon = "Gobierno de Aragón"
 
-
-
 // Name - main organization
 // subOrganization - suborganization
 // whole name - nombre completo o alias de la organizacion
 
 // Se mostrará asi por pantalla.
+// tag::map[]
+
 @Service
 class CpAliasService{
 
     val contactPointAliases = mapOf(
         "Gobierno de Navarra." to
-                Organization(name = gobNavarra, subOrganization = null, wholeName = null),
+                Organization(name = gobNavarra, subOrganization = null, wholeName = null), // <1>
         "Directorate General for Cadastre. Spain" to
                 Organization(name = dirCadastre, subOrganization = null, wholeName = null),
         "Gipuzkoa Provincial Council" to
@@ -63,7 +66,9 @@ class CpAliasService{
         "Diputación de Barcelona - Oficina Técnica de Cartografía y SIG Local - Área de Territorio y Sostenibilidad" to
                 Organization(name = dipBcn, subOrganization = "Oficina Técnica de Cartografía y SIG Local - Área de Territorio y Sostenibilidad", wholeName = null),
         "Gobierno de Navarra. Departamento de Economía y Hacienda. Servicio de Riqueza Territorial y Tributos Patrimoniales." to
-                Organization(name = gobNavarra, subOrganization = "Departamento de Economía y Hacienda. Servicio de Riqueza Territorial y Tributos Patrimoniales", wholeName = null),
+                Organization(name = gobNavarra, subOrganization = "Departamento de Economía y Hacienda. Servicio de Riqueza Territorial y Tributos Patrimoniales", wholeName = null), // <1>
+        // ...
+        // end::map[]
         "Institut Cartogràfic i Geològic de Catalunya (ICGC)" to
                 Organization(name = ICGC, subOrganization = null, wholeName = "Institut Cartogràfic i Geològic de Catalunya"),
         "Agencia Catalana del Agua (ACA)" to
@@ -216,9 +221,11 @@ class CpAliasService{
                 Organization(name = MAPAMA, subOrganization = null, wholeName = "Ministerio de Agricultura y Pesca, Alimentación y Medio Ambiente"),
         "Ministerio para la Transición Ecológica y el Reto Demográfico. Dirección General de Biodiversidad y Calidad Ambiental" to
                 Organization(name = ministerioTransicion, subOrganization = "Dirección General de Biodiversidad y Calidad Ambiental", wholeName = null)
+    // tag::function[]
     )
 
     fun getCpAlias(cp : String?) : Organization {
-        return contactPointAliases[cp] ?: Organization(name = "Other/Unknown", subOrganization = null, wholeName = null)
+        return contactPointAliases[cp] ?: Organization(name = "Other/Unknown", subOrganization = null, wholeName = null) // <2>
     }
+    // end::function[]
 }

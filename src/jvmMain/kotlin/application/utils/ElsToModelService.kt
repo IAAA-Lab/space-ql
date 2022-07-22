@@ -11,22 +11,23 @@ class ElsToModelService(
     private val cpAliasService: CpAliasService
 ){
 
+    // tag::functions[]
     fun getMDRecord(elsRecord : ElsMetadataRecord) : MetadataRecord {
         return MetadataRecord(
             ID = elsRecord.ID,
             title = elsRecord.title,
             description = elsRecord.description,
-            primaryTopic = getMDPrimaryTopic(elsRecord.primaryTopic, elsRecord.type),
+            primaryTopic = getMDPrimaryTopic(elsRecord.primaryTopic, elsRecord.type), // <1>
             type = elsRecord.type,
-            details = getMDContent(elsRecord.details)
+            details = getMDContent(elsRecord.details)  // <1>
         )
     }
 
     fun getMDContent(elsDetails: ElsContentMetadata): ContentMetadata {
         return ContentMetadata(
-            language = langAliasService.getLangAlias(elsDetails.language),
+            language = langAliasService.getLangAlias(elsDetails.language),  // <2>
             uploadDate = elsDetails.uploadDate,
-            contactPoint = getMDContactPoint(elsDetails.contactPoint),
+            contactPoint = getMDContactPoint(elsDetails.contactPoint), // <1>
             accessUrl = elsDetails.accessUrl,
             distributionFormats = elsDetails.distributionFormats?.map{ Format(fmtAliasService.getFormatAlias(it.name), it.version) },
             distributionTransfers = elsDetails.distributionTransfers?.map{ Transfer(it.URL) }
@@ -37,7 +38,7 @@ class ElsToModelService(
         return ContactPoint(
             individual = elsContactPoint.individual,
             phone = elsContactPoint.phone,
-            organization = cpAliasService.getCpAlias(elsContactPoint.name),
+            organization = cpAliasService.getCpAlias(elsContactPoint.name),  // <2>
             mail = elsContactPoint.mail,
             onlineSource = elsContactPoint.onlineSource
         )
@@ -68,4 +69,5 @@ class ElsToModelService(
             return null
         }
     }
+    // end::functions[]
 }

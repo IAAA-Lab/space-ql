@@ -27,5 +27,4 @@ include::chapters/chapterGraphEls.asciidoc[]
 
 include::chapters/chapterServer.asciidoc[]
 
-
-
+include::chapters/chapterCommon.asciidoc[]

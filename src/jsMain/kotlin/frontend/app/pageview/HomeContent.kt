@@ -13,7 +13,6 @@ import mui.system.Box
 import mui.system.sx
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML
 import react.router.useLocation
 import react.useEffectOnce
 
@@ -42,6 +41,7 @@ val homeContent = FC<HomeProps> { props ->
     // The checked facet is stored into a string following the
     useEffectOnce {
         if(checkedName != null){
+            props.setSearchTerm("")
             val items = checkedName.split(";")
             when(items[0]){
                 "Contact" -> props.setSingleCheck("Contact Points", items[1])

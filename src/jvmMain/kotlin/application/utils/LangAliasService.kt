@@ -2,6 +2,8 @@ package application.utils
 
 import org.springframework.stereotype.Service
 
+// tag::main[]
+
 @Service
 class LangAliasService{
     val langAliases: Map<String, String> = mapOf(
@@ -18,4 +20,4 @@ class LangAliasService{
     }
 
 }
-
+// end::main[]

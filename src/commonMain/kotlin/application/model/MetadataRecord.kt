@@ -6,50 +6,52 @@ import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 
+// tag::mdrecord[]
 @Serializable
 data class MetadataRecord(
-    var ID: String? = null,
-    var title: String? = null,
-    var description: String? = null,
-    var primaryTopic: Resource? = null,
-    var type: String? = null,
-    var details: ContentMetadata? = null,
+    var ID: String? = null,     // <1>
+    var title: String? = null,     // <2>
+    var description: String? = null,     // <3>
+    var primaryTopic: Resource? = null,     // <4>
+    var type: String? = null,     // <5>
+    var details: ContentMetadata? = null,     // <6>
 )
+// end::mdrecord[]
 
+// tag::polymorphic[]
 @Polymorphic
 @Serializable
 abstract class Resource{
     abstract val id: String?
     abstract val title: String?
 }
+//end::polymorphic[]
 
-object ResourceSerializer : JsonContentPolymorphicSerializer<Resource>(Resource::class) {
-    override fun selectDeserializer(element: JsonElement) = when {
-        "coupledDatasets" in element.jsonObject -> Service.serializer()
-        else -> Dataset.serializer()
-    }
-}
-
+// tag::mdpage[]
 @Serializable
 data class MetadataPage(
-    var facets: List<Facets>? = null,
-    var totalPages: Int? = null,
-    var metaData: List<MetadataRecord>? = null
+    var facets: List<Facets>? = null,   // <1>
+    var totalPages: Int? = null,    // <2>
+    var metaData: List<MetadataRecord>? = null    // <3>
 )
+// end::mdpage[]
 
-@Serializable
-data class SubFacets(
-    var field : String? = null,
-    var docNum : Int? = null,
-    var checked : Boolean = false
-)
-
+// tag::facets[]
 @Serializable
 data class Facets(
-    var name: String? = null,
-    var values: List<SubFacets>? = null
+    var name: String? = null,     // <1>
+    var values: List<SubFacets>? = null      // <2>
+)
+@Serializable
+data class SubFacets(
+    var field : String? = null,      // <3>
+    var docNum : Int? = null,     // <4>
+    var checked : Boolean = false     // <5>
 )
 
+// end::facets[]
+
+// tag::fmttrs[]
 @Serializable
 data class Format (
     var name: String? = null,
@@ -60,32 +62,26 @@ data class Format (
 data class Transfer (
     var URL: String? = null
     )
-
-@Serializable
-data class OldContactPoint (
-    var individual: String? = null,
-    var phone: String? = null,
-    var name: String? = null,
-    var mail: String? = null,
-    var onlineSource: String? = null,
-)
-
+//end::fmttrs[]
+//tag::org[]
 @Serializable
 data class Organization(
-    var name: String? = null,
-    var subOrganization : String? = null,
-    var wholeName : String? = null
+    var name: String? = null, //<1>
+    var subOrganization : String? = null,//<2>
+    var wholeName : String? = null//<3>
 )
-
+//end::org[]
+//tag::contact[]
 @Serializable
 data class ContactPoint (
-    var individual: String? = null,
-    var phone: String? = null,
-    var organization: Organization? = null,
-    var mail: String? = null,
-    var onlineSource: String? = null,
+    var individual: String? = null, //<1>
+    var phone: String? = null,//<2>
+    var organization: Organization? = null, //<3>
+    var mail: String? = null,//<4>
+    var onlineSource: String? = null,//<5>
 )
-
+//end::contact[]
+//tag::content[]
 @Serializable
 data class ContentMetadata (
     var language: String? = null,
@@ -95,3 +91,4 @@ data class ContentMetadata (
     var distributionFormats: List<Format>? = null,
     var distributionTransfers: List<Transfer>? = null
 )
+//end::content[]

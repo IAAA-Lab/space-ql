@@ -1,0 +1,164 @@
+== Clases globales y comunicación cliente-servidor
+ifndef::sourcedir[:sourcedir: ../../../../../src]
+ifndef::jvmModel[:jvmModel: /jvmMain/kotlin/application/model]
+ifndef::jvmUtils[:jvmUtils: /jvmMain/kotlin/application/utils]
+ifndef::jsfolder[:jsFolder: /jsMain/kotlin/frontend]
+ifndef::commonModel[:commonModel: /commonMain/kotlin/application/model]
+:icons: font
+
+[abstract]
+En este capítulo se explican las clases globales que representan los tipos del esquema de GraphQL junto a las transformaciones que lleva a cabo el servidor para convertir las clases de la base de datos a las clases de GraphQL.
+
+=== Clases globales
+
+Todas las clases existentes se mapean automáticamente por el framework de DGS. Para ello es necesario que la clase y el tipo de GraphQL se llamen igual.
+
+Como se ha podido ver en el esquema de GraphQL, las consultas devuelven una página, denominada "MetaDataPage". Esta página se representa dentro del modelo de Kotlin de la siguiente forma:
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=mdpage]
+----
+<1> Lista de "facetas" vinculadas a la página.
+<2> Número total de páginas que resultan de la búsqueda actual
+<3> Lista de elementos recuperados para la página actual
+
+El servidor se encarga de poblar estos campos al generar la respuesta para el cliente en el *Fetcher de GraphQL*. La lista de facetas también se calcula en el momento. Cada "Facet" se compone de los siguientes campos:
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=facets]
+----
+<1> Nombre del campo a filtrar (p.e. "Idioma")
+<2> La lista de subfacetas por las que se puede filtrar el campo en cuestión (p.e. "Inglés", "Español"...)
+<3> Nombre de la subfaceta
+<4> Número de documentos en la subfaceta
+<5> Valor que se usa solo desde el cliente para indicar si una faceta ha sido seleccionada o no por el usuario como filtro para la búsqueda.
+
+NOTE: Añadir fragmentos de código donde se calculen las facets.
+
+Dentro de la página se devuelve una lista de elementos. Estos elementos tienen la siguiente estructura:
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=mdrecord]
+----
+<1> Identificador único del elemento
+<2> Título del documento original
+<3> Breve descripción del contenido procedente del documento original
+<4> Tipo del documento, puede ser: servicio, conjunto de datos u otro. Los tipos servicio y conjunto de datos se definirán a continuación. Se define como null por defecto porque la base de datos no almacena este dato por defecto y, por lo tanto, en un primer instante siempre será nulo.
+<5> Cadena de texto que representa el tipo del documento ("Service", "Dataset", "Other").
+<6> Detalles extra del dato. El tipo de datos "ContentMetadata" se definirá a continuación.
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=content]
+----
+
+El tipo *"ContentMetadata"* representa los detalles extra de un recurso. Detalles como el idioma, la fecha y la URL son cadenas de texto. Los tipos *"ContactPoint"*, *"Format"* y *"Transfer"* son clases de kotlin complejas.
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=fmttrs]
+----
+
+La clase "Format" representa los formatos en los que se puede acceder a un recurso y se representa con dos cadenas de texto, una con el nombre del formato y otra con la versión del mismo. Por otro lado, el tipo "Transfer" representa los puntos desde los que acceder a estos formatos, direcciones URL almacenadas en cadenas de texto.
+
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=contact]
+----
+<1> Nombre de la persona responsable del punto de contacto del recurso.
+<2> Teléfono de contacto.
+<3> Organización a la que contactar a cargo del recurso.
+<4> Correo electrónico de contacto.
+<5> Dirección online del punto de contacto.
+
+La clase que representa los puntos de contacto almacena prácticamente toda la información en cadenas de texto a excepción de la organización, que se representa con otra sub-clase:
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=org]
+----
+<1> Nombre de la organización (p.ej. "Gobierno de Navarra").
+<2> Nombre de la sub-organización (p.ej. "Ministerio de agricultura").
+<3> Nombre completo de la organización en caso de que el nombre principal se represente con siglas.
+
+Estos son los registros almacenados en la base de datos. Todos los datos que se envían entre el servidor y el cliente deben tener la etiqueta *@Serializable*, que indica que sus tipos de datos pueden ser convertidos a un formato que se puede enviar a través de una red o almacenar en una base de datos.
+
+En el caso de los *"primaryTopic"*, el tipo de datos "Resource" es una clase abstracta que cuenta con los valores comunes a los tipos "Service" y "Dataset", ya que se utiliza para representar a ambos. Esta clase tiene que ser marcada como *@Polymorphic*, para indicar que algo de ese tipo puede ser serializado como otros elementos que hereden de la clase.
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/MetadataRecord.kt[tags=polymorphic]
+----
+
+Las clases "Dataset" y "Service" necesitan tener dos modelos distintos para poder ser utilizados en este polimorfismo.
+
+*Servicio*
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/Service.kt[tags=main]
+----
+
+*Conjunto de datos*
+[source,kotlin, linenums]
+----
+include::{sourcedir}{commonModel}/Dataset.kt[tags=main]
+----
+
+Ambos modelos cuentan con dos clases, la clase estándar y una clase "cli". Esto es así porque al enviarse la clase al cliente es necesario que cuente con un discriminante codificado en JSON que indique el nombre de la clase a la que representa, pero este discriminante no puede ser un parámetro de la clase en sí, sino un valor codificado únicamente en el JSON. De esta forma, desde el servidor se envía un elemento con el atributo *"type"* que indica el nombre de la clase, y en el cliente se deserializa en una clase idéntica, pero sin el atributo en cuestión. Por defecto, JSON busca un atributo con el nombre "type" como discriminante, pero se podría modificar por otro si fuera necesario.
+
+Finalmente, para indicar al cliente HTTP que se utiliza desde el cliente que la clase "Resource" puede representar a "Service" y "Dataset", se añade en el serializador la información que aparece a continuación:
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{jsFolder}/common/Api.kt[tags=serializerModule]
+----
+<1> Indica las subclases que representan a la clase abstracta "Resource" a la hora de serializar o deserializar.
+
+Este cliente HTTP con el serializador configurado es el que se encarga de enviar las peticiones al servidor.
+
+=== Comunicación cliente-servidor
+
+El siguiente bloque de código es un ejemplo de función que utiliza el cliente HTTP que se ha mencionado antes para hacer una llamada con el método POST al servidor. Esta llamada se hace sobre la dirección "http://localhost:8080/graphql", que es el punto que sirve el paquete DGS para recibir las peticiones graphql. El servidor recibirá el cuerpo de la petición, que estará en formato JSON y en el que se indicará el tipo o nombre de la consulta, mediante el que sabrá qué elementos debe devolver al cliente.
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{jsFolder}/common/Api.kt[tags=singleRes]
+----
+
+En el servicio "BasicService", tras obtener los recursos de la base de datos, hay que convertir estos recursos a las clases globales de forma que el cliente pueda recibirlos sin problema. Para esto se han construido varios servicios que modifican y crean la información que falta en los recursos para que el cliente reciba lo que necesita.
+
+*Servicio para convertir al modelo global*
+
+Este servicio cuenta con varias funciones que convierten un recurso a su versión del modelo global:
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{jvmUtils}/ElsToModelService.kt[tags=functions]
+----
+<1> Cada función llama a otras funciones para convertir los objetos que representen tipos complejos como el "Primary Topic", el contenido o el punto de contacto.
+<2> Algunas funciones hacen uso de los otros servicios existentes.
+
+*Servicios para obtención de Alias*
+
+Los servicios que aparecen en el punto dos se encargan de  sustituir grupos heterogéneos de palabras que hacen referencias a las mismas cosas por un sinónimo común. Por ejemplo, el *"langAliasService"* que aparece en la línea 14 se encarga de recibir las distintas nomenclaturas que se le ha dado a los idiomas (p.ej. "spa", "Español", "Spanish"...) y sustituye cada una de estas apariciones por el nombre del idioma en un formato estándar. De esta forma, el cliente recibe la información correctamente y siendo lo menos confusa posible.
+
+El servicio "langAliasService" y el servicio "fmtAliasService" son muy simples y similares. Ambos servicios contienen una tabla hash cuyas claves son las distintas combinaciones de elementos que se pueden recibir desde la base de datos. Los valores de cada una de estas parejas clave-valor, son la versión estandarizada de la clave. Un ejemplo sería el servcio de alias de idiomas, que al ser más corto puede representarse sin problema en un bloque de código en esta documentación:
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{jvmUtils}/LangAliasService.kt[tags=main]
+----
+
+Se pueden observar los distintos pares de claves y valores de la tabla hash, así como la función que accede a ellos. Se aprecia también en la función la consulta "*?: "Other/Unknown"* " que comprueba si se ha podido obtener un valor con la clave introducida y de no ser así devuelve la cadena "Other/Unknown", que se traduce como "otro/desconocido". Así se pueden evitar posibles errores como que la entrada no esté registrada o que se desconozca el idioma del recurso. A nivel funcional, el servicio que se encarga de los alias de formatos es idéntico.
+
+Finalmente, se puede encontrar el *"cpAliasService"*, o servicio de alias de puntos de contacto. La función de este servicio es casi idéntica a la del idioma o el formato, pero en este caso no devuelve una cadena, sino un elemento del tipo "Organization". Una organización cuenta con un nombre de la organización principal, que representa una organización general como puede ser un ministerio, y una sub-organización que puede aparecer o no. Todos los nombres de organizaciones se han almacenado en constantes asegurando que no se repiten y que son reutilizables, para que a la hora de usarlos como filtros o facetas en la búsqueda sean nombres comunes, sencillos y estandarizados. Por otro lado, las sub-organizaciones son ramas de la organización principal que simplemente permiten añadir información sobre el resultado, aunque podría añadirse una faceta de sub-organización en función de las organizaciones seleccionadas.
+
+[source,kotlin, linenums]
+----
+include::{sourcedir}{jvmUtils}/CpAliasService.kt[tags=consts;map;function]
+----
+<1> Todas utilizan la constante que representa la organización del "Gobierno de Navarra", pero una de ellas representa una sub-organización, y la otra representa el Gobierno de Navarra como tal.
+<2> La función devuelve la organización obtenida de la tabla hash o, en su defecto, una organización de nombre "Other/Unknown", es decir, representa una organización desconocida, al igual que se hace con los idiomas y los formatos.

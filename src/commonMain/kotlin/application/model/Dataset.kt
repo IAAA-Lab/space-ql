@@ -3,6 +3,7 @@ package application.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// tag::main[]
 @Serializable
 @SerialName("Dataset")
 data class cliDataset(
@@ -21,3 +22,4 @@ data class Dataset(
     val __typename: String = "Dataset",
     val type: String? = "Dataset"
 ) : Resource()
+// end::main[]

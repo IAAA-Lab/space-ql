@@ -10,6 +10,8 @@ plugins {
     application
 }
 
+
+
 group = "space-ql"
 version = "1.0-SNAPSHOT"
 
@@ -19,6 +21,7 @@ repositories {
 }
 
 kotlin {
+    kotlinDaemonJvmArgs = listOf("-Xmx4g")
     jvm {
         compilations.all {
             kotlinOptions.jvmTarget = "14"

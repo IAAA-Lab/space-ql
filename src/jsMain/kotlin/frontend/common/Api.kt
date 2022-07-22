@@ -11,10 +11,11 @@ import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import kotlinx.serialization.json.Json
 
+// tag::serializerModule[]
 private val serializer = SerializersModule {
     polymorphic(Resource::class){
-        subclass(cliService::class)
-        subclass(cliDataset::class)
+        subclass(cliService::class) // <1>
+        subclass(cliDataset::class) // <1>
     }
 }
 
@@ -25,12 +26,13 @@ val JSON = Json {
 val jsonClient = HttpClient {
     install(JsonFeature) { serializer = KotlinxSerializer(JSON) }
 }
+// end::serializerModule[]
 
+// tag::singleRes[]
 suspend fun getSingleResult(id: String) : MetadataRecord {
-
     val ret: GraphResponse<RecordResponse> = jsonClient.post("http://localhost:8080/graphql") {
         contentType(ContentType.Application.Json)
-
+// end::singleRes[]
         body = GraphQuery("""
         {
             getRecord(id:"${id}") {

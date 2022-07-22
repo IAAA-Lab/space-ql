@@ -41,11 +41,9 @@ include::{sourcedir}{jvmGraph}/fetcher/AllMetadataDataFetcher.kt[tags=fetcher]
 <3> La etiqueta InputArgument representa los argumentos de la función del esquema.
 <4> Este elemento tiene una dependencia sobre la clase BasicService, que, como su nombre indica, es un servicio o conjunto de funciones que realizan las llamadas a la base de datos y ejecutan la lógica de las funciones de GraphQL.
 
-De esta forma, cuando DGS recibe una petición a la URL de GraphQL, automáticamente realiza la llamada a la función pertinente, que a su vez, invoca las funciones correspondientes dentro del BasicService.
+De esta forma, cuando DGS recibe una petición a la URL de GraphQL, automáticamente realiza la llamada a la función correspondiente, que a su vez, invoca las funciones  dentro del BasicService.
 
-El BasicService se encarga de hacer las llamadas a la base de datos y de recuperar toda la información extra que haga falta de cara a completar la información que se sirve al usuario. Se obtienen los elementos relacionados, se ordenan y filtran los resultados y se calculan las facetas/filtros en tiempo real.
-
-WARNING: Pensar si vale la pena añadir el código de BasicService aquí (Lo considero más relevante en Elasticsearch)
+El BasicService se encarga de hacer las llamadas a la base de datos y de recuperar toda la información extra que haga falta de cara a completar la información que se sirve al usuario. Se obtienen los elementos (servicios y conjuntos de datos) relacionados, se ordenan y filtran los resultados y se calculan las facetas/filtros en tiempo real.
 
 Por otro lado, los elementos de tipo mutation son lo que correspondería con un POST o un PUT. Son llamadas que buscan modificar de algún modo la base de datos.
 
@@ -62,9 +60,7 @@ Las funciones de BasicService se pueden ver más en profundidad en el apartado d
 === Elasticsearch y spring-data elasticsearch:
 Elasticsearch es un motor de búsqueda y analítica distribuido, gratuito y abierto https://www.elastic.co/es/what-is/elasticsearch[REF]. Está desarrollado sobre Apache Lucene y facilita el acceso a los datos mediante API REST muy simples. Para cargar los datos se han creado dos scripts de Python que procesan y almacenan los datos en los índices de Elasticsearch. Cuando un dato se almacena en Elasticsearch, el sistema lo analiza e indexa de forma que se pueden obtener datos buscando a través de múltiples parámetros (ID, palabras clave, texto, tamaño de resultados o cantidad de resultados a analizar, entre otros). Como los índices se construyen por campos, se facilita el filtrado y búsqueda de los distintos documentos. Esto permite, dentro de una aplicación como la que se está planteando en este trabajo, almacenar e indexar un conjunto de documentos y posteriormente buscar, por ejemplo, en su título y contenido como se haría en un buscador habitual añadiendo incluso palabras clave o cualquier elemento extra que se considere oportuno.
 
-WARNING: Hablar del despliegue de Elasticsearch - Un Docker para todo el sistema o un docker solo para Elastic y se entiende que el sistema se despliega manualmente?
-
-Spring-data Elasticsearch, por su parte, es un proyecto que permite conectar fácilmente instancias de Elasticsearch con una aplicación de Spring Boot.  Mediante notación de Spring se encarga de crear interfaces y plantillas que enmascaran el acceso a la información, haciendo que sea mucho más simple. A continuación se va a ver cómo se ha utilizado en este proyecto:
+Spring-data Elasticsearch, por su parte, es un proyecto que permite conectar fácilmente instancias de Elasticsearch con una aplicación de Spring Boot.  Mediante notación de Spring, se encarga de crear interfaces y plantillas que enmascaran el acceso a la información haciendo uso de la API mencionada previamente. En consecuencia, el acceso a dicha información se vuelve muy simple. A continuación se va a ver cómo se ha utilizado en este proyecto:
 
 [source,kotlin,linenum]
 ----
@@ -101,7 +97,7 @@ En primer lugar, se crea un servicio dentro de la aplicación que sirva las func
 
 Una vez se ha creado el servicio, se definen dentro las funciones:
 
-Las funciones "getRecord" y "search" tienen una serie de parámetros que son equivalentes a los que se han planteado en el esquema de graphQL para las funciones homónimas.
+Las funciones "getRecord" y "search" tienen una serie de parámetros iguales a los que se han planteado en el esquema de GraphQL para las funciones homónimas. Si bien no es necesario que las funciones y los parámetros se llamen igual que las definidas en el esquema de GraphQL, ya que se podrían seguir otras aproximaciones, es muy recomendable para mantener el código lo más legible posible.
 
 [source,kotlin,linenum]
 ----
@@ -123,7 +119,32 @@ La función de "search" se encarga de calcular los filtros además de obtener lo
 ----
 include::{sourcedir}{jvmApplication}/BasicService.kt[tags=finddata]
 ----
-<1> Si hay elementos para la búsqueda, se utilizan para buscar por título o descripción los posibles recursos, indicando que es una búsqueda paginada
+<1> Si hay elementos para la búsqueda, se utilizan para buscar por título o descripción los posibles recursos, indicando que es una búsqueda paginada. Si no los hay, se devuelve la lista al completo de los recursos disponibles
 <2> Se obtienen todos los elementos de los servicios y conjuntos de datos para obtener más fácilmente los distintos valores haciendo uso de la función "find" de Kotlin
 
-El uso de GraphQL permite enmascarar todas estas funciones y llamadas de cara al usuario, completando mucha información que no estaría presente originalmente, como los contenidos de los elementos relacionados. Además de calcular los filtros y de hacer la ordenación de los resultados en el servidor sin depender del tipo de base de datos que se utilice.
+
+NOTE: Pensar si poner o no las funciones auxiliares en la documentación
+
+Estas dos funciones hacen uso de otras funciones auxiliares también definidas en el propio servicio. No obstante, estas funciones no son relevantes a nivel global dentro de la aplicación, por lo que no se van a explicar en detalle en esta documentación. Por otro lado, se pueden encontrar también las funciones *"removeRealated"* y *"suggest"*. Estas funciones "eliminan" un elemento de la lista de elementos relacionados de otro registro y devuelven una lista de títulos sugeridos según un término de búsqueda, respectivamente.
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmApplication}/BasicService.kt[tags=rmrelated]
+----
+<1> Se obtiene el elemento del que se va a eliminar el relacionado del repositorio de servicios o de conjuntos de datos según corresponda.
+<2> Se modifica el valor booleano del recurso relacionado, marcándolo a "false" para indicar que ya no está relacionado
+<3> Se guarda el elemento modificado
+<4> La función devuelve el registro que tendrá dentro de su "primaryTopic" el elemento que acaba de ser modificado
+
+[source,kotlin,linenum]
+----
+include::{sourcedir}{jvmApplication}/BasicService.kt[tags=suggest]
+----
+<1> Crea una instancia de un "Suggest Builder" que indica que se debe buscar por el campo "title" preparado para autocompletar ("completion"), que empiece por la cadena introducida como parámetro y que tenga un tamaño máximo de 20 resultados.
+<2> Se indica que la recomendación o "Suggest" a construir es por el campo "title", con todos los parámetros indicados en el constructor anterior.
+<3> Se construye la consulta con el constructor de consultas de Elasticsearch de Spring-Data, que recibe como parámetro la consulta creada.
+<4> Se realiza la búsqueda sobre la instancia de Elasticsearch, indicando el tipo de dato que se busca recuperar (lo que indicará también el índice).
+<5> Se obtienen de los resultados obtenidos únicamente las cadenas de texto que devuelve Elasticsearch, añadiéndolas a la lista de cadenas que se devolverá en la función.
+<6> Devuelve los valores filtrando repetidos. De esta forma aunque haya varios elementos con títulos parecidos no aparecerá una misma recomendación de autocompletado dos veces.
+
+El uso de GraphQL permite enmascarar todas estas funciones y llamadas de cara al usuario, completando mucha información que no estaría presente originalmente, como los contenidos de los elementos relacionados. Además de calcular los filtros y de hacer la ordenación de los resultados en el servidor independientemente del tipo de base de datos que se utilice.

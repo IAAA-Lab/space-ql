@@ -4,35 +4,13 @@ ifndef::jvmModel[:jvmModel: /jvmMain/kotlin/application/model]
 :icons: font
 
 [abstract]
-Modelo de datos del servidor que se corresponde a la traducción y adaptación del esquema de GraphQL y de los datos almacenados en Elasticsearch a Kotlin para poder trabajar con los datos y construir las respuestas para el cliente, facilitando su traducción a GraphQL.
+En el servidor se hace uso de dos conjuntos distintos de objetos. Por un lado, están los objetos que mapean los índices de Elasticsearch, como se ha introducido en el capítulo anterior, por otro lado, están las clases definidas en el "commonMain", que se utilizan tanto en el servidor como en el cliente. En este capítulo se van a ver únicamente las clases de los objetos de Elasticsearch, que se emplean solo desde el lado del servidor.
 
-Como se ha podido ver en el esquema de GraphQL, las consultas devuelven una página. Esta página se representa dentro del modelo de Kotlin de la siguiente forma:
+Los índices de elasticsearch almacenan la información en formato JSON, como se ha mencionado en el capítulo correspondiente. Spring necesita que esta información esté mapeada en el sistema donde se vaya a utilizar para poder devolver los datos del JSON directamente como objetos de kotlin.
 
-WARNING:    Habrá que explicar el esquema de graphql en el capítulo anterior
+Los índices almacenan los registros o "records", además de los servicios y conjuntos de datos. Todos estos objetos y sus sub-clases deben estar creados en kotlin siguiendo el mismo esquema con el que se han almacenado en Elasticsearch.
 
-[source,kotlin, linenums]
-----
-include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=mdpage]
-----
-<1> Lista de "facetas" vinculadas a la página.
-<2> Número total de páginas que resultan de la búsqueda actual
-<3> Lista de elementos recuperados para la página actual
-
-WARNING: Hay que añadir todo el código en el que se trabaja con todos estos elementos
-
-El servidor se encarga de poblar estos campos al generar la respuesta para el cliente en el *Fetcher de GraphQL*. La lista de facetas también se calcula en el momento. Cada "Facet" se compone de los siguientes campos:
-[source,kotlin, linenums]
-----
-include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=facets]
-----
-<1> Nombre del campo a filtrar (p.e. "Idioma")
-<2> La lista de subfacetas por las que se puede filtrar el campo en cuestión (p.e. "Inglés", "Español"...)
-<3> Nombre de la subfaceta
-<4> Número de documentos en la subfaceta
-
-NOTE: Añadir fragmentos de código donde se calculen las facets.
-
-Dentro de la página se devuelve una lista de elementos. Estos elementos tienen la siguiente estructura:
+En primer lugar, podemos encontrar los registros, almacenados en la clase "ElsMetadataRecord" y que se encuentran en el índice "sql_records" de nuestra instancia de Elasticsearch:
 
 [source,kotlin, linenums]
 ----
@@ -41,12 +19,10 @@ include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=mdrecord]
 <1> Identificador único del elemento
 <2> Título del documento original
 <3> Breve descripción del contenido procedente del documento original
-<4> Tipo del documento, puede ser: servicio, conjunto de datos u otro. Los tipos servicio y conjunto de datos se definirán a continuación. Se define como null por defecto porque la base de datos no almacena este dato por defecto y, por lo tanto, en un primer instante siempre será nulo.
+<4> Tipo del documento, puede ser: servicio, conjunto de datos u otro. Los tipos servicio y conjunto de datos se definirán a continuación. Se define como null por defecto porque la base de datos no almacena este dato y, por lo tanto, en un primer instante siempre será nulo y deberá ser completado en el servidor.
 <5> Cadena de texto que representa el tipo del documento ("Service", "Dataset", "Other").
-<6> Detalles extra del dato. El tipo de datos "ContentMetadata" se definirá a continuación.
+<6> Detalles extra del dato. El tipo de datos "ElsContentMetadata" se definirá a continuación.
 <7> Nombre del índice dentro de la base de datos de Elasticsearch conectada al servidor (explicación en detalle en el capítulo anterior)
-
-NOTE: explicar en detalle el comportamiento de elasticsearch_Data en el capítulo pertinente
 
 El campo *primaryTopic*, como se explica al pie del bloque de código, puede ser de tipo servicio o del tipo conjunto de datos. Estos tipos de datos tienen una estructura muy similar, con la diferencia de que los servicios tienen un campo "coupledDatasets" que representa los conjuntos de datos vinculados al servicio, y los conjuntos de datos tienen un campo "coupledServices" que representa los servicios vinculados al conjunto de datos.
 
@@ -62,23 +38,23 @@ include::{sourcedir}{jvmModel}/ElsService.kt[tags=service]
 include::{sourcedir}{jvmModel}/ElsDataset.kt[tags=dataset]
 ----
 
-Los campos coupledDatasets y coupledServices mencionados previamente, son del tipo "*RelatedElements*". Este tipo representa un metadato (de tipo MetadataRecord) junto a un booleano que representa *si el valor está o no realmente relacionado*. Este campo se ha añadido para que el usuario pueda indicar, si así lo desea, que un recurso no está relacionado con otro. De esta forma los registros que el usuario marca como "no relacionados" no se eliminan de la base de datos, simplemente cambian su valor de related a "false". La funcionalidad que realiza estos cambios se puede encontrar en el apartado dedicado a GraphQL.
+Los campos coupledDatasets y coupledServices mencionados previamente, son del tipo "*RelatedElements*". Este tipo representa un metadato (de tipo MetadataRecord) junto a un booleano que representa *si el valor está o no realmente relacionado*. Este campo se ha añadido para que el usuario pueda indicar, si así lo considera, que un recurso no está relacionado con otro. De esta forma los registros que el usuario marca como "no relacionados" no se eliminan de la base de datos, simplemente cambian su valor de related a "false" y el servidor sabe que no debe devolver ese resultado. La funcionalidad que realiza estos cambios se puede encontrar en el apartado dedicado a GraphQL.
 
 [source,kotlin, linenums]
 ----
 include::{sourcedir}{jvmModel}/ElsRelatedElements.kt[tags=related]
 ----
 
-Se puede observar además, que ambos tipos de datos están vinculados a los índices de Elasticsearch que representan, al igual que el tipo "MetadataRecord".
+Se puede observar además, que ambos tipos de datos están vinculados a los índices de Elasticsearch que representan, al igual que el tipo "ElsMetadataRecord".
 
-El tipo "MetadataRecord" cuenta además con un campo "details" que, como se ha mencionado, incluye detalles extra sobre el metadato, siendo fácilmente ampliable de ser necesario. El contenido de los detalles en cuestión es este:
+El tipo "ElsMetadataRecord" cuenta además con un campo "details" que incluye detalles extra sobre el recurso, siendo fácilmente ampliable de ser necesario. El contenido de los detalles en cuestión es este:
 
 [source,kotlin, linenums]
 ----
 include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=content]
 ----
 <1> El tipo punto de contacto se representa como un objeto "ContactPoint" que contiene toda la información relevante del punto de contacto del documento.
-<2> Los formatos y los "transfers" de distribución se representan en listas de los tipos "Format" y "Transfer" respectivamente, que sigue el esquema que aparece a continuación:
+<2> Los formatos y los "transfers" de distribución se representan en listas de los tipos "ElsFormat" y "ElsTransfer" respectivamente, que sigue el esquema que aparece a continuación.
 
 [source,kotlin, linenums]
 ----
@@ -86,12 +62,11 @@ include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=formtrans]
 ----
 Donde el formato se representa como el nombre y la versión del formato de distribución, y el "transfer" indica la URL de la distribución en sí.
 
-Como se ha mencionado en el párrafo anterior, los puntos de contacto se representan también con un objeto con las siguientes características:
+Los puntos de contacto se representan también con un objeto con las siguientes características:
 
 [source,kotlin, linenums]
 ----
 include::{sourcedir}{jvmModel}/ElsMetadataRecord.kt[tags=contactpoint]
 ----
 
-
-
+Todas estas clases se deben convertir de alguna forma a las clases globales que utiliza el cliente y que se corresponden con los esquemas de GraphQL. En el siguiente capítulo se puede encontrar cómo se realizan estas conversiones y las clases que representan los tipos del esquema de GraphQL.

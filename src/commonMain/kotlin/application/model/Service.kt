@@ -3,6 +3,7 @@ package application.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+// tag::main[]
 @Serializable
 @SerialName("Service")
 data class cliService(
@@ -21,3 +22,4 @@ data class Service(
     var __typename: String = "Service",
     val type: String? = "Service"
 ) : Resource()
+// end::main[]

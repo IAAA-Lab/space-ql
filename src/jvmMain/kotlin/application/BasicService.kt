@@ -429,41 +429,43 @@ class BasicService(
         }
     }
 
+    //tag::rmrelated[]
     fun removeRelated(recordId: String, relatedId: String): MetadataRecord {
         val value = metadataRepository.findById(recordId)
 
         val retValue = value.get()
 
         if(retValue.type == "service"){
-            val service = serviceRepository.findById(recordId).get()
+            val service = serviceRepository.findById(recordId).get() // <1>
             val auxCoupled : MutableList<ElsRelatedElements> = ArrayList(service.coupledDatasets)
 
-            auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false
+            auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false // <2>
             service.coupledDatasets = auxCoupled
-            serviceRepository.save(service)
+            serviceRepository.save(service) // <3>
 
         } else if(retValue.type == "dataset"){
-            val dataset = datasetRepository.findById(recordId).get()
+            val dataset = datasetRepository.findById(recordId).get() // <1>
             val auxCoupled : MutableList<ElsRelatedElements> = ArrayList(dataset.coupledServices)
 
-            auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false
+            auxCoupled.find { it.relatedRecord.ID == relatedId }?.related = false // <2>
             dataset.coupledServices = auxCoupled
-            datasetRepository.save(dataset)
+            datasetRepository.save(dataset) // <3>
         }
 
-        return getRecord(recordId)
+        return getRecord(recordId) // <4>
     }
-
+    //end::rmrelated[]
+    //tag::suggest[]
     fun suggest(text: String): List<String?> {
-        val suggestionBuilder = SuggestBuilders.completionSuggestion("title").prefix(text).size(20)
+        val suggestionBuilder = SuggestBuilders.completionSuggestion("title").prefix(text).size(20) //<1>
 
         val suggestBuilder = SuggestBuilder()
-        suggestBuilder.addSuggestion("title",suggestionBuilder)
+        suggestBuilder.addSuggestion("title",suggestionBuilder) //<2>
 
         val query = NativeSearchQueryBuilder()
-            .withSuggestBuilder(suggestBuilder).build()
+            .withSuggestBuilder(suggestBuilder).build() //<3>
 
-        val search = elasticsearchOperations.search(query, ElsMetadataRecord::class.java)
+        val search = elasticsearchOperations.search(query, ElsMetadataRecord::class.java) //<4>
 
         if(query.query != null) println(query.query.toString())
 
@@ -473,9 +475,10 @@ class BasicService(
             ?.suggestions?.get(0)
             ?.entries?.get(0)
             ?.options?.forEach {
-            ret.add(it.text)
+            ret.add(it.text) //<5>
         }
 
-        return ret.distinct()
+        return ret.distinct() // <6>
     }
+    //end::suggest[]
 }
