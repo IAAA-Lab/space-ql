@@ -2,6 +2,7 @@ package frontend.app.components.results
 
 import application.model.*
 import csstype.*
+import emotion.react.css
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
 import mui.icons.material.Cloud
@@ -13,6 +14,7 @@ import mui.system.sx
 import org.w3c.dom.HTMLButtonElement
 import react.*
 import react.dom.events.MouseEventHandler
+import react.dom.html.ReactHTML
 import react.router.NavigateOptions
 import react.router.useNavigate
 
@@ -22,6 +24,10 @@ external interface RelatedResultProps : Props {
 }
 
 val RelatedResult = FC<RelatedResultProps> { props ->
+
+    val spainImg = "../spain.png"
+    val ukImg = "../uk.png"
+
     val navigate = useNavigate()
     val extra = (if(props.data.description?.length!! > 500)"..." else "")
     val lang = useContext(LangContext).lang
@@ -144,7 +150,37 @@ val RelatedResult = FC<RelatedResultProps> { props ->
                             fontSize = 1.rem
                             marginInline = 10.px
                         }
-                        +"${langMap["lang"]!![lang]!!}: ${props.data.details?.language}"
+                        +"${langMap["lang"]!![lang]!!}: "//${props.data.details?.language}"
+                    }
+                    when (props.data.details?.language) {
+                        "Spanish" -> {
+                            ReactHTML.img {
+                                css {
+                                    width = 30.px
+                                    height = 30.px
+                                }
+                                src = spainImg
+                            }
+                        }
+                        "English" -> {
+                            ReactHTML.img {
+                                css {
+                                    width = 30.px
+                                    height = 30.px
+                                }
+                                src = ukImg
+                            }
+                        }
+                        else -> {
+                            Typography {
+                                variant = TypographyVariant.body2
+                                sx{
+                                    fontWeight = FontWeight.bold
+                                    fontSize = 1.3.rem
+                                }
+                                +props.data.details?.language!!
+                            }
+                        }
                     }
                 }
             }

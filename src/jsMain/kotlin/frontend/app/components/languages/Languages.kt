@@ -106,8 +106,8 @@ val langMap = mapOf(
         "Eng" to "Related services"
     ),
     "notRelated" to mapOf(
-        "Esp" to "No está relacionado",
-        "Eng" to "Not related"
+        "Esp" to "Marcar como no relacionado",
+        "Eng" to "Mark as not related"
     ),
     "results" to mapOf(
         "Esp" to "Resultados",

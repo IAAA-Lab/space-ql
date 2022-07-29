@@ -1,8 +1,6 @@
 package frontend.app.pageview
 
-import application.model.Dataset
-import application.model.MetadataRecord
-import application.model.Service
+import application.model.*
 import csstype.*
 import frontend.app.components.languages.LangContext
 import frontend.app.components.languages.langMap
@@ -45,6 +43,7 @@ val resultContent = FC<Props> { props ->
            setData(getSingleResult(id))
         }
     }
+
 
     Box {
         sx {
@@ -146,7 +145,7 @@ val resultContent = FC<Props> { props ->
                                 marginInline=70.px
                             }
                             val topic = data.primaryTopic
-                            if(topic != null && topic is Service){
+                            if(topic != null && topic is cliService){
                                 topic.coupledDatasets?.forEach{
                                     if(it.related == true) {
                                         RelatedResult {
@@ -160,7 +159,7 @@ val resultContent = FC<Props> { props ->
                                         }
                                     }
                                 }
-                            }else if(topic != null && topic is Dataset){
+                            }else if(topic != null && topic is cliDataset){
                                 topic.coupledServices?.forEach{
                                     if(it.related == true){
                                         RelatedResult {
